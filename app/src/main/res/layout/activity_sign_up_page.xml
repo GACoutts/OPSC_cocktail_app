@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    tools:context=".sign_up_page">
+    tools:context=".SignUpPage">
 
     <LinearLayout
         android:id="@+id/main"
@@ -74,7 +74,7 @@
             android:id="@+id/btnSignUp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Sign Up"/>
+            android:text="@string/sign_up"/>
 
     </LinearLayout>
 </ScrollView>
