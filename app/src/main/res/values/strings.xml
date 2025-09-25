@@ -7,4 +7,8 @@
     <string name="surname">Surname</string>
     <string name="name">Name</string>
     <string name="sign_up_page">Sign Up Page</string>
+
+    <!-- Added missing strings referenced by layouts -->
+    <string name="back">Back</string>
+    <string name="sign_up">Sign Up</string>
 </resources>

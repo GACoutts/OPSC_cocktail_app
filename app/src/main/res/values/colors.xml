@@ -1,5 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Default Colors -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- Main Background -->
+    <color name="dark_brown">#171212</color>
+
+    <!-- Button outlines + input field background (email) -->
+    <color name="brown">#543d3d</color>
+
+    <!-- Lighter input field background (Search favourites -->
+    <color name="dark_light_brown">#876363</color>
+
+    <!-- Navbar background and buttons or 382929 -->
+    <color name="dark_brown_navbar">#261C1C</color>
+
+    <!-- Icons and labels text color -->
+    <color name="light_brown">#B89E9E</color>
+
+    <!-- Nav Links (login) -->
+    <color name="grayish_green">#9EBAB0</color>
 </resources>
