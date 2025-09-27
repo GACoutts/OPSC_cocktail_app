@@ -11,6 +11,7 @@ import androidx.core.view.WindowInsetsCompat
 class HomePage : AppCompatActivity() {
 
    private lateinit var btnLogOut: Button
+   private lateinit var btnProfile: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,9 +24,15 @@ class HomePage : AppCompatActivity() {
         }
 
         btnLogOut = findViewById(R.id.btnLogOut)
+        btnProfile = findViewById(R.id.btnProfile)
 
         btnLogOut.setOnClickListener {
             val intent = Intent(this,MainActivity::class.java)
+            startActivity(intent)
+        }
+        
+        btnProfile.setOnClickListener {
+            val intent = Intent(this, ProfileActivity::class.java)
             startActivity(intent)
         }
     }
