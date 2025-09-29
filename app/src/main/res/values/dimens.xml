@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="grid_spacing">9dp</dimen>
+    <dimen name="card_corner_radius">16dp</dimen>
+    <dimen name="thumb_size">48dp</dimen>
+    <dimen name="thumb_corner_radius">12dp</dimen>
+    <dimen name="card_padding">8dp</dimen>
+    <dimen name="margin_top">20dp</dimen>
+    <dimen name="margin_side">12dp</dimen>
+</resources>
