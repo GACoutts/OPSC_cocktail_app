@@ -9,11 +9,10 @@
 
     <ImageView
         android:id="@+id/header_logo"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="@dimen/header_logo_size"
+        android:layout_height="@dimen/header_logo_size"
         android:contentDescription="@string/cd_logo"
-        app:tint="@color/light_brown"
-        android:src="@drawable/ic_heart"
+        android:src="@drawable/mix_mate_transparent_logo"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

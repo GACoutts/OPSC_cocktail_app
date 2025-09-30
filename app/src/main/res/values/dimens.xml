@@ -2,9 +2,17 @@
 <resources>
     <dimen name="grid_spacing">9dp</dimen>
     <dimen name="card_corner_radius">16dp</dimen>
-    <dimen name="thumb_size">48dp</dimen>
+    <!-- Slightly smaller thumb to shorten My Bar cards -->
+    <dimen name="thumb_size">40dp</dimen>
     <dimen name="thumb_corner_radius">12dp</dimen>
     <dimen name="card_padding">8dp</dimen>
     <dimen name="margin_top">20dp</dimen>
-    <dimen name="margin_side">12dp</dimen>
+    <!-- tiny side margin -->
+    <dimen name="margin_side">8dp</dimen>
+    <dimen name="header_logo_size">32dp</dimen>
+
+    <!-- Suggested cocktails section -->
+    <dimen name="suggested_card_image_height">140dp</dimen>
+    <dimen name="suggested_card_radius">16dp</dimen>
+    <dimen name="suggested_card_spacing_vertical">8dp</dimen>
 </resources>

@@ -17,4 +17,5 @@
 
     <!-- Discover Page -->
     <string name="title_my_bar">My Bar</string>
+    <string name="title_suggested">Suggested Cocktails</string>
 </resources>

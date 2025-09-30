@@ -13,6 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_side"
         android:layout_marginEnd="@dimen/margin_side"
+        android:layout_marginTop="@dimen/margin_top"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -33,11 +34,39 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_bar_items"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="9dp"
         android:padding="@dimen/grid_spacing"
         android:clipToPadding="false"
         app:layout_constraintTop_toBottomOf="@id/tv_my_bar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="@dimen/margin_side"
+        android:layout_marginEnd="@dimen/margin_side"/>
+
+    <!-- Suggested Cocktails title -->
+    <TextView
+        android:id="@+id/tv_suggested_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="24dp"
+        android:text="@string/title_suggested"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/rv_bar_items" />
+
+    <!-- Suggested Cocktails grid -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_suggested"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="9dp"
+        android:padding="@dimen/grid_spacing"
+        android:clipToPadding="false"
+        app:layout_constraintTop_toBottomOf="@id/tv_suggested_title"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
