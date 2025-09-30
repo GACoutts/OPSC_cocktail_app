@@ -27,7 +27,7 @@ class DiscoverPage : AppCompatActivity() {
             BarItem("Tequila", R.drawable.ic_heart),
             BarItem("Whiskey", R.drawable.ic_heart),
             BarItem("Gin", R.drawable.ic_heart),
-            BarItem("Orange Juice", R.drawable.ic_heart)
+            BarItem("Juice", R.drawable.ic_heart)
         )
         recycler.adapter = BarItemAdapter(items)
 
