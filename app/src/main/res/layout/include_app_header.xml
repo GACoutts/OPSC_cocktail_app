@@ -5,7 +5,8 @@
     android:layout_height="56dp"
     android:background="@color/dark_brown"
     android:paddingStart="16dp"
-    android:paddingEnd="16dp">
+    android:paddingEnd="16dp"
+    android:fitsSystemWindows="true">
 
     <ImageView
         android:id="@+id/header_logo"

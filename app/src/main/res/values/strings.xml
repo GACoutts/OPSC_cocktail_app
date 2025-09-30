@@ -18,4 +18,11 @@
     <!-- Discover Page -->
     <string name="title_my_bar">My Bar</string>
     <string name="title_suggested">Suggested Cocktails</string>
+
+    <!-- Bottom Navigation -->
+    <string name="cd_home">Home</string>
+    <string name="cd_discover">Discover</string>
+    <string name="cd_list">List</string>
+    <string name="cd_favourites">Favourites</string>
+    <string name="cd_profile">Profile</string>
 </resources>

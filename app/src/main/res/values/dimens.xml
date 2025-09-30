@@ -9,10 +9,15 @@
     <dimen name="margin_top">20dp</dimen>
     <!-- tiny side margin -->
     <dimen name="margin_side">8dp</dimen>
-    <dimen name="header_logo_size">32dp</dimen>
+    <dimen name="header_logo_size">48dp</dimen>
 
     <!-- Suggested cocktails section -->
     <dimen name="suggested_card_image_height">140dp</dimen>
     <dimen name="suggested_card_radius">16dp</dimen>
     <dimen name="suggested_card_spacing_vertical">8dp</dimen>
+
+    <!-- Footer for new bottom navigation bar -->
+    <dimen name="footer_height">64dp</dimen>
+    <dimen name="nav_icon_size">42dp</dimen>
+    <dimen name="nav_icon_padding">12dp</dimen>
 </resources>

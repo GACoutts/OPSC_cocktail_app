@@ -5,6 +5,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsControllerCompat
+import androidx.core.content.ContextCompat
+import android.widget.ImageView
+import android.widget.Toast
+import android.content.Intent
+import android.os.Build
 
 class DiscoverPage : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -12,6 +18,35 @@ class DiscoverPage : AppCompatActivity() {
         // Ensure content is laid out below the system status bar
         WindowCompat.setDecorFitsSystemWindows(window, true)
         setContentView(R.layout.activity_discover_page)
+
+        // Make the system nav bar match the footer color and keep icons light
+        val footerColor = ContextCompat.getColor(this, R.color.dark_brown_navbar)
+        window.navigationBarColor = footerColor
+        WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightNavigationBars = false
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            window.isNavigationBarContrastEnforced = false
+        }
+
+        // Footer selection state
+        val navHome = findViewById<ImageView>(R.id.nav_home)
+        val navDiscover = findViewById<ImageView>(R.id.nav_discover)
+        val navList = findViewById<ImageView>(R.id.nav_list)
+        val navFav = findViewById<ImageView>(R.id.nav_favourites)
+        val navProfile = findViewById<ImageView>(R.id.nav_profile)
+        navDiscover?.isSelected = true
+
+        navHome?.setOnClickListener {
+            if (!navHome.isSelected) {
+                startActivity(Intent(this, HomePage::class.java))
+                finish()
+            }
+        }
+        navDiscover?.setOnClickListener {
+            // Already here
+        }
+        navList?.setOnClickListener { Toast.makeText(this, "List coming soon", Toast.LENGTH_SHORT).show() }
+        navFav?.setOnClickListener { Toast.makeText(this, "Favourites coming soon", Toast.LENGTH_SHORT).show() }
+        navProfile?.setOnClickListener { Toast.makeText(this, "Profile coming soon", Toast.LENGTH_SHORT).show() }
 
         val recycler: RecyclerView = findViewById(R.id.rv_bar_items)
         val spanCount = 2
@@ -22,12 +57,12 @@ class DiscoverPage : AppCompatActivity() {
         recycler.addItemDecoration(GridSpacingItemDecoration(spanCount, spacingPx, includeEdge = false))
 
         val items = listOf(
-            BarItem("Vodka", R.drawable.ic_heart),
-            BarItem("Rum", R.drawable.ic_heart),
-            BarItem("Tequila", R.drawable.ic_heart),
-            BarItem("Whiskey", R.drawable.ic_heart),
-            BarItem("Gin", R.drawable.ic_heart),
-            BarItem("Juice", R.drawable.ic_heart)
+            BarItem("Vodka", R.drawable.tequila),
+            BarItem("Rum", R.drawable.tequila),
+            BarItem("Tequila", R.drawable.tequila),
+            BarItem("Whiskey", R.drawable.tequila),
+            BarItem("Gin", R.drawable.tequila),
+            BarItem("Juice", R.drawable.tequila)
         )
         recycler.adapter = BarItemAdapter(items)
 
