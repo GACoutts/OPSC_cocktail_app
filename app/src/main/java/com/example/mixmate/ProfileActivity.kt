@@ -121,9 +121,15 @@ class ProfileActivity : AppCompatActivity() {
         }
         
         btnSettings.setOnClickListener {
-            // TODO: Navigate to settings when SettingsActivity is created
-            // val intent = Intent(this, SettingsActivity::class.java)
-            // startActivity(intent)
+            Log.d("ProfileActivity", "Settings button clicked")
+            Toast.makeText(this, "Opening Settings...", Toast.LENGTH_SHORT).show()
+            try {
+                val intent = Intent(this, SettingsActivity::class.java)
+                startActivity(intent)
+            } catch (e: Exception) {
+                Log.e("ProfileActivity", "Error starting SettingsActivity: ${e.message}")
+                Toast.makeText(this, "Error opening Settings", Toast.LENGTH_SHORT).show()
+            }
         }
         
         // Settings navigation
