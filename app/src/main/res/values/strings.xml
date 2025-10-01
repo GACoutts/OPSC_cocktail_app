@@ -9,4 +9,20 @@
     <string name="sign_up_page">Sign Up Page</string>
     <string name="back">Back</string>
     <string name="sign_up">Sign Up</string>
+
+    <!-- Header -->
+    <string name="header_title_mix_mate">MixMate</string>
+    <string name="cd_logo">App logo</string>
+    <string name="cd_search">Search</string>
+
+    <!-- Discover Page -->
+    <string name="title_my_bar">My Bar</string>
+    <string name="title_suggested">Suggested Cocktails</string>
+
+    <!-- Bottom Navigation -->
+    <string name="cd_home">Home</string>
+    <string name="cd_discover">Discover</string>
+    <string name="cd_list">List</string>
+    <string name="cd_favourites">Favourites</string>
+    <string name="cd_profile">Profile</string>
 </resources>
