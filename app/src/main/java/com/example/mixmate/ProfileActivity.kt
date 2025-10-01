@@ -6,6 +6,7 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -36,6 +37,7 @@ class ProfileActivity : AppCompatActivity() {
     private lateinit var cardNotifications: MaterialCardView
     private lateinit var cardPrivacy: MaterialCardView
     private lateinit var cardHelpSupport: MaterialCardView
+    private lateinit var cardLogout: MaterialCardView
     
     // Footer navigation views
     private lateinit var navHome: ImageView
@@ -83,6 +85,7 @@ class ProfileActivity : AppCompatActivity() {
         cardNotifications = findViewById(R.id.card_notifications)
         cardPrivacy = findViewById(R.id.card_privacy)
         cardHelpSupport = findViewById(R.id.card_help_support)
+        cardLogout = findViewById(R.id.card_logout)
         
         // Footer navigation views
         navHome = findViewById(R.id.nav_home)
@@ -139,6 +142,10 @@ class ProfileActivity : AppCompatActivity() {
             // startActivity(intent)
         }
         
+        cardLogout.setOnClickListener {
+            showLogoutConfirmationDialog()
+        }
+        
         // Footer navigation listeners
         navHome.setOnClickListener {
             val intent = Intent(this, HomePage::class.java)
@@ -178,6 +185,28 @@ class ProfileActivity : AppCompatActivity() {
         navDiscover.isSelected = false
         navList.isSelected = false
         navFavourites.isSelected = false
+    }
+
+    private fun showLogoutConfirmationDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("Logout")
+            .setMessage("Are you sure you want to logout?")
+            .setPositiveButton("Logout") { _, _ ->
+                performLogout()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+    
+    private fun performLogout() {
+        // Clear user data
+        UserManager.clearUserData(this)
+        
+        // Navigate back to MainActivity
+        val intent = Intent(this, MainActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        finish()
     }
 
     private fun loadProfileData() {
