@@ -26,9 +26,10 @@
             android:layout_weight="2"
             android:hint="@string/ingredient_name"
             app:boxBackgroundColor="@color/dark_light_brown"
-            app:boxStrokeColor="@android:color/transparent"
+            app:boxStrokeColor="@color/light_brown"
+            app:boxStrokeWidth="1dp"
             app:hintTextColor="@color/white"
-            app:errorTextColor="@color/white"
+            app:errorTextColor="@color/grayish_green"
             app:boxCollapsedPaddingTop="8dp">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -53,9 +54,10 @@
             android:layout_weight="1"
             android:hint="@string/amount"
             app:boxBackgroundColor="@color/dark_light_brown"
-            app:boxStrokeColor="@android:color/transparent"
+            app:boxStrokeColor="@color/light_brown"
+            app:boxStrokeWidth="1dp"
             app:hintTextColor="@color/white"
-            app:errorTextColor="@color/white"
+            app:errorTextColor="@color/grayish_green"
             app:boxCollapsedPaddingTop="8dp">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -80,9 +82,10 @@
             android:layout_weight="1"
             android:hint="@string/unit"
             app:boxBackgroundColor="@color/dark_light_brown"
-            app:boxStrokeColor="@android:color/transparent"
+            app:boxStrokeColor="@color/light_brown"
+            app:boxStrokeWidth="1dp"
             app:hintTextColor="@color/white"
-            app:errorTextColor="@color/white"
+            app:errorTextColor="@color/grayish_green"
             app:endIconTint="@color/white"
             app:boxCollapsedPaddingTop="8dp">
 

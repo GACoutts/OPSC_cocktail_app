@@ -108,15 +108,19 @@ class IngredientsAdapter(
                 View.INVISIBLE
             }
 
-            // Initial validation
-            validateField(tilIngredientName, ingredient.name.trim().isNotEmpty())
-            validateField(tilIngredientAmount, ingredient.amount.trim().isNotEmpty())
-            validateField(tilIngredientUnit, ingredient.unit.trim().isNotEmpty())
+            // Clear any existing errors on bind (don't validate empty fields initially)
+            tilIngredientName.error = null
+            tilIngredientAmount.error = null
+            tilIngredientUnit.error = null
         }
 
         private fun validateField(textInputLayout: TextInputLayout, isValid: Boolean) {
-            if (!isValid && textInputLayout.editText?.hasFocus() == false) {
-                // Only show error if field is not currently focused (user isn't typing)
+            // Only show validation errors if the field is not empty or currently focused
+            if (textInputLayout.editText?.hasFocus() == true) {
+                // Clear errors while user is typing
+                textInputLayout.error = null
+            } else if (!isValid && !textInputLayout.editText?.text.isNullOrBlank()) {
+                // Show error only for non-empty invalid fields that aren't focused
                 textInputLayout.error = when (textInputLayout.id) {
                     R.id.til_ingredient_name -> "Ingredient name required"
                     R.id.til_ingredient_amount -> "Amount required"
