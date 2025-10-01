@@ -12,16 +12,14 @@ import android.widget.Toast
 import android.content.Intent
 import android.os.Build
 
-class DiscoverPage : AppCompatActivity() {
+class MyBar : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // Ensure content is laid out below the system status bar
         WindowCompat.setDecorFitsSystemWindows(window, true)
-        setContentView(R.layout.activity_discover_page)
+        setContentView(R.layout.activity_my_bar)
 
         // Make the system nav bar match the footer color and keep icons light
-        val footerColor = ContextCompat.getColor(this, R.color.dark_brown_navbar)
-        window.navigationBarColor = footerColor
         WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightNavigationBars = false
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             window.isNavigationBarContrastEnforced = false

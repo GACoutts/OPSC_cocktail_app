@@ -19,7 +19,7 @@
             android:name=".SignUpPage"
             android:exported="false" />
         <activity
-            android:name=".DiscoverPage"
+            android:name=".MyBar"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
