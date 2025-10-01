@@ -57,6 +57,7 @@ class ProfileActivity : AppCompatActivity() {
         initializeViews()
         setupRecyclerViews()
         setupClickListeners()
+        updateNavigationState()
         loadProfileData()
     }
 
@@ -168,16 +169,26 @@ class ProfileActivity : AppCompatActivity() {
         }
     }
 
-    private fun loadProfileData() {
-        // TODO: Load profile data from repository
-        // For now, set placeholder data
-        tvUsername.text = "MixMate"
-        tvHandle.text = "@mixmate"
-        tvJoinDate.text = "Joined 2025"
+    private fun updateNavigationState() {
+        // Set profile as selected (current page)
+        navProfile.isSelected = true
         
-        // TODO: Load profile picture
-        // TODO: Load user's recipes
-        // TODO: Load user's favorites
+        // Ensure other navigation items are not selected
+        navHome.isSelected = false
+        navDiscover.isSelected = false
+        navList.isSelected = false
+        navFavourites.isSelected = false
+    }
+
+    private fun loadProfileData() {
+        // Load user data from UserManager
+        tvUsername.text = UserManager.getDisplayName(this)
+        tvHandle.text = UserManager.getUsername(this)
+        tvJoinDate.text = UserManager.getJoinDate(this)
+        
+        // TODO: Load profile picture from UserManager.getProfilePictureUri()
+        // TODO: Load user's recipes from API
+        // TODO: Load user's favorites from Room database
     }
 
     @Deprecated("Deprecated in Java")

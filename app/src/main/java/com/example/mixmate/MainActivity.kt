@@ -27,8 +27,16 @@ class MainActivity : AppCompatActivity() {
         btnSignUpPage = findViewById(R.id.btnSignUp)
 
         btnLogIn.setOnClickListener {
-            val intent = Intent(this,HomePage::class.java)
-            startActivity((intent))
+            // For now, just check if user has signed up before
+            if (UserManager.isLoggedIn(this)) {
+                val intent = Intent(this, HomePage::class.java)
+                startActivity(intent)
+                finish()
+            } else {
+                // If no user data, redirect to signup
+                val intent = Intent(this, SignUpPage::class.java)
+                startActivity(intent)
+            }
         }
 
         btnSignUpPage.setOnClickListener {
