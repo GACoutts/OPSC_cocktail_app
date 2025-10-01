@@ -39,7 +39,7 @@
                 android:inputType="textCapWords"
                 android:maxLines="1"
                 android:textColor="@color/white"
-                android:textColorHint="@color/white"
+                android:textColorHint="@color/grayish_green"
                 tools:text="Vodka" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -67,7 +67,7 @@
                 android:inputType="numberDecimal"
                 android:maxLines="1"
                 android:textColor="@color/white"
-                android:textColorHint="@color/white"
+                android:textColorHint="@color/grayish_green"
                 tools:text="2" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -96,7 +96,7 @@
                 android:inputType="textCapWords"
                 android:maxLines="1"
                 android:textColor="@color/white"
-                android:textColorHint="@color/white"
+                android:textColorHint="@color/grayish_green"
                 tools:text="oz" />
 
         </com.google.android.material.textfield.TextInputLayout>
