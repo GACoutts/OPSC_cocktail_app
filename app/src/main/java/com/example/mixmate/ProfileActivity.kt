@@ -2,16 +2,20 @@ package com.example.mixmate
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class ProfileActivity : AppCompatActivity() {
 
@@ -36,6 +40,10 @@ class ProfileActivity : AppCompatActivity() {
     private lateinit var cardNotifications: MaterialCardView
     private lateinit var cardPrivacy: MaterialCardView
     private lateinit var cardHelpSupport: MaterialCardView
+    private lateinit var cardLogout: MaterialCardView
+    
+    // FAB for creating recipes
+    private lateinit var fabCreateRecipe: FloatingActionButton
     
     // Footer navigation views
     private lateinit var navHome: ImageView
@@ -57,6 +65,7 @@ class ProfileActivity : AppCompatActivity() {
         initializeViews()
         setupRecyclerViews()
         setupClickListeners()
+        updateNavigationState()
         loadProfileData()
     }
 
@@ -82,6 +91,10 @@ class ProfileActivity : AppCompatActivity() {
         cardNotifications = findViewById(R.id.card_notifications)
         cardPrivacy = findViewById(R.id.card_privacy)
         cardHelpSupport = findViewById(R.id.card_help_support)
+        cardLogout = findViewById(R.id.card_logout)
+        
+        // FAB
+        fabCreateRecipe = findViewById(R.id.fab_create_recipe)
         
         // Footer navigation views
         navHome = findViewById(R.id.nav_home)
@@ -108,9 +121,15 @@ class ProfileActivity : AppCompatActivity() {
         }
         
         btnSettings.setOnClickListener {
-            // TODO: Navigate to settings when SettingsActivity is created
-            // val intent = Intent(this, SettingsActivity::class.java)
-            // startActivity(intent)
+            Log.d("ProfileActivity", "Settings button clicked")
+            Toast.makeText(this, "Opening Settings...", Toast.LENGTH_SHORT).show()
+            try {
+                val intent = Intent(this, SettingsActivity::class.java)
+                startActivity(intent)
+            } catch (e: Exception) {
+                Log.e("ProfileActivity", "Error starting SettingsActivity: ${e.message}")
+                Toast.makeText(this, "Error opening Settings", Toast.LENGTH_SHORT).show()
+            }
         }
         
         // Settings navigation
@@ -138,23 +157,37 @@ class ProfileActivity : AppCompatActivity() {
             // startActivity(intent)
         }
         
+        cardLogout.setOnClickListener {
+            showLogoutConfirmationDialog()
+        }
+        
+        // FAB click listener
+        fabCreateRecipe.setOnClickListener {
+            Log.d("ProfileActivity", "FAB clicked - navigating to SubmitRecipeActivity")
+            Toast.makeText(this, "Opening Submit Recipe...", Toast.LENGTH_SHORT).show()
+            try {
+                val intent = Intent(this, SubmitRecipeActivity::class.java)
+                startActivity(intent)
+            } catch (e: Exception) {
+                Log.e("ProfileActivity", "Error starting SubmitRecipeActivity: ${e.message}")
+                Toast.makeText(this, "Error opening Submit Recipe", Toast.LENGTH_SHORT).show()
+            }
+        }
+        
         // Footer navigation listeners
         navHome.setOnClickListener {
-            val intent = Intent(this, HomePage::class.java)
+            val intent = Intent(this, DiscoverPage::class.java)
             startActivity(intent)
-            finish()
         }
         
         navDiscover.setOnClickListener {
-            // TODO: Navigate to discover page when DiscoverPage is ready
-            // val intent = Intent(this, DiscoverPage::class.java)
-            // startActivity(intent)
+            val intent = Intent(this, DiscoverPage::class.java)
+            startActivity(intent)
         }
         
         navList.setOnClickListener {
-            // TODO: Navigate to my bar page when MyBar is ready
-            // val intent = Intent(this, MyBar::class.java)
-            // startActivity(intent)
+            val intent = Intent(this, MyBar::class.java)
+            startActivity(intent)
         }
         
         navFavourites.setOnClickListener {
@@ -168,16 +201,48 @@ class ProfileActivity : AppCompatActivity() {
         }
     }
 
-    private fun loadProfileData() {
-        // TODO: Load profile data from repository
-        // For now, set placeholder data
-        tvUsername.text = "MixMate"
-        tvHandle.text = "@mixmate"
-        tvJoinDate.text = "Joined 2025"
+    private fun updateNavigationState() {
+        // Set profile as selected (current page)
+        navProfile.isSelected = true
         
-        // TODO: Load profile picture
-        // TODO: Load user's recipes
-        // TODO: Load user's favorites
+        // Ensure other navigation items are not selected
+        navHome.isSelected = false
+        navDiscover.isSelected = false
+        navList.isSelected = false
+        navFavourites.isSelected = false
+    }
+
+    private fun showLogoutConfirmationDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("Logout")
+            .setMessage("Are you sure you want to logout?")
+            .setPositiveButton("Logout") { _, _ ->
+                performLogout()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+    
+    private fun performLogout() {
+        // Clear user data
+        UserManager.clearUserData(this)
+        
+        // Navigate back to MainActivity
+        val intent = Intent(this, MainActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        finish()
+    }
+
+    private fun loadProfileData() {
+        // Load user data from UserManager
+        tvUsername.text = UserManager.getDisplayName(this)
+        tvHandle.text = UserManager.getUsername(this)
+        tvJoinDate.text = UserManager.getJoinDate(this)
+        
+        // TODO: Load profile picture from UserManager.getProfilePictureUri()
+        // TODO: Load user's recipes from API
+        // TODO: Load user's favorites from Room database
     }
 
     @Deprecated("Deprecated in Java")

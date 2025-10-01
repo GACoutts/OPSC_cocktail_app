@@ -39,17 +39,17 @@ class MyBar : AppCompatActivity() {
         navProfile?.isSelected = false
 
         navHome?.setOnClickListener {
-            startActivity(Intent(this, HomePage::class.java))
-            finish()
+            startActivity(Intent(this, DiscoverPage::class.java))
         }
         navDiscover?.setOnClickListener {
             startActivity(Intent(this, DiscoverPage::class.java))
-            finish()
         }
         // Already on My Bar
         navList?.setOnClickListener { /* no-op */ }
         navFav?.setOnClickListener { Toast.makeText(this, "Favourites coming soon", Toast.LENGTH_SHORT).show() }
-        navProfile?.setOnClickListener { Toast.makeText(this, "Profile coming soon", Toast.LENGTH_SHORT).show() }
+        navProfile?.setOnClickListener {
+            startActivity(Intent(this, ProfileActivity::class.java))
+        }
 
         val recycler: RecyclerView = findViewById(R.id.rv_bar_items)
         val spanCount = 2

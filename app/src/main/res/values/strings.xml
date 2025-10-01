@@ -25,4 +25,25 @@
     <string name="cd_list">List</string>
     <string name="cd_favourites">Favourites</string>
     <string name="cd_profile">Profile</string>
+
+    <!-- Submit Recipe Activity -->
+    <string name="submit_recipe">Submit Recipe</string>
+    <string name="save">Save</string>
+    <string name="recipe_name">Recipe Name</string>
+    <string name="description">Description</string>
+    <string name="ingredients">Ingredients</string>
+    <string name="ingredient_name">Ingredient Name</string>
+    <string name="amount">Amount</string>
+    <string name="unit">Unit</string>
+    <string name="add_ingredient">Add Ingredient</string>
+    <string name="remove_ingredient">Remove Ingredient</string>
+    <string name="instructions">Instructions</string>
+    <string name="optional_details">Optional Details</string>
+    <string name="glassware">Glassware</string>
+    <string name="garnish">Garnish</string>
+    <string name="prep_time_minutes">Prep Time (minutes)</string>
+    <string name="difficulty">Difficulty</string>
+    <string name="recipe_image">Recipe Image</string>
+    <string name="tap_to_add_photo">Tap to add photo</string>
+    <string name="remove_image">Remove Image</string>
 </resources>
