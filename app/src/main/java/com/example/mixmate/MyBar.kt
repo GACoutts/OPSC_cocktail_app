@@ -31,6 +31,13 @@ class MyBar : AppCompatActivity() {
         val navFav = findViewById<ImageView>(R.id.nav_favourites)
         val navProfile = findViewById<ImageView>(R.id.nav_profile)
 
+        // Select the middle icon (list) for My Bar; unselect others
+        navHome?.isSelected = false
+        navDiscover?.isSelected = false
+        navList?.isSelected = true
+        navFav?.isSelected = false
+        navProfile?.isSelected = false
+
         navHome?.setOnClickListener {
             startActivity(Intent(this, HomePage::class.java))
             finish()
@@ -39,7 +46,8 @@ class MyBar : AppCompatActivity() {
             startActivity(Intent(this, DiscoverPage::class.java))
             finish()
         }
-        navList?.setOnClickListener { Toast.makeText(this, "List coming soon", Toast.LENGTH_SHORT).show() }
+        // Already on My Bar
+        navList?.setOnClickListener { /* no-op */ }
         navFav?.setOnClickListener { Toast.makeText(this, "Favourites coming soon", Toast.LENGTH_SHORT).show() }
         navProfile?.setOnClickListener { Toast.makeText(this, "Profile coming soon", Toast.LENGTH_SHORT).show() }
 
