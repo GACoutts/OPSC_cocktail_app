@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
         btnLogIn.setOnClickListener {
             // For now, just check if user has signed up before
             if (UserManager.isLoggedIn(this)) {
-                val intent = Intent(this, HomePage::class.java)
+                val intent = Intent(this, DiscoverPage::class.java)
                 startActivity(intent)
                 finish()
             } else {

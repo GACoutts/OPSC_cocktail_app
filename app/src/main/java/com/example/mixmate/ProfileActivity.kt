@@ -148,21 +148,21 @@ class ProfileActivity : AppCompatActivity() {
         
         // Footer navigation listeners
         navHome.setOnClickListener {
-            val intent = Intent(this, HomePage::class.java)
+            val intent = Intent(this, DiscoverPage::class.java)
             startActivity(intent)
             finish()
         }
         
         navDiscover.setOnClickListener {
-            // TODO: Navigate to discover page when DiscoverPage is ready
-            // val intent = Intent(this, DiscoverPage::class.java)
-            // startActivity(intent)
+            val intent = Intent(this, DiscoverPage::class.java)
+            startActivity(intent)
+            finish()
         }
         
         navList.setOnClickListener {
-            // TODO: Navigate to my bar page when MyBar is ready
-            // val intent = Intent(this, MyBar::class.java)
-            // startActivity(intent)
+            val intent = Intent(this, MyBar::class.java)
+            startActivity(intent)
+            finish()
         }
         
         navFavourites.setOnClickListener {

@@ -25,8 +25,10 @@ class HomePage : AppCompatActivity() {
         btnLogOut = findViewById(R.id.btnLogOut)
 
         btnLogOut.setOnClickListener {
-            val intent = Intent(this,MainActivity::class.java)
+            // Navigate to main app (DiscoverPage)
+            val intent = Intent(this, DiscoverPage::class.java)
             startActivity(intent)
+            finish()
         }
     }
 }

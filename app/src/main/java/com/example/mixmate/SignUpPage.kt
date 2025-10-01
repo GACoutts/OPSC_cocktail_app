@@ -82,8 +82,8 @@ class SignUpPage : AppCompatActivity() {
         // Show success message
         Toast.makeText(this, "Account created successfully!", Toast.LENGTH_SHORT).show()
         
-        // Navigate to HomePage
-        val intent = Intent(this, HomePage::class.java)
+        // Navigate to main app (DiscoverPage)
+        val intent = Intent(this, DiscoverPage::class.java)
         startActivity(intent)
         finish() // Close signup page
     }
