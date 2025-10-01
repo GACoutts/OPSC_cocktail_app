@@ -23,7 +23,6 @@
     <color name="grayish_green">#9EBAB0</color>
 
     <!-- Additional colors for components -->
-    <color name="sort_segment_bg">@android:color/transparent</color>
     <color name="input_field_background">@color/brown</color>
     <color name="text_primary">@color/white</color>
     <color name="text_secondary">@color/light_brown</color>
