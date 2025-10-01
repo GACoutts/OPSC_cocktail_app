@@ -28,7 +28,8 @@
             app:boxBackgroundColor="@color/dark_light_brown"
             app:boxStrokeColor="@android:color/transparent"
             app:hintTextColor="@color/white"
-            app:errorTextColor="@color/light_brown">
+            app:errorTextColor="@color/white"
+            app:boxCollapsedPaddingTop="8dp">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_ingredient_name"
@@ -37,7 +38,7 @@
                 android:inputType="textCapWords"
                 android:maxLines="1"
                 android:textColor="@color/white"
-                android:textColorHint="@color/light_brown"
+                android:textColorHint="@color/white"
                 tools:text="Vodka" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -54,7 +55,8 @@
             app:boxBackgroundColor="@color/dark_light_brown"
             app:boxStrokeColor="@android:color/transparent"
             app:hintTextColor="@color/white"
-            app:errorTextColor="@color/light_brown">
+            app:errorTextColor="@color/white"
+            app:boxCollapsedPaddingTop="8dp">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_ingredient_amount"
@@ -63,7 +65,7 @@
                 android:inputType="numberDecimal"
                 android:maxLines="1"
                 android:textColor="@color/white"
-                android:textColorHint="@color/light_brown"
+                android:textColorHint="@color/white"
                 tools:text="2" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -80,8 +82,9 @@
             app:boxBackgroundColor="@color/dark_light_brown"
             app:boxStrokeColor="@android:color/transparent"
             app:hintTextColor="@color/white"
-            app:errorTextColor="@color/light_brown"
-            app:endIconTint="@color/white">
+            app:errorTextColor="@color/white"
+            app:endIconTint="@color/white"
+            app:boxCollapsedPaddingTop="8dp">
 
             <AutoCompleteTextView
                 android:id="@+id/actv_ingredient_unit"
@@ -90,7 +93,7 @@
                 android:inputType="textCapWords"
                 android:maxLines="1"
                 android:textColor="@color/white"
-                android:textColorHint="@color/light_brown"
+                android:textColorHint="@color/white"
                 tools:text="oz" />
 
         </com.google.android.material.textfield.TextInputLayout>

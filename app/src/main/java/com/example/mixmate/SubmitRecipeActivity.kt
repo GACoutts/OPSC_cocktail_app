@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.MenuItem
+import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
@@ -66,7 +67,7 @@ class SubmitRecipeActivity : AppCompatActivity() {
     private lateinit var tilPreparationTime: TextInputLayout
     private lateinit var etPreparationTime: TextInputEditText
     private lateinit var tilDifficulty: TextInputLayout
-    private lateinit var etDifficulty: TextInputEditText
+    private lateinit var etDifficulty: AutoCompleteTextView
     
     // Image handling
     private var selectedImageUri: Uri? = null

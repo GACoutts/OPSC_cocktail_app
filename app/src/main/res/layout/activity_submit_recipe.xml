@@ -150,7 +150,7 @@
                 app:startIconDrawable="@drawable/ic_cocktail"
                 app:startIconTint="@color/white"
                 app:hintTextColor="@color/white"
-                app:errorTextColor="@color/light_brown">
+                app:errorTextColor="@color/white">
 
 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_recipe_name"
@@ -158,8 +158,8 @@
                     android:layout_height="wrap_content"
                     android:inputType="textCapWords"
                     android:maxLines="1"
-                    android:textColor="@color/white"
-                    android:textColorHint="@color/light_brown" />
+                android:textColor="@color/white"
+                android:textColorHint="@color/white" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -176,7 +176,7 @@
                 app:startIconDrawable="@drawable/ic_description"
                 app:startIconTint="@color/white"
                 app:hintTextColor="@color/white"
-                app:errorTextColor="@color/light_brown">
+                app:errorTextColor="@color/white">
 
 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_description"
@@ -184,8 +184,8 @@
                     android:layout_height="wrap_content"
                     android:inputType="textMultiLine|textCapSentences"
                     android:maxLines="3"
-                    android:textColor="@color/white"
-                    android:textColorHint="@color/light_brown" />
+                android:textColor="@color/white"
+                android:textColorHint="@color/white" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -235,7 +235,7 @@ style="@style/Widget.Material3.Button.OutlinedButton"
                 app:startIconDrawable="@drawable/ic_list"
                 app:startIconTint="@color/white"
                 app:hintTextColor="@color/white"
-                app:errorTextColor="@color/light_brown">
+                app:errorTextColor="@color/white">
 
 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_instructions"
@@ -244,8 +244,8 @@ style="@style/Widget.Material3.Button.OutlinedButton"
                     android:gravity="top"
                     android:inputType="textMultiLine|textCapSentences"
                     android:minLines="3"
-                    android:textColor="@color/white"
-                    android:textColorHint="@color/light_brown" />
+                android:textColor="@color/white"
+                android:textColorHint="@color/white" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -280,7 +280,7 @@ style="@style/Widget.Material3.Button.OutlinedButton"
                     app:startIconDrawable="@drawable/ic_local_bar"
                     app:startIconTint="@color/white"
                     app:hintTextColor="@color/white"
-                    app:errorTextColor="@color/light_brown">
+                    app:errorTextColor="@color/white">
 
 <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/et_glassware"
@@ -289,7 +289,7 @@ style="@style/Widget.Material3.Button.OutlinedButton"
                         android:inputType="textCapWords"
                         android:maxLines="1"
                         android:textColor="@color/white"
-                        android:textColorHint="@color/light_brown" />
+                        android:textColorHint="@color/white" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -306,7 +306,7 @@ style="@style/Widget.Material3.Button.OutlinedButton"
                     app:startIconDrawable="@drawable/ic_eco"
                     app:startIconTint="@color/white"
                     app:hintTextColor="@color/white"
-                    app:errorTextColor="@color/light_brown">
+                    app:errorTextColor="@color/white">
 
 <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/et_garnish"
@@ -315,7 +315,7 @@ style="@style/Widget.Material3.Button.OutlinedButton"
                         android:inputType="textCapWords"
                         android:maxLines="1"
                         android:textColor="@color/white"
-                        android:textColorHint="@color/light_brown" />
+                        android:textColorHint="@color/white" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -342,7 +342,7 @@ style="@style/Widget.Material3.Button.OutlinedButton"
                     app:startIconDrawable="@drawable/ic_timer"
                     app:startIconTint="@color/white"
                     app:hintTextColor="@color/white"
-                    app:errorTextColor="@color/light_brown">
+                    app:errorTextColor="@color/white">
 
 <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/et_preparation_time"
@@ -351,7 +351,7 @@ style="@style/Widget.Material3.Button.OutlinedButton"
                         android:inputType="number"
                         android:maxLines="1"
                         android:textColor="@color/white"
-                        android:textColorHint="@color/light_brown" />
+                        android:textColorHint="@color/white" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -369,7 +369,7 @@ style="@style/Widget.Material3.Button.OutlinedButton"
                     app:startIconTint="@color/white"
                     app:endIconTint="@color/white"
                     app:hintTextColor="@color/white"
-                    app:errorTextColor="@color/light_brown">
+                    app:errorTextColor="@color/white">
 
 <AutoCompleteTextView
                         android:id="@+id/et_difficulty"
@@ -378,7 +378,7 @@ style="@style/Widget.Material3.Button.OutlinedButton"
                         android:inputType="none"
                         android:text=""
                         android:textColor="@color/white"
-                        android:textColorHint="@color/light_brown" />
+                        android:textColorHint="@color/white" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
