@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="ingredient_options">
+        <item>Ingredient</item>
+        <item>Vodka</item>
+        <item>Rum</item>
+        <item>Tequila</item>
+        <item>Whiskey</item>
+        <item>Gin</item>
+        <item>Juice</item>
+    </string-array>
+
+    <string-array name="alcohol_type_options">
+        <item>Type</item>
+        <item>Vodka</item>
+        <item>Rum</item>
+        <item>Tequila</item>
+        <item>Whiskey</item>
+        <item>Gin</item>
+        <item>Liqueur</item>
+        <item>Non-Alcoholic</item>
+    </string-array>
+
+    <string-array name="rating_options">
+        <item>Rating</item>
+        <item>4.5+</item>
+        <item>4.0+</item>
+        <item>3.5+</item>
+        <item>3.0+</item>
+    </string-array>
+</resources>
+

@@ -19,7 +19,7 @@
             android:name=".SignUpPage"
             android:exported="false" />
         <activity
-            android:name=".MyBar"
+            android:name=".DiscoverPage"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -30,6 +30,9 @@
 
         <activity
             android:name=".MainActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MyBar"
             android:exported="false" />
     </application>
 </manifest>

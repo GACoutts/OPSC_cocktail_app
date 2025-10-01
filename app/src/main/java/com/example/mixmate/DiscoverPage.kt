@@ -2,80 +2,66 @@ package com.example.mixmate
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import androidx.core.content.ContextCompat
+import android.os.Build
+import android.widget.ArrayAdapter
+import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import android.widget.ImageView
 import android.widget.Toast
 import android.content.Intent
-import android.os.Build
 
-class MyBar : AppCompatActivity() {
+class DiscoverPage : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Ensure content is laid out below the system status bar
         WindowCompat.setDecorFitsSystemWindows(window, true)
-        setContentView(R.layout.activity_my_bar)
-
-        // Make the system nav bar match the footer color and keep icons light
+        setContentView(R.layout.activity_discover_page)
         WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightNavigationBars = false
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             window.isNavigationBarContrastEnforced = false
         }
 
-        // Footer selection state
+        // Footer navigation wiring
         val navHome = findViewById<ImageView>(R.id.nav_home)
         val navDiscover = findViewById<ImageView>(R.id.nav_discover)
         val navList = findViewById<ImageView>(R.id.nav_list)
         val navFav = findViewById<ImageView>(R.id.nav_favourites)
         val navProfile = findViewById<ImageView>(R.id.nav_profile)
+
         navDiscover?.isSelected = true
 
         navHome?.setOnClickListener {
-            if (!navHome.isSelected) {
-                startActivity(Intent(this, HomePage::class.java))
-                finish()
-            }
+            startActivity(Intent(this, HomePage::class.java))
+            finish()
         }
-        navDiscover?.setOnClickListener {
-            // Already here
-        }
+        navDiscover?.setOnClickListener { /* already here */ }
         navList?.setOnClickListener { Toast.makeText(this, "List coming soon", Toast.LENGTH_SHORT).show() }
         navFav?.setOnClickListener { Toast.makeText(this, "Favourites coming soon", Toast.LENGTH_SHORT).show() }
         navProfile?.setOnClickListener { Toast.makeText(this, "Profile coming soon", Toast.LENGTH_SHORT).show() }
 
-        val recycler: RecyclerView = findViewById(R.id.rv_bar_items)
-        val spanCount = 2
-        recycler.layoutManager = GridLayoutManager(this, spanCount)
-        recycler.setHasFixedSize(true)
+        // Setup dropdown adapters
+        val ingredientView = findViewById<MaterialAutoCompleteTextView>(R.id.ac_filter_ingredient)
+        val alcoholView = findViewById<MaterialAutoCompleteTextView>(R.id.ac_filter_alcohol)
+        val ratingView = findViewById<MaterialAutoCompleteTextView>(R.id.ac_filter_rating)
 
-        val spacingPx = resources.getDimensionPixelSize(R.dimen.grid_spacing)
-        recycler.addItemDecoration(GridSpacingItemDecoration(spanCount, spacingPx, includeEdge = false))
-
-        val items = listOf(
-            BarItem("Vodka", R.drawable.tequila),
-            BarItem("Rum", R.drawable.tequila),
-            BarItem("Tequila", R.drawable.tequila),
-            BarItem("Whiskey", R.drawable.tequila),
-            BarItem("Gin", R.drawable.tequila),
-            BarItem("Juice", R.drawable.tequila)
+        fun adapterFromArray(arrayId: Int) = ArrayAdapter(
+            this,
+            android.R.layout.simple_list_item_1,
+            resources.getStringArray(arrayId)
         )
-        recycler.adapter = BarItemAdapter(items)
 
-        // Suggested Cocktails section
-        val rvSuggested: RecyclerView = findViewById(R.id.rv_suggested)
-        rvSuggested.layoutManager = GridLayoutManager(this, spanCount)
-        rvSuggested.setHasFixedSize(true)
-        rvSuggested.addItemDecoration(GridSpacingItemDecoration(spanCount, spacingPx, includeEdge = false))
+        ingredientView?.setAdapter(adapterFromArray(R.array.ingredient_options))
+        alcoholView?.setAdapter(adapterFromArray(R.array.alcohol_type_options))
+        ratingView?.setAdapter(adapterFromArray(R.array.rating_options))
 
-        val suggested = listOf(
-            SuggestedCocktail("Cosmopolitan", 4.5, "Vodka", R.drawable.cosmopolitan),
-            SuggestedCocktail("Mojito", 4.2, "Rum", R.drawable.cosmopolitan),
-            SuggestedCocktail("Margarita", 4.7, "Tequila", R.drawable.cosmopolitan),
-            SuggestedCocktail("Old Fashioned", 4.6, "Whiskey", R.drawable.cosmopolitan)
-        )
-        rvSuggested.adapter = SuggestedCocktailAdapter(suggested)
+        // Set default display text (first item in each array)
+        ingredientView?.setText(resources.getStringArray(R.array.ingredient_options).first(), false)
+        alcoholView?.setText(resources.getStringArray(R.array.alcohol_type_options).first(), false)
+        ratingView?.setText(resources.getStringArray(R.array.rating_options).first(), false)
+
+        // Ensure tapping the field opens the menu
+        ingredientView?.setOnClickListener { ingredientView.showDropDown() }
+        alcoholView?.setOnClickListener { alcoholView.showDropDown() }
+        ratingView?.setOnClickListener { ratingView.showDropDown() }
     }
 }
