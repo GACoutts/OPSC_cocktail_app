@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/dark_brown">
+
+    <!-- Header (same include + margins as Discover) -->
+    <include
+        android:id="@+id/app_header"
+        layout="@layout/include_app_header"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_side"
+        android:layout_marginEnd="@dimen/margin_side"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Footer (same include + fixed height) -->
+    <include
+        android:id="@+id/app_footer"
+        layout="@layout/include_app_footer"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/footer_height"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <!-- Content area between header and footer -->
+    <LinearLayout
+        android:id="@+id/content"
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="@dimen/margin_side"
+        android:layout_marginEnd="@dimen/margin_side"
+        app:layout_constraintTop_toBottomOf="@id/app_header"
+        app:layout_constraintBottom_toTopOf="@id/app_footer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Search (ties to ViewModel.setQuery) -->
+        <EditText
+            android:id="@+id/etSearch"
+            android:layout_width="match_parent"
+            android:layout_height="67dp"
+            android:backgroundTint="@color/white"
+            android:drawablePadding="8dp"
+            android:hint="Search favourites"
+            android:padding="8dp"
+            android:textColor="@color/white"
+            android:textColorHint="@color/white" />
+
+        <!-- Grid list -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvFavs"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:padding="@dimen/grid_spacing"
+            android:clipToPadding="false"/>
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

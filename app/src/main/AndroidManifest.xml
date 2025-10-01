@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <!-- Network access for Cocktail API -->
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -16,6 +18,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MixMate"
         tools:targetApi="31">
+
+
+
         <activity
             android:name=".SignUpActivity"
             android:exported="false"
@@ -53,6 +58,16 @@
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
         </activity>
+
+        <activity
+            android:name=".ui.details.RecipeDetailsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".FavouritesActivity"
+            android:exported="false" />
+
+
+
         <activity
             android:name=".MyBar"
             android:exported="false" />
