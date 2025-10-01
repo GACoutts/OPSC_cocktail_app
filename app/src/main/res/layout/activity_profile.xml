@@ -435,6 +435,19 @@
 
     </ScrollView>
 
+    <!-- Floating Action Button for Create Recipe -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_create_recipe"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:contentDescription="Create Recipe"
+        android:src="@drawable/ic_add"
+        app:backgroundTint="@color/grayish_green"
+        app:tint="@color/white"
+        app:layout_constraintBottom_toTopOf="@id/footer_navigation"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <!-- Sticky Footer Navigation -->
     <include
         android:id="@+id/footer_navigation"

@@ -13,6 +13,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class ProfileActivity : AppCompatActivity() {
 
@@ -38,6 +39,9 @@ class ProfileActivity : AppCompatActivity() {
     private lateinit var cardPrivacy: MaterialCardView
     private lateinit var cardHelpSupport: MaterialCardView
     private lateinit var cardLogout: MaterialCardView
+    
+    // FAB for creating recipes
+    private lateinit var fabCreateRecipe: FloatingActionButton
     
     // Footer navigation views
     private lateinit var navHome: ImageView
@@ -86,6 +90,9 @@ class ProfileActivity : AppCompatActivity() {
         cardPrivacy = findViewById(R.id.card_privacy)
         cardHelpSupport = findViewById(R.id.card_help_support)
         cardLogout = findViewById(R.id.card_logout)
+        
+        // FAB
+        fabCreateRecipe = findViewById(R.id.fab_create_recipe)
         
         // Footer navigation views
         navHome = findViewById(R.id.nav_home)
@@ -144,6 +151,12 @@ class ProfileActivity : AppCompatActivity() {
         
         cardLogout.setOnClickListener {
             showLogoutConfirmationDialog()
+        }
+        
+        // FAB click listener
+        fabCreateRecipe.setOnClickListener {
+            val intent = Intent(this, SubmitRecipeActivity::class.java)
+            startActivity(intent)
         }
         
         // Footer navigation listeners
