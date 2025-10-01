@@ -40,11 +40,9 @@ class MyBar : AppCompatActivity() {
 
         navHome?.setOnClickListener {
             startActivity(Intent(this, DiscoverPage::class.java))
-            finish()
         }
         navDiscover?.setOnClickListener {
             startActivity(Intent(this, DiscoverPage::class.java))
-            finish()
         }
         // Already on My Bar
         navList?.setOnClickListener { /* no-op */ }

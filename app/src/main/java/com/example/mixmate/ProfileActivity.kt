@@ -2,9 +2,11 @@ package com.example.mixmate
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -155,27 +157,31 @@ class ProfileActivity : AppCompatActivity() {
         
         // FAB click listener
         fabCreateRecipe.setOnClickListener {
-            val intent = Intent(this, SubmitRecipeActivity::class.java)
-            startActivity(intent)
+            Log.d("ProfileActivity", "FAB clicked - navigating to SubmitRecipeActivity")
+            Toast.makeText(this, "Opening Submit Recipe...", Toast.LENGTH_SHORT).show()
+            try {
+                val intent = Intent(this, SubmitRecipeActivity::class.java)
+                startActivity(intent)
+            } catch (e: Exception) {
+                Log.e("ProfileActivity", "Error starting SubmitRecipeActivity: ${e.message}")
+                Toast.makeText(this, "Error opening Submit Recipe", Toast.LENGTH_SHORT).show()
+            }
         }
         
         // Footer navigation listeners
         navHome.setOnClickListener {
             val intent = Intent(this, DiscoverPage::class.java)
             startActivity(intent)
-            finish()
         }
         
         navDiscover.setOnClickListener {
             val intent = Intent(this, DiscoverPage::class.java)
             startActivity(intent)
-            finish()
         }
         
         navList.setOnClickListener {
             val intent = Intent(this, MyBar::class.java)
             startActivity(intent)
-            finish()
         }
         
         navFavourites.setOnClickListener {

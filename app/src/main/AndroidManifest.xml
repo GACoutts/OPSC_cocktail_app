@@ -13,6 +13,9 @@
         android:theme="@style/Theme.MixMate"
         tools:targetApi="31">
         <activity
+            android:name=".SubmitRecipeActivity"
+            android:exported="false" />
+        <activity
             android:name=".ProfileActivity"
             android:exported="false" />
         <activity
