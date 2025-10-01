@@ -21,5 +21,6 @@ class MixMateApp : Application() {
         )
             .fallbackToDestructiveMigration()
             .build()
+        println("MixMateApp started, DB created")
     }
 }
