@@ -36,6 +36,13 @@ class ProfileActivity : AppCompatActivity() {
     private lateinit var cardNotifications: MaterialCardView
     private lateinit var cardPrivacy: MaterialCardView
     private lateinit var cardHelpSupport: MaterialCardView
+    
+    // Footer navigation views
+    private lateinit var navHome: ImageView
+    private lateinit var navDiscover: ImageView
+    private lateinit var navList: ImageView
+    private lateinit var navFavourites: ImageView
+    private lateinit var navProfile: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,6 +82,13 @@ class ProfileActivity : AppCompatActivity() {
         cardNotifications = findViewById(R.id.card_notifications)
         cardPrivacy = findViewById(R.id.card_privacy)
         cardHelpSupport = findViewById(R.id.card_help_support)
+        
+        // Footer navigation views
+        navHome = findViewById(R.id.nav_home)
+        navDiscover = findViewById(R.id.nav_discover)
+        navList = findViewById(R.id.nav_list)
+        navFavourites = findViewById(R.id.nav_favourites)
+        navProfile = findViewById(R.id.nav_profile)
     }
 
     private fun setupRecyclerViews() {
@@ -122,6 +136,35 @@ class ProfileActivity : AppCompatActivity() {
             // TODO: Navigate to help & support
             // val intent = Intent(this, HelpSupportActivity::class.java)
             // startActivity(intent)
+        }
+        
+        // Footer navigation listeners
+        navHome.setOnClickListener {
+            val intent = Intent(this, HomePage::class.java)
+            startActivity(intent)
+            finish()
+        }
+        
+        navDiscover.setOnClickListener {
+            // TODO: Navigate to discover page when DiscoverPage is ready
+            // val intent = Intent(this, DiscoverPage::class.java)
+            // startActivity(intent)
+        }
+        
+        navList.setOnClickListener {
+            // TODO: Navigate to my bar page when MyBar is ready
+            // val intent = Intent(this, MyBar::class.java)
+            // startActivity(intent)
+        }
+        
+        navFavourites.setOnClickListener {
+            // TODO: Navigate to favourites page when created
+            // val intent = Intent(this, FavouritesActivity::class.java)
+            // startActivity(intent)
+        }
+        
+        navProfile.setOnClickListener {
+            // Already on profile page - do nothing or scroll to top
         }
     }
 
