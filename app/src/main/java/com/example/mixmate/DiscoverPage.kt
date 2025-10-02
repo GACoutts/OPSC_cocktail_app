@@ -37,9 +37,13 @@ class DiscoverPage : AppCompatActivity() {
             finish()
         }
         navDiscover?.setOnClickListener { /* already here */ }
-        navList?.setOnClickListener { Toast.makeText(this, "List coming soon", Toast.LENGTH_SHORT).show() }
+        navList?.setOnClickListener { 
+            startActivity(Intent(this, MyBar::class.java))
+        }
         navFav?.setOnClickListener { Toast.makeText(this, "Favourites coming soon", Toast.LENGTH_SHORT).show() }
-        navProfile?.setOnClickListener { Toast.makeText(this, "Profile coming soon", Toast.LENGTH_SHORT).show() }
+        navProfile?.setOnClickListener {
+            startActivity(Intent(this, ProfileActivity::class.java))
+        }
 
         // Setup dropdown adapters (textless pills)
         val ingredientView = findViewById<MaterialAutoCompleteTextView>(R.id.ac_filter_ingredient)
