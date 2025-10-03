@@ -10,4 +10,10 @@
     <string name="back">back</string>
     <string name="sign_up">Sign Up</string>
     <string name="main_trending_drink">Main Trending Drink</string>
+    <string name="action_search" />
+    <string name="nav_home" />
+    <string name="nav_explore" />
+    <string name="nav_list" />
+    <string name="nav_favorites" />
+    <string name="nav_profile" />
 </resources>
