@@ -10,6 +10,8 @@ import android.widget.ImageView
 import android.widget.Toast
 import android.content.Intent
 import android.os.Build
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 
 class MyBar : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,18 +71,30 @@ class MyBar : AppCompatActivity() {
         )
         recycler.adapter = BarItemAdapter(items)
 
-        // Suggested Cocktails section
+        // Suggested Cocktails section with API-backed data
         val rvSuggested: RecyclerView = findViewById(R.id.rv_suggested)
         rvSuggested.layoutManager = GridLayoutManager(this, spanCount)
         rvSuggested.setHasFixedSize(true)
         rvSuggested.addItemDecoration(GridSpacingItemDecoration(spanCount, spacingPx, includeEdge = false))
 
-        val suggested = listOf(
+        val fallbackSuggested = listOf(
             SuggestedCocktail("Cosmopolitan", 4.5, "Vodka", R.drawable.cosmopolitan),
             SuggestedCocktail("Mojito", 4.2, "Rum", R.drawable.cosmopolitan),
             SuggestedCocktail("Margarita", 4.7, "Tequila", R.drawable.cosmopolitan),
             SuggestedCocktail("Old Fashioned", 4.6, "Whiskey", R.drawable.cosmopolitan)
         )
-        rvSuggested.adapter = SuggestedCocktailAdapter(suggested)
+        val suggestedAdapter = SuggestedCocktailAdapter(fallbackSuggested.toMutableList())
+        rvSuggested.adapter = suggestedAdapter
+
+        // Fetch from API (10 items) and update, fallback if empty
+        lifecycleScope.launch {
+            val apiItems = CocktailApiRepository.fetchCocktails(limit = 10)
+            if (apiItems.isNotEmpty()) {
+                suggestedAdapter.replaceAll(apiItems)
+            } else {
+                // Keep fallback; optionally inform user once
+                Toast.makeText(this@MyBar, "Using offline cocktail list", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 }

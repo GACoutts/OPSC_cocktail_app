@@ -12,6 +12,8 @@ import android.widget.Toast
 import android.content.Intent
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 
 class DiscoverPage : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,7 +39,7 @@ class DiscoverPage : AppCompatActivity() {
             finish()
         }
         navDiscover?.setOnClickListener { /* already here */ }
-        navList?.setOnClickListener { 
+        navList?.setOnClickListener {
             startActivity(Intent(this, MyBar::class.java))
         }
         navFav?.setOnClickListener { Toast.makeText(this, "Favourites coming soon", Toast.LENGTH_SHORT).show() }
@@ -65,7 +67,7 @@ class DiscoverPage : AppCompatActivity() {
         alcoholView?.setOnClickListener { alcoholView.showDropDown() }
         ratingView?.setOnClickListener { ratingView.showDropDown() }
 
-        // Suggested Cocktails grid (mirror MyBar)
+        // Suggested Cocktails grid (API backed with fallback)
         val rvSuggested: RecyclerView = findViewById(R.id.rv_discover_suggested)
         val spanCount = 2
         rvSuggested.layoutManager = GridLayoutManager(this, spanCount)
@@ -73,7 +75,7 @@ class DiscoverPage : AppCompatActivity() {
         val spacingPx = resources.getDimensionPixelSize(R.dimen.grid_spacing)
         rvSuggested.addItemDecoration(GridSpacingItemDecoration(spanCount, spacingPx, includeEdge = false))
 
-        val suggested = listOf(
+        val fallbackSuggested = listOf(
             SuggestedCocktail("Cosmopolitan", 4.5, "Vodka", R.drawable.cosmopolitan),
             SuggestedCocktail("Mojito", 4.2, "Rum", R.drawable.cosmopolitan),
             SuggestedCocktail("Margarita", 4.7, "Tequila", R.drawable.cosmopolitan),
@@ -81,6 +83,16 @@ class DiscoverPage : AppCompatActivity() {
             SuggestedCocktail("Martini", 3.5, "Tequila", R.drawable.cosmopolitan),
             SuggestedCocktail("Daiquiri", 4.6, "Whiskey", R.drawable.cosmopolitan)
         )
-        rvSuggested.adapter = SuggestedCocktailAdapter(suggested)
+        val suggestedAdapter = SuggestedCocktailAdapter(fallbackSuggested.toMutableList())
+        rvSuggested.adapter = suggestedAdapter
+
+        lifecycleScope.launch {
+            val apiItems = CocktailApiRepository.fetchCocktails(limit = 10)
+            if (apiItems.isNotEmpty()) {
+                suggestedAdapter.replaceAll(apiItems)
+            } else {
+                Toast.makeText(this@DiscoverPage, "Using offline cocktail list", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 }

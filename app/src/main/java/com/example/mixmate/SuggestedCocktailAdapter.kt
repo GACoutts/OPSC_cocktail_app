@@ -16,7 +16,7 @@ data class SuggestedCocktail(
 )
 
 class SuggestedCocktailAdapter(
-    private val items: List<SuggestedCocktail>
+    private val items: MutableList<SuggestedCocktail>
 ) : RecyclerView.Adapter<SuggestedCocktailAdapter.VH>() {
 
     class VH(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -39,4 +39,10 @@ class SuggestedCocktailAdapter(
     }
 
     override fun getItemCount(): Int = items.size
+
+    fun replaceAll(newItems: List<SuggestedCocktail>) {
+        items.clear()
+        items.addAll(newItems)
+        notifyDataSetChanged()
+    }
 }
