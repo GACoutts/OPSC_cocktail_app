@@ -28,7 +28,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
-                android:src="@drawable/placeholder_drink"
+                android:src="@drawable/cosmopolitan"
                 android:clickable="true"
                 android:focusable="true"
                 android:contentDescription="@string/main_trending_drink"
@@ -43,7 +43,7 @@
                 app:layout_collapseMode="pin"
                 app:title="MixMate"
                 app:titleTextColor="@android:color/white"
-                app:logo="@drawable/placeholder_logo"
+                app:logo="@drawable/mix_mate_transparent_logo"
                 app:menu="@menu/toolbar_menu" />
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
