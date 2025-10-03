@@ -6,13 +6,15 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import java.util.Locale
 
 data class SuggestedCocktail(
     val name: String,
     val rating: Double,
     val category: String,
-    val imageRes: Int
+    val imageRes: Int = R.drawable.cosmopolitan, // default placeholder
+    val imageUrl: String? = null
 )
 
 class SuggestedCocktailAdapter(
@@ -33,7 +35,18 @@ class SuggestedCocktailAdapter(
 
     override fun onBindViewHolder(holder: VH, position: Int) {
         val item = items[position]
-        holder.photo.setImageResource(item.imageRes)
+        // Load imageUrl if present else fallback resource
+        val placeholder = item.imageRes
+        if (item.imageUrl.isNullOrBlank()) {
+            holder.photo.setImageResource(placeholder)
+        } else {
+            Glide.with(holder.photo.context)
+                .load(item.imageUrl)
+                .placeholder(placeholder)
+                .error(placeholder)
+                .centerCrop()
+                .into(holder.photo)
+        }
         holder.name.text = item.name
         holder.meta.text = String.format(Locale.getDefault(), "%.1f • %s", item.rating, item.category)
     }

@@ -89,7 +89,8 @@ class DiscoverPage : AppCompatActivity() {
         lifecycleScope.launch {
             val apiItems = CocktailApiRepository.fetchCocktails(limit = 10)
             if (apiItems.isNotEmpty()) {
-                suggestedAdapter.replaceAll(apiItems)
+                val enriched = CocktailImageProvider.enrichWithImages(apiItems)
+                suggestedAdapter.replaceAll(enriched)
             } else {
                 Toast.makeText(this@DiscoverPage, "Using offline cocktail list", Toast.LENGTH_SHORT).show()
             }

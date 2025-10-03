@@ -90,7 +90,8 @@ class MyBar : AppCompatActivity() {
         lifecycleScope.launch {
             val apiItems = CocktailApiRepository.fetchCocktails(limit = 10)
             if (apiItems.isNotEmpty()) {
-                suggestedAdapter.replaceAll(apiItems)
+                val enriched = CocktailImageProvider.enrichWithImages(apiItems)
+                suggestedAdapter.replaceAll(enriched)
             } else {
                 // Keep fallback; optionally inform user once
                 Toast.makeText(this@MyBar, "Using offline cocktail list", Toast.LENGTH_SHORT).show()
