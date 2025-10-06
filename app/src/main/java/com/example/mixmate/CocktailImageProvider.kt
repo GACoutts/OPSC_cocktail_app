@@ -1,6 +1,5 @@
 package com.example.mixmate
 
-import android.util.Log
 import com.google.gson.annotations.SerializedName
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -30,14 +29,21 @@ private interface TheCocktailDbService {
 }
 
 object CocktailImageProvider {
-    private const val BASE_URL = "https://www.thecocktaildb.com/api/json/v1/1/"
+    private const val BASE_URL = "https://www.thecocktaildb.com/api/json/v1/1/" // made internal for tests
 
-    private val service: TheCocktailDbService by lazy {
-        Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(TheCocktailDbService::class.java)
+    private fun createService(base: String): TheCocktailDbService = Retrofit.Builder()
+        .baseUrl(base)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+        .create(TheCocktailDbService::class.java)
+
+    @Volatile private var service: TheCocktailDbService = createService(BASE_URL)
+
+    // Test hook to replace backend with MockWebServer endpoint
+    internal fun replaceServiceForTests(baseUrl: String) {
+        service = createService(baseUrl)
+        // Clear cache so previous lookups don't interfere with assertions
+        cache.clear()
     }
 
     // Simple in-memory cache to avoid duplicate lookups across screens
@@ -76,10 +82,9 @@ object CocktailImageProvider {
         cache[key]?.let { return it }
         val normalized = normalize(name)
         return try {
-            // 1. Direct exact search with original name
             service.searchByName(name).drinks?.firstOrNull()?.thumb?.let { url ->
                 cache[key] = url
-                Log.d("CocktailImageProvider", "Direct match for '$name'")
+                SafeLog.d("CocktailImageProvider", "Direct match for '$name'")
                 return url
             }
             // 2. Try simplified variants
@@ -94,11 +99,28 @@ object CocktailImageProvider {
             }.distinct().filter { it.isNotBlank() }
             for (variant in variants) {
                 val resp = service.searchByName(variant)
-                val candidate = resp.drinks?.firstOrNull()?.thumb
-                if (candidate != null) {
-                    cache[key] = candidate
-                    Log.d("CocktailImageProvider", "Variant '$variant' matched for '$name'")
-                    return candidate
+                val drinks = resp.drinks
+                if (!drinks.isNullOrEmpty()) {
+                    // If only one, use directly; otherwise choose smallest distance.
+                    val best = if (drinks.size == 1) drinks.first() else {
+                        var bestDrink: CocktailDbDrink? = null
+                        var bestScore = Int.MAX_VALUE
+                        for (d in drinks) {
+                            val dn = d.name ?: continue
+                            val score = levenshtein(normalized, normalize(dn))
+                            if (score < bestScore) {
+                                bestScore = score
+                                bestDrink = d
+                            }
+                        }
+                        bestDrink
+                    }
+                    val candidate = best?.thumb
+                    if (candidate != null) {
+                        cache[key] = candidate
+                        SafeLog.d("CocktailImageProvider", "Variant '$variant' matched for '$name' via best-distance selection")
+                        return candidate
+                    }
                 }
             }
             // 3. Fuzzy: first-letter search then pick smallest Levenshtein distance
@@ -121,17 +143,17 @@ object CocktailImageProvider {
                 val acceptThreshold = maxOf(2, normalized.length / 3)
                 if (bestUrl != null && bestScore <= acceptThreshold) {
                     cache[key] = bestUrl
-                    Log.d("CocktailImageProvider", "Fuzzy match (score=$bestScore) accepted for '$name'")
+                    SafeLog.d("CocktailImageProvider", "Fuzzy match (score=$bestScore) accepted for '$name'")
                     return bestUrl
                 } else {
-                    Log.d("CocktailImageProvider", "Fuzzy search found no acceptable match for '$name' (bestScore=$bestScore)")
+                    SafeLog.d("CocktailImageProvider", "Fuzzy search found no acceptable match for '$name' (bestScore=$bestScore)")
                 }
             }
-            Log.d("CocktailImageProvider", "No image found for '$name'")
+            SafeLog.d("CocktailImageProvider", "No image found for '$name'")
             cache[key] = null
             null
         } catch (e: Exception) {
-            Log.w("CocktailImageProvider", "Image fetch failed for $name", e)
+            SafeLog.w("CocktailImageProvider", "Image fetch failed for $name", e)
             cache[key] = null
             null
         }

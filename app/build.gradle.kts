@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("org.jetbrains.kotlin.kapt")
+    id("jacoco")
 }
 
 android {
@@ -52,7 +53,35 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+
+    testOptions {
+        unitTests.isIncludeAndroidResources = true
+    }
 }
+
+jacoco {
+    toolVersion = "0.8.11"
+}
+
+tasks.register<JacocoReport>("jacocoTestReport") {
+    dependsOn("testDebugUnitTest")
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+    val fileFilter = listOf(
+        "**/R.class", "**/R$*.class", "**/BuildConfig.*", "**/Manifest*.*", "**/*Test*.*",
+        "**/databinding/**", "**/androidx/**"
+    )
+    val debugTree = fileTree(layout.buildDirectory.dir("intermediates/javac/debug/classes")) { exclude(fileFilter) }
+    val kotlinDebugTree = fileTree(layout.buildDirectory.dir("tmp/kotlin-classes/debug")) { exclude(fileFilter) }
+    classDirectories.setFrom(files(debugTree, kotlinDebugTree))
+    sourceDirectories.setFrom(files("src/main/java"))
+    executionData.setFrom(files(layout.buildDirectory.file("jacoco/testDebugUnitTest.exec")))
+}
+
+// Ensure coverage runs with check (optional)
+tasks.named("check") { dependsOn("jacocoTestReport") }
 
 dependencies {
     implementation(libs.androidx.core.ktx)
@@ -84,4 +113,11 @@ dependencies {
     // Glide for images
     implementation(libs.glide)
     kapt(libs.glideCompiler)
+
+    testImplementation(libs.mockwebserver)
+    testImplementation(libs.coroutinesTest)
+    testImplementation(libs.androidx.test.core)
+    testImplementation(libs.androidx.test.rules)
+    androidTestImplementation(libs.androidx.test.core)
+    androidTestImplementation(libs.androidx.test.rules)
 }
