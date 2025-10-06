@@ -381,7 +381,11 @@ class SubmitRecipeActivity : AppCompatActivity() {
         // TODO: Implement proper user authentication with Firebase Auth
         // For now, return a placeholder or get from your UserManager
         return try {
-            UserManager.INSTANCE.getLoggedInUser()?.email // Assuming email as user ID
+            if (UserManager.isLoggedIn(this)) {
+                UserManager.getUsername(this) // Use username as user ID for now
+            } else {
+                "anonymous_user"
+            }
         } catch (e: Exception) {
             "anonymous_user" // Fallback for offline usage
         }
