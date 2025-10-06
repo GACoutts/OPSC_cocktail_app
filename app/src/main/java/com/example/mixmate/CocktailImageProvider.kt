@@ -9,19 +9,24 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
+import kotlin.math.min
 
-// TheCocktailDB response models (only fields we need)
+// Data models (expanded to include drink name for fuzzy matching)
 private data class CocktailDbResponse(
     @SerializedName("drinks") val drinks: List<CocktailDbDrink>?
 )
 
 private data class CocktailDbDrink(
+    @SerializedName("strDrink") val name: String?,
     @SerializedName("strDrinkThumb") val thumb: String?
 )
 
 private interface TheCocktailDbService {
     @GET("search.php")
     suspend fun searchByName(@Query("s") name: String): CocktailDbResponse
+
+    @GET("search.php")
+    suspend fun searchByFirstLetter(@Query("f") letter: String): CocktailDbResponse
 }
 
 object CocktailImageProvider {
@@ -38,14 +43,93 @@ object CocktailImageProvider {
     // Simple in-memory cache to avoid duplicate lookups across screens
     private val cache = mutableMapOf<String, String?>()
 
+    private fun normalize(raw: String): String = raw.lowercase()
+        .replace(Regex("\\(.*?\\)"), " ")          // remove parenthetical descriptors
+        .replace("cocktail", " ")                    // drop the word cocktail
+        .replace(Regex("[^a-z0-9 ]"), " ")           // non-alphanumeric -> space
+        .replace(Regex("\\s+"), " ")                // collapse whitespace
+        .trim()
+
+    private fun levenshtein(a: String, b: String): Int {
+        if (a == b) return 0
+        if (a.isEmpty()) return b.length
+        if (b.isEmpty()) return a.length
+        val rows = a.length + 1
+        val cols = b.length + 1
+        val dist = Array(rows) { IntArray(cols) }
+        for (i in 0 until rows) dist[i][0] = i
+        for (j in 0 until cols) dist[0][j] = j
+        for (i in 1 until rows) {
+            for (j in 1 until cols) {
+                val cost = if (a[i - 1] == b[j - 1]) 0 else 1
+                dist[i][j] = min(
+                    min(dist[i - 1][j] + 1, dist[i][j - 1] + 1),
+                    dist[i - 1][j - 1] + cost
+                )
+            }
+        }
+        return dist[a.length][b.length]
+    }
+
     private suspend fun fetchImageUrlForName(name: String): String? {
         val key = name.lowercase().trim()
         cache[key]?.let { return it }
+        val normalized = normalize(name)
         return try {
-            val resp = service.searchByName(name)
-            val url = resp.drinks?.firstOrNull()?.thumb
-            cache[key] = url
-            url
+            // 1. Direct exact search with original name
+            service.searchByName(name).drinks?.firstOrNull()?.thumb?.let { url ->
+                cache[key] = url
+                Log.d("CocktailImageProvider", "Direct match for '$name'")
+                return url
+            }
+            // 2. Try simplified variants
+            val variants = buildList {
+                add(normalized)
+                val tokens = normalized.split(' ').filter { it.isNotBlank() }
+                if (tokens.size > 1) {
+                    add(tokens.first())
+                    add(tokens.last())
+                    add(tokens.take(2).joinToString(" "))
+                }
+            }.distinct().filter { it.isNotBlank() }
+            for (variant in variants) {
+                val resp = service.searchByName(variant)
+                val candidate = resp.drinks?.firstOrNull()?.thumb
+                if (candidate != null) {
+                    cache[key] = candidate
+                    Log.d("CocktailImageProvider", "Variant '$variant' matched for '$name'")
+                    return candidate
+                }
+            }
+            // 3. Fuzzy: first-letter search then pick smallest Levenshtein distance
+            val firstLetter = normalized.firstOrNull()
+            if (firstLetter != null) {
+                val list = service.searchByFirstLetter(firstLetter.toString()).drinks.orEmpty()
+                var bestUrl: String? = null
+                var bestScore = Int.MAX_VALUE
+                for (drink in list) {
+                    val dName = drink.name ?: continue
+                    val dnNorm = normalize(dName)
+                    if (dnNorm.isBlank()) continue
+                    val score = levenshtein(normalized, dnNorm)
+                    if (score < bestScore) {
+                        bestScore = score
+                        bestUrl = drink.thumb
+                    }
+                }
+                // Accept fuzzy match only if reasonably close
+                val acceptThreshold = maxOf(2, normalized.length / 3)
+                if (bestUrl != null && bestScore <= acceptThreshold) {
+                    cache[key] = bestUrl
+                    Log.d("CocktailImageProvider", "Fuzzy match (score=$bestScore) accepted for '$name'")
+                    return bestUrl
+                } else {
+                    Log.d("CocktailImageProvider", "Fuzzy search found no acceptable match for '$name' (bestScore=$bestScore)")
+                }
+            }
+            Log.d("CocktailImageProvider", "No image found for '$name'")
+            cache[key] = null
+            null
         } catch (e: Exception) {
             Log.w("CocktailImageProvider", "Image fetch failed for $name", e)
             cache[key] = null
@@ -63,4 +147,3 @@ object CocktailImageProvider {
         }.awaitAll()
     }
 }
-
