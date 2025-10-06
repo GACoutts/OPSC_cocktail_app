@@ -2,11 +2,17 @@ package com.example.mixmate
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -117,14 +123,26 @@ class RecipeDetailActivity : AppCompatActivity() {
     }
 
     private fun loadRecipeFromDatabase(recipeId: Long) {
-        // TODO: Implement proper database loading
-        // For now, create a sample recipe or finish the activity
-        // In the real implementation, you would:
-        // val recipe = MixMateApp.db.customRecipeDao().getCustomRecipeById(recipeId)
-        // populateViews(recipe)
-        
-        // Placeholder - this should be replaced with actual database query
-        finish() // Remove this when implementing proper loading
+        // Launch coroutine to load recipe from database
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                val recipe = withContext(Dispatchers.IO) {
+                    MixMateApp.db.customRecipeDao().getCustomRecipeById(recipeId)
+                }
+                
+                if (recipe != null) {
+                    populateViews(recipe)
+                } else {
+                    // Recipe not found
+                    Toast.makeText(this@RecipeDetailActivity, "Recipe not found", Toast.LENGTH_SHORT).show()
+                    finish()
+                }
+            } catch (e: Exception) {
+                Log.e("RecipeDetailActivity", "Error loading recipe", e)
+                Toast.makeText(this@RecipeDetailActivity, "Error loading recipe: ${e.message}", Toast.LENGTH_SHORT).show()
+                finish()
+            }
+        }
     }
 
     private fun populateViews(recipe: CustomRecipeEntity) {
