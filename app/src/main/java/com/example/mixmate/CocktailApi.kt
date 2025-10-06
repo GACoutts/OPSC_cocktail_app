@@ -1,6 +1,5 @@
 package com.example.mixmate
 
-import android.util.Log
 import com.example.mixmate.BuildConfig.API_KEY
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -45,7 +44,11 @@ private class ApiKeyInterceptor : Interceptor {
 }
 
 object CocktailApiRepository {
-    private const val BASE_URL = "https://api.api-ninjas.com/"
+    private const val DEFAULT_BASE_URL = "https://api.api-ninjas.com/"
+
+    // Allow tests to override base URL / service and skip API key requirement.
+    @Volatile private var baseUrl: String = DEFAULT_BASE_URL
+    @Volatile private var allowBlankApiKeyForTests: Boolean = false
 
     private val client: OkHttpClient by lazy {
         OkHttpClient.Builder()
@@ -53,23 +56,30 @@ object CocktailApiRepository {
             .build()
     }
 
-    private val service: CocktailApiService by lazy {
-        Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .client(client)
-            .build()
-            .create(CocktailApiService::class.java)
+    @Volatile private var service: CocktailApiService = buildService()
+
+    private fun buildService(): CocktailApiService = Retrofit.Builder()
+        .baseUrl(baseUrl)
+        .addConverterFactory(GsonConverterFactory.create())
+        .client(client)
+        .build()
+        .create(CocktailApiService::class.java)
+
+    // Internal hooks for androidTest/unit tests
+    internal fun replaceBaseUrlForTests(newBase: String) {
+        baseUrl = newBase
+        service = buildService()
     }
+    internal fun enableBlankApiKeyForTests() { allowBlankApiKeyForTests = true }
 
     // Public suspend function to get up to [limit] cocktails. Uses a broad letter query to widen results.
     suspend fun fetchCocktails(limit: Int = 10): List<SuggestedCocktail> = withContext(Dispatchers.IO) {
-        if (API_KEY.isBlank()) {
-            Log.w("CocktailApi", "API_KEY is blank; skipping network call")
+        if (!allowBlankApiKeyForTests && API_KEY.isBlank()) {
+            SafeLog.w("CocktailApi", "API_KEY is blank; skipping network call")
             return@withContext emptyList()
         }
         return@withContext try {
-            // Using letter 'a' to get a wide range. Could randomize across letters if desired.
+            NetworkIdlingResource.increment()
             val apiItems = service.searchCocktails("a")
             apiItems.asSequence()
                 .filter { !it.name.isNullOrBlank() }
@@ -85,8 +95,10 @@ object CocktailApiRepository {
                 }
                 .toList()
         } catch (e: Exception) {
-            Log.e("CocktailApi", "Error fetching cocktails", e)
+            SafeLog.w("CocktailApi", "Error fetching cocktails", e)
             emptyList()
+        } finally {
+            NetworkIdlingResource.decrement()
         }
     }
 
@@ -104,4 +116,3 @@ object CocktailApiRepository {
         return spirits.firstOrNull { joined.contains(it.lowercase()) } ?: "General"
     }
 }
-

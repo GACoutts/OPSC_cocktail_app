@@ -9,18 +9,14 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.GET
-import retrofit2.http.Query
 
 // We duplicate minimal interface to inject a test Retrofit pointing to MockWebServer.
 private interface TestCocktailDbService {
-    @GET("search.php")
-    suspend fun searchByName(@Query("s") name: String): TestResponse
+    @retrofit2.http.GET("search.php")
+    suspend fun searchByName(@retrofit2.http.Query("s") name: String): TestResponse
 
-    @GET("search.php")
-    suspend fun searchByFirstLetter(@Query("f") letter: String): TestResponse
+    @retrofit2.http.GET("search.php")
+    suspend fun searchByFirstLetter(@retrofit2.http.Query("f") letter: String): TestResponse
 }
 
 private data class TestResponse(val drinks: List<TestDrink>?)
@@ -76,5 +72,38 @@ class CocktailImageProviderTest {
         val list = listOf(SuggestedCocktail("Margarita", 4.5, "Tequila"))
         val enriched = CocktailImageProvider.enrichWithImages(list)
         assertEquals("https://img/fuzzy_correct.png", enriched.first().imageUrl)
+    }
+
+    @Test
+    fun `punctuation heavy name falls back to normalized variant`() = runBlocking {
+        // Direct search (original string) empty
+        server.enqueue(MockResponse().setBody(gson.toJson(TestResponse(null))).setResponseCode(200))
+        // Variant search (normalized) returns a usable image
+        val variantResp = gson.toJson(TestResponse(listOf(TestDrink("Bloody Mary", "https://img/bloodymary.png"))))
+        server.enqueue(MockResponse().setBody(variantResp).setResponseCode(200))
+        // Remaining variant attempts can be satisfied with empty bodies (defensive) - provide two more
+        server.enqueue(MockResponse().setBody(gson.toJson(TestResponse(null))).setResponseCode(200))
+        server.enqueue(MockResponse().setBody(gson.toJson(TestResponse(null))).setResponseCode(200))
+
+        val list = listOf(SuggestedCocktail("Bloody Mary's - Special!", 4.2, "Vodka"))
+        val enriched = CocktailImageProvider.enrichWithImages(list)
+        assertEquals("https://img/bloodymary.png", enriched.first().imageUrl)
+    }
+
+    @Test
+    fun `large result set chooses best Levenshtein match`() = runBlocking {
+        val bigList = (1..20).map { i ->
+            // Insert some noise names
+            TestDrink("Margarit$i", "https://img/marg$i.png")
+        } + listOf(
+            TestDrink("Margarita", "https://img/perfect.png"),
+            TestDrink("Margarita Special", "https://img/special.png")
+        )
+        val responseJson = gson.toJson(TestResponse(bigList))
+        server.enqueue(MockResponse().setBody(responseJson).setResponseCode(200))
+
+        val list = listOf(SuggestedCocktail("Margarita", 4.9, "Tequila"))
+        val enriched = CocktailImageProvider.enrichWithImages(list)
+        assertEquals("https://img/perfect.png", enriched.first().imageUrl)
     }
 }

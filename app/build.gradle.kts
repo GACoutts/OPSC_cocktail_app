@@ -40,35 +40,28 @@ android {
                 "proguard-rules.pro"
             )
         }
+        debug {
+            @Suppress("DEPRECATION")
+            isTestCoverageEnabled = true
+        }
     }
 
-    buildFeatures {
-        buildConfig = true
-    }
+    buildFeatures { buildConfig = true }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlinOptions {
-        jvmTarget = "11"
-    }
+    kotlinOptions { jvmTarget = "11" }
 
-    testOptions {
-        unitTests.isIncludeAndroidResources = true
-    }
+    testOptions { unitTests.isIncludeAndroidResources = true }
 }
 
-jacoco {
-    toolVersion = "0.8.11"
-}
+jacoco { toolVersion = "0.8.11" }
 
 tasks.register<JacocoReport>("jacocoTestReport") {
     dependsOn("testDebugUnitTest")
-    reports {
-        xml.required.set(true)
-        html.required.set(true)
-    }
+    reports { xml.required.set(true); html.required.set(true) }
     val fileFilter = listOf(
         "**/R.class", "**/R$*.class", "**/BuildConfig.*", "**/Manifest*.*", "**/*Test*.*",
         "**/databinding/**", "**/androidx/**"
@@ -80,7 +73,21 @@ tasks.register<JacocoReport>("jacocoTestReport") {
     executionData.setFrom(files(layout.buildDirectory.file("jacoco/testDebugUnitTest.exec")))
 }
 
-// Ensure coverage runs with check (optional)
+tasks.register<JacocoReport>("jacocoFullReport") {
+    dependsOn("testDebugUnitTest")
+    val androidTestExec = fileTree(layout.buildDirectory) { include("**/coverage.ec") }
+    val fileFilter = listOf(
+        "**/R.class", "**/R$*.class", "**/BuildConfig.*", "**/Manifest*.*", "**/*Test*.*",
+        "**/databinding/**", "**/androidx/**"
+    )
+    val debugTree = fileTree(layout.buildDirectory.dir("intermediates/javac/debug/classes")) { exclude(fileFilter) }
+    val kotlinDebugTree = fileTree(layout.buildDirectory.dir("tmp/kotlin-classes/debug")) { exclude(fileFilter) }
+    classDirectories.setFrom(files(debugTree, kotlinDebugTree))
+    sourceDirectories.setFrom(files("src/main/java"))
+    executionData.setFrom(files(layout.buildDirectory.file("jacoco/testDebugUnitTest.exec")) + androidTestExec)
+    reports { xml.required.set(true); html.required.set(true) }
+}
+
 tasks.named("check") { dependsOn("jacocoTestReport") }
 
 dependencies {
@@ -90,27 +97,23 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.recyclerview)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
-    // Retrofit + JSON
     implementation(libs.retrofit)
     implementation(libs.converterGson)
 
-    // Room (Kotlin + coroutines)
     implementation(libs.roomRuntime)
     implementation(libs.roomKtx)
     kapt(libs.roomCompiler)
 
-    // Lifecycle
     implementation(libs.lifecycleViewModel)
     implementation(libs.lifecycleRuntime)
 
-    // Coroutines
     implementation(libs.coroutinesAndroid)
 
-    // Glide for images
     implementation(libs.glide)
     kapt(libs.glideCompiler)
 
@@ -118,6 +121,9 @@ dependencies {
     testImplementation(libs.coroutinesTest)
     testImplementation(libs.androidx.test.core)
     testImplementation(libs.androidx.test.rules)
+
     androidTestImplementation(libs.androidx.test.core)
     androidTestImplementation(libs.androidx.test.rules)
+    androidTestImplementation(libs.mockwebserver)
+    androidTestImplementation(libs.espresso.idling.resource)
 }

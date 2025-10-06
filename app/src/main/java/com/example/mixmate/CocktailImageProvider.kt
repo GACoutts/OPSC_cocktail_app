@@ -82,10 +82,28 @@ object CocktailImageProvider {
         cache[key]?.let { return it }
         val normalized = normalize(name)
         return try {
-            service.searchByName(name).drinks?.firstOrNull()?.thumb?.let { url ->
-                cache[key] = url
-                SafeLog.d("CocktailImageProvider", "Direct match for '$name'")
-                return url
+            // Direct search: prefer exact or closest match instead of naive first item
+            val directList = service.searchByName(name).drinks
+            if (!directList.isNullOrEmpty()) {
+                val chosen = if (directList.size == 1) directList.first() else {
+                    // Pick lowest distance against normalized target
+                    var best: CocktailDbDrink? = null
+                    var bestScore = Int.MAX_VALUE
+                    for (d in directList) {
+                        val dn = d.name ?: continue
+                        val score = levenshtein(normalized, normalize(dn))
+                        if (score < bestScore) {
+                            bestScore = score
+                            best = d
+                        }
+                    }
+                    best ?: directList.first()
+                }
+                chosen.thumb?.let { url ->
+                    cache[key] = url
+                    SafeLog.d("CocktailImageProvider", "Direct match/selection for '$name'")
+                    return url
+                }
             }
             // 2. Try simplified variants
             val variants = buildList {

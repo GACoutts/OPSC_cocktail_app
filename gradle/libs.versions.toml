@@ -20,6 +20,7 @@ glide = "4.16.0"
 mockwebserver = "4.12.0"
 androidxTestCore = "1.5.0"
 androidxTestRules = "1.6.1"
+espressoIdling = "3.7.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -47,6 +48,7 @@ mockwebserver = { group = "com.squareup.okhttp3", name = "mockwebserver", versio
 coroutinesTest = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
 androidx-test-core = { group = "androidx.test", name = "core", version.ref = "androidxTestCore" }
 androidx-test-rules = { group = "androidx.test", name = "rules", version.ref = "androidxTestRules" }
+espresso-idling-resource = { group = "androidx.test.espresso", name = "espresso-idling-resource", version.ref = "espressoIdling" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
