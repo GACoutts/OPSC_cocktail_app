@@ -47,10 +47,7 @@ class SuggestedCocktailAdapter(
                 .centerCrop()
                 .into(holder.photo)
         }
-        // Capitalize each word (locale-aware basic title case)
-        holder.name.text = item.name.split(' ')
-            .filter { it.isNotBlank() }
-            .joinToString(" ") { w -> w.replaceFirstChar { c -> if (c.isLowerCase()) c.titlecase(Locale.getDefault()) else c.toString() } }
+        holder.name.text = capitalizeWords(item.name)
         holder.meta.text = String.format(Locale.getDefault(), "%.1f • %s", item.rating, item.category)
     }
 
@@ -61,4 +58,28 @@ class SuggestedCocktailAdapter(
         items.addAll(newItems)
         notifyDataSetChanged()
     }
+}
+
+fun capitalizeWords(raw: String): String = raw.trim()
+    .split(Regex("\\s+"))
+    .filter { it.isNotBlank() }
+    .joinToString(" ") { token ->
+        // Process hyphenated segments separately
+        token.split('-').joinToString("-") { segment ->
+            if (segment.isBlank()) "" else capitalizePossessiveSegment(segment)
+        }
+    }
+
+private fun capitalizePossessiveSegment(segment: String): String {
+    val parts = segment.split("'")
+    if (parts.size == 1) {
+        return parts[0].lowercase().replaceFirstChar { c -> if (c.isLowerCase()) c.titlecase(Locale.getDefault()) else c.toString() }
+    }
+    return parts.mapIndexed { index, part ->
+        if (part.isBlank()) "" else when {
+            index == 0 -> part.lowercase().replaceFirstChar { c -> if (c.isLowerCase()) c.titlecase(Locale.getDefault()) else c.toString() }
+            part.length == 1 -> part.lowercase() // possessive 's
+            else -> part.lowercase().replaceFirstChar { c -> if (c.isLowerCase()) c.titlecase(Locale.getDefault()) else c.toString() }
+        }
+    }.joinToString("'")
 }
