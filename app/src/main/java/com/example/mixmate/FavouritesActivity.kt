@@ -3,7 +3,8 @@ package com.example.mixmate
 import android.content.Intent
 import android.os.Bundle
 import android.widget.EditText
-import androidx.activity.ComponentActivity
+import com.example.mixmate.ui.BaseActivity
+import com.example.mixmate.ui.FooterTab
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
@@ -15,7 +16,8 @@ import androidx.core.widget.addTextChangedListener
 import android.text.Editable
 
 
-class FavouritesActivity : ComponentActivity() {
+class FavouritesActivity : BaseActivity() {
+    override fun activeTab() = com.example.mixmate.ui.FooterTab.FAVOURITES
 
     private lateinit var vm: FavouritesViewModel
     private lateinit var adapter: FavoritesAdapter
