@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1056261417081",
+    "project_id": "mixmate-ca926",
+    "storage_bucket": "mixmate-ca926.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1056261417081:android:b71e0bd13658be54dc8ca8",
+        "android_client_info": {
+          "package_name": "com.example.mixmate"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDNxoWgoRRUI8lkQoUCe7X19flZ_r6Fq6w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

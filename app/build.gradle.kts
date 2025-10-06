@@ -3,6 +3,7 @@ import java.util.Properties
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.google.services)
     id("org.jetbrains.kotlin.kapt")
     id("jacoco")
 }
@@ -117,6 +118,13 @@ dependencies {
     implementation(libs.glide)
     kapt(libs.glideCompiler)
 
+    // Firebase
+    implementation(platform(libs.firebaseBom))
+    implementation(libs.firebaseAuth)
+    implementation(libs.firebaseFirestore)
+    implementation(libs.firebaseStorage)
+
+    // Testing dependencies
     testImplementation(libs.mockwebserver)
     testImplementation(libs.coroutinesTest)
     testImplementation(libs.androidx.test.core)

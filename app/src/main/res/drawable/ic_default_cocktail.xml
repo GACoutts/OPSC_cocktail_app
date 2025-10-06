@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    android:tint="@color/light_brown">
+  
+  <!-- Cocktail glass shape -->
+  <path
+      android:fillColor="@color/light_brown"
+      android:pathData="M21,5V3H3v2l8,8v5H7v2h10v-2h-4v-5L21,5zM7.43,7L5.66,5h12.69l-1.78,2H7.43z"/>
+  
+  <!-- Olive garnish -->
+  <path
+      android:fillColor="@color/grayish_green"
+      android:pathData="M12,7.5 C13.38,7.5 14.5,8.62 14.5,10 C14.5,11.38 13.38,12.5 12,12.5 C10.62,12.5 9.5,11.38 9.5,10 C9.5,8.62 10.62,7.5 12,7.5 Z"/>
+      
+</vector>

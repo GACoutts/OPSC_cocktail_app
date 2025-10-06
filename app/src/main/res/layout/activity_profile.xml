@@ -137,16 +137,17 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_my_recipes"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_height="220dp"
                 android:clipToPadding="false"
                 android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp"
                 tools:listitem="@layout/item_recipe_card" />
 
             <!-- Empty state for recipes -->
             <TextView
                 android:id="@+id/tv_my_recipes_empty"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_height="220dp"
                 android:gravity="center"
                 android:text="No recipes yet\nTap + to create your first recipe"
                 android:textColor="@color/light_brown"
