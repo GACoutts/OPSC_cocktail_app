@@ -26,4 +26,11 @@
     <color name="input_field_background">@color/brown</color>
     <color name="text_primary">@color/white</color>
     <color name="text_secondary">@color/light_brown</color>
+
+    <!-- nav item colors (adjust to match your theme) -->
+    <color name="nav_item_checked">#FFFFFF</color>
+    <color name="nav_item_default">#B79D9A</color>
+
+    <!-- example background / accents (optional) -->
+    <color name="mixmate_background">#1E0F0F</color>
 </resources>
