@@ -35,16 +35,17 @@ class SuggestedCocktailAdapter(
 
     override fun onBindViewHolder(holder: VH, position: Int) {
         val item = items[position]
-        // Load imageUrl if present else fallback resource
         val placeholder = item.imageRes
         if (item.imageUrl.isNullOrBlank()) {
+            holder.photo.scaleType = android.widget.ImageView.ScaleType.FIT_CENTER
             holder.photo.setImageResource(placeholder)
         } else {
+            holder.photo.scaleType = android.widget.ImageView.ScaleType.FIT_CENTER
             Glide.with(holder.photo.context)
                 .load(item.imageUrl)
                 .placeholder(placeholder)
                 .error(placeholder)
-                .centerCrop()
+                .fitCenter()
                 .into(holder.photo)
         }
         holder.name.text = item.name

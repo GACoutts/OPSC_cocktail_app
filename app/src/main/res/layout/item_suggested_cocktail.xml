@@ -18,7 +18,8 @@
             android:layout_width="0dp"
             android:layout_height="@dimen/suggested_card_image_height"
             android:adjustViewBounds="true"
-            android:scaleType="centerCrop"
+            android:scaleType="fitCenter"
+            android:padding="4dp"
             android:src="@drawable/cosmopolitan"
             android:contentDescription="@null"
             app:layout_constraintTop_toTopOf="parent"
@@ -57,4 +58,3 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </com.google.android.material.card.MaterialCardView>
-
