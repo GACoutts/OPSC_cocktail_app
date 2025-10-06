@@ -1,7 +1,9 @@
 package com.example.mixmate
 
+import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import android.os.Build
@@ -15,10 +17,18 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.lifecycle.lifecycleScope
 import android.view.View
 import kotlinx.coroutines.launch
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.mixmate.ui.BaseActivity
+import com.example.mixmate.ui.FooterTab
 
-class DiscoverPage : AppCompatActivity() {
+class DiscoverPage : BaseActivity() {
+    override fun activeTab() = FooterTab.DISCOVER
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Ensure content is laid out below the system status bar
         WindowCompat.setDecorFitsSystemWindows(window, true)
         setContentView(R.layout.activity_discover_page)
         WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightNavigationBars = false
@@ -72,7 +82,26 @@ class DiscoverPage : AppCompatActivity() {
         val rvSuggested: RecyclerView = findViewById(R.id.rv_discover_suggested)
         val loadingContainer: View = findViewById(R.id.loading_container_discover)
         val emptyContainer: View = findViewById(R.id.empty_container_discover)
+        // --- My Bar grid ---
+        val recycler: RecyclerView = findViewById(R.id.rv_bar_items)
         val spanCount = 2
+        recycler.layoutManager = GridLayoutManager(this, spanCount)
+        recycler.setHasFixedSize(true)
+        val spacingPx = resources.getDimensionPixelSize(R.dimen.grid_spacing)
+        recycler.addItemDecoration(GridSpacingItemDecoration(spanCount, spacingPx, includeEdge = false))
+
+        val items = listOf(
+            BarItem("Vodka", R.drawable.tequila),
+            BarItem("Rum", R.drawable.tequila),
+            BarItem("Tequila", R.drawable.tequila),
+            BarItem("Whiskey", R.drawable.tequila),
+            BarItem("Gin", R.drawable.tequila),
+            BarItem("Juice", R.drawable.tequila)
+        )
+        recycler.adapter = BarItemAdapter(items)
+
+        // --- Suggested Cocktails grid ---
+        val rvSuggested: RecyclerView = findViewById(R.id.rv_suggested)
         rvSuggested.layoutManager = GridLayoutManager(this, spanCount)
         rvSuggested.setHasFixedSize(true)
         val spacingPx = resources.getDimensionPixelSize(R.dimen.grid_spacing)
