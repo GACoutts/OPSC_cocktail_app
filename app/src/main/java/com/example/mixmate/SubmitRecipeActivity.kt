@@ -207,15 +207,21 @@ class SubmitRecipeActivity : AppCompatActivity() {
     }
     
     private fun handleImageUpload() {
-        when {
-            ContextCompat.checkSelfPermission(
-                this, 
-                Manifest.permission.READ_EXTERNAL_STORAGE
-            ) == PackageManager.PERMISSION_GRANTED -> {
-                showImageSourceDialog()
-            }
-            else -> {
-                permissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+        // For modern Android versions (API 33+), we don't need READ_EXTERNAL_STORAGE
+        // for picking images from gallery
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            showImageSourceDialog()
+        } else {
+            when {
+                ContextCompat.checkSelfPermission(
+                    this, 
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+                ) == PackageManager.PERMISSION_GRANTED -> {
+                    showImageSourceDialog()
+                }
+                else -> {
+                    permissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+                }
             }
         }
     }

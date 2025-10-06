@@ -150,12 +150,13 @@ class RecipeDetailActivity : AppCompatActivity() {
         if (!recipe.imageUri.isNullOrEmpty()) {
             Glide.with(this)
                 .load(recipe.imageUri)
-                .placeholder(R.drawable.ic_local_bar)
-                .error(R.drawable.ic_local_bar)
+                .placeholder(R.drawable.ic_default_cocktail)
+                .error(R.drawable.ic_default_cocktail)
                 .centerCrop()
                 .into(imgRecipeDetail)
         } else {
-            imgRecipeDetail.setImageResource(R.drawable.ic_local_bar)
+            imgRecipeDetail.setImageResource(R.drawable.ic_default_cocktail)
+            imgRecipeDetail.scaleType = ImageView.ScaleType.CENTER_INSIDE
         }
         
         // Set ingredients

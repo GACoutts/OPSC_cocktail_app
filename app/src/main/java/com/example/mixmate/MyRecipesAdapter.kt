@@ -35,13 +35,14 @@ class MyRecipesAdapter(
         if (!recipe.imageUri.isNullOrEmpty()) {
             Glide.with(holder.itemView.context)
                 .load(recipe.imageUri)
-                .placeholder(R.drawable.ic_add_photo)
-                .error(R.drawable.ic_add_photo)
+                .placeholder(R.drawable.ic_default_cocktail)
+                .error(R.drawable.ic_default_cocktail)
                 .centerCrop()
                 .into(holder.imgRecipe)
         } else {
-            // Use a default cocktail image or icon
-            holder.imgRecipe.setImageResource(R.drawable.ic_local_bar)
+            // Use a default cocktail image
+            holder.imgRecipe.setImageResource(R.drawable.ic_default_cocktail)
+            holder.imgRecipe.scaleType = ImageView.ScaleType.CENTER_INSIDE
         }
         
         // Set click listener
