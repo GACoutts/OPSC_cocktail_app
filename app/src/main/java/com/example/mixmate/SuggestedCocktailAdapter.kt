@@ -36,19 +36,21 @@ class SuggestedCocktailAdapter(
     override fun onBindViewHolder(holder: VH, position: Int) {
         val item = items[position]
         val placeholder = item.imageRes
+        holder.photo.scaleType = android.widget.ImageView.ScaleType.CENTER_CROP
         if (item.imageUrl.isNullOrBlank()) {
-            holder.photo.scaleType = android.widget.ImageView.ScaleType.FIT_CENTER
             holder.photo.setImageResource(placeholder)
         } else {
-            holder.photo.scaleType = android.widget.ImageView.ScaleType.FIT_CENTER
             Glide.with(holder.photo.context)
                 .load(item.imageUrl)
                 .placeholder(placeholder)
                 .error(placeholder)
-                .fitCenter()
+                .centerCrop()
                 .into(holder.photo)
         }
-        holder.name.text = item.name
+        // Capitalize each word (locale-aware basic title case)
+        holder.name.text = item.name.split(' ')
+            .filter { it.isNotBlank() }
+            .joinToString(" ") { w -> w.replaceFirstChar { c -> if (c.isLowerCase()) c.titlecase(Locale.getDefault()) else c.toString() } }
         holder.meta.text = String.format(Locale.getDefault(), "%.1f • %s", item.rating, item.category)
     }
 
