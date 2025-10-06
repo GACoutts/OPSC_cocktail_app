@@ -4,6 +4,12 @@
 
     <!-- Search icon in the toolbar -->
     <item
+        android:id="@+id/btnLogOut"
+        android:icon="@drawable/logout"
+        android:title="@string/action_logout"
+        app:showAsAction="always" />
+
+    <item
         android:id="@+id/action_search"
         android:icon="@android:drawable/ic_menu_search"
         android:title="@string/action_search"
