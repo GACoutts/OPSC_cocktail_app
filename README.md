@@ -39,10 +39,11 @@ MixMate was designed to solve the common challenges faced by cocktail enthusiast
 ## ✨ Key Features
 
 ### 🔍 **Discovery & Search**
-- Browse curated cocktail collections
+- Browse **636+ cocktail recipes** from TheCocktailDB
 - Search by name, ingredient, or difficulty
-- Filter by available ingredients in your bar
-- Discover trending and seasonal cocktails
+- Filter by available ingredients in your bar  
+- Discover **489+ ingredients** and popular combinations
+- Access crowd-sourced recipes from bartenders worldwide
 
 ### 📝 **Custom Recipe Creation**
 - **Hybrid Storage System**: Offline-first with cloud synchronization
@@ -80,7 +81,7 @@ MixMate was designed to solve the common challenges faced by cocktail enthusiast
 │                 │    │                  │    │                 │
 │ • Activities    │◄──►│ • RecipeRepo     │◄──►│ • Room DB       │
 │ • Fragments     │    │ • UserManager    │    │ • Firebase      │
-│ • Adapters      │    │ • CocktailApi    │    │ • API Ninjas    │
+│ • Adapters      │    │ • CocktailApi    │    │ • CocktailDB    │
 └─────────────────┘    └──────────────────┘    └─────────────────┘
 ```
 
@@ -116,7 +117,7 @@ MixMate was designed to solve the common challenges faced by cocktail enthusiast
 - **Cloud Database**: Firebase Firestore
 - **Authentication**: Firebase Auth (planned)
 - **Image Storage**: Firebase Storage
-- **API Integration**: Retrofit 2.11.0 with API Ninjas
+- **API Integration**: Retrofit 2.11.0 with TheCocktailDB API
 
 #### **Development Tools**
 - **Build System**: Gradle with Kotlin DSL
@@ -163,11 +164,13 @@ MixMate was designed to solve the common challenges faced by cocktail enthusiast
 4. Enable Firestore Database and Authentication
 
 ### **API Configuration**
-1. Get API key from [API Ninjas](https://api.api-ninjas.com/)
-2. Add to `local.properties`:
-```properties
-API_KEY=your_api_ninjas_key_here
-```
+**TheCocktailDB** provides a free cocktail API that MixMate uses for discovering cocktails.
+
+1. **Free Tier**: No API key required for basic usage (up to 100 requests/day)
+2. **Premium Tier**: Optional $10 lifetime upgrade for unlimited access
+3. Visit [TheCocktailDB](https://www.thecocktaildb.com/) for more details
+
+> **Note**: The free tier is sufficient for development and testing. Premium upgrade is optional.
 
 ### **Build & Run**
 ```bash
@@ -379,7 +382,7 @@ We follow [Conventional Commits](https://www.conventionalcommits.org/):
 
 - **GitHub Repository**: [OPSC_cocktail_app](https://github.com/GACoutts/OPSC_cocktail_app)
 - **Firebase Console**: [Project Dashboard](https://console.firebase.google.com/)
-- **API Documentation**: [API Ninjas Cocktail API](https://api.api-ninjas.com/v1/cocktail)
+- **API Documentation**: [TheCocktailDB API](https://www.thecocktaildb.com/api.php)
 - **Design System**: [Material Design 3](https://m3.material.io/)
 
 ---
