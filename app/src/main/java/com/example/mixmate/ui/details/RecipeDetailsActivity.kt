@@ -13,6 +13,7 @@ import com.example.mixmate.R
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import androidx.lifecycle.ViewModelProvider
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 
 class RecipeDetailsActivity : ComponentActivity() {
 
@@ -31,8 +32,7 @@ class RecipeDetailsActivity : ComponentActivity() {
         val id = intent.getStringExtra("cocktail_id")
         if (id.isNullOrBlank()) {
             Toast.makeText(this, "Missing cocktail id", Toast.LENGTH_SHORT).show()
-            // For a quick one-time test, you could replace the 2 lines above with:
-            // val testId = "17196"; vm.load(testId)
+
             finish()
             return
         }
