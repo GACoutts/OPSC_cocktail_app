@@ -29,8 +29,20 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import com.example.mixmate.data.local.CustomRecipeEntity
+import com.example.mixmate.data.local.CustomIngredient
+import com.example.mixmate.data.remote.FirebaseRecipeRepository
+import com.example.mixmate.data.repository.RecipeRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class SubmitRecipeActivity : AppCompatActivity() {
+
+    // Repository and coroutine scope
+    private lateinit var recipeRepository: RecipeRepository
+    private val activityScope = CoroutineScope(Dispatchers.Main)
 
     // Header views
     private lateinit var btnBack: ImageButton
@@ -115,6 +127,7 @@ class SubmitRecipeActivity : AppCompatActivity() {
         setupRecyclerView()
         setupClickListeners()
         setupDifficultyDropdown()
+        initializeRepository()
         
         // Add first ingredient by default
         addIngredient()
@@ -296,10 +309,82 @@ class SubmitRecipeActivity : AppCompatActivity() {
         etDifficulty.setAdapter(adapter)
     }
     
+    private fun initializeRepository() {
+        val customRecipeDao = MixMateApp.db.customRecipeDao()
+        val firebaseRepository = FirebaseRecipeRepository()
+        recipeRepository = RecipeRepository(customRecipeDao, firebaseRepository, activityScope)
+    }
+    
     private fun submitRecipe() {
-        // TODO: Implement API submission
-        Toast.makeText(this, "Recipe submitted successfully!", Toast.LENGTH_LONG).show()
-        finish()
+        activityScope.launch {
+            try {
+                // Convert form data to CustomRecipeEntity
+                val recipe = createRecipeFromForm()
+                
+                // Get current user ID (you'll need to implement user authentication)
+                val userId = getCurrentUserId() ?: "anonymous_user"
+                
+                // Save using hybrid repository (offline-first with Firebase sync)
+                val result = recipeRepository.saveRecipe(recipe, userId, isPublic = false)
+                
+                withContext(Dispatchers.Main) {
+                    if (result.isSuccess) {
+                        Toast.makeText(
+                            this@SubmitRecipeActivity, 
+                            "Recipe saved successfully! (Syncing to cloud...)", 
+                            Toast.LENGTH_LONG
+                        ).show()
+                        finish()
+                    } else {
+                        Toast.makeText(
+                            this@SubmitRecipeActivity, 
+                            "Failed to save recipe: ${result.exceptionOrNull()?.message}", 
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        this@SubmitRecipeActivity, 
+                        "Error saving recipe: ${e.message}", 
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+        }
+    }
+    
+    private fun createRecipeFromForm(): CustomRecipeEntity {
+        val ingredients = ingredientsAdapter.getValidIngredients().map { ingredient ->
+            CustomIngredient(
+                name = ingredient.name,
+                amount = ingredient.amount,
+                unit = ingredient.unit
+            )
+        }
+        
+        return CustomRecipeEntity(
+            name = etRecipeName.text.toString().trim(),
+            description = etDescription.text.toString().trim(),
+            instructions = etInstructions.text.toString().trim(),
+            ingredients = ingredients,
+            glassware = etGlassware.text.toString().trim().ifEmpty { null },
+            garnish = etGarnish.text.toString().trim().ifEmpty { null },
+            preparationTime = etPreparationTime.text.toString().trim().toIntOrNull(),
+            difficulty = etDifficulty.text.toString().trim().ifEmpty { null },
+            imageUri = selectedImageUri?.toString()
+        )
+    }
+    
+    private fun getCurrentUserId(): String? {
+        // TODO: Implement proper user authentication with Firebase Auth
+        // For now, return a placeholder or get from your UserManager
+        return try {
+            UserManager.INSTANCE.getLoggedInUser()?.email // Assuming email as user ID
+        } catch (e: Exception) {
+            "anonymous_user" // Fallback for offline usage
+        }
     }
 
     @Deprecated("Deprecated in Java")

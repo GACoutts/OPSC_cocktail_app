@@ -1,5 +1,5 @@
 [versions]
-agp = "8.9.3"
+agp = "8.12.3"
 kotlin = "2.1.10"
 coreKtx = "1.17.0"
 junit = "4.13.2"
@@ -17,6 +17,7 @@ room = "2.8.1"
 lifecycle = "2.9.4"
 coroutines = "1.8.1"
 glide = "4.16.0"
+firebaseBom = "33.7.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -41,6 +42,13 @@ coroutinesAndroid = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutine
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
 glideCompiler = { group = "com.github.bumptech.glide", name = "compiler", version.ref = "glide" }
 
+# Firebase
+firebaseBom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
+firebaseAuth = { group = "com.google.firebase", name = "firebase-auth" }
+firebaseFirestore = { group = "com.google.firebase", name = "firebase-firestore" }
+firebaseStorage = { group = "com.google.firebase", name = "firebase-storage" }
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+google-services = { id = "com.google.gms.google-services", version = "4.4.2" }

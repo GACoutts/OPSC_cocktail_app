@@ -3,6 +3,7 @@ import java.util.Properties
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.google.services)
     id("org.jetbrains.kotlin.kapt")
 }
 
@@ -84,4 +85,10 @@ dependencies {
     // Glide for images
     implementation(libs.glide)
     kapt(libs.glideCompiler)
+
+    // Firebase
+    implementation(platform(libs.firebaseBom))
+    implementation(libs.firebaseAuth)
+    implementation(libs.firebaseFirestore)
+    implementation(libs.firebaseStorage)
 }
