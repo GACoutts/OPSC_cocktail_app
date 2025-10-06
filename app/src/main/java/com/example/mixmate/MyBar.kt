@@ -63,12 +63,12 @@ class MyBar : AppCompatActivity() {
         recycler.addItemDecoration(GridSpacingItemDecoration(spanCount, spacingPx, includeEdge = false))
 
         val items = listOf(
-            BarItem("Vodka", R.drawable.tequila),
-            BarItem("Rum", R.drawable.tequila),
+            BarItem("Vodka", R.drawable.vodka),
+            BarItem("Rum", R.drawable.rum),
             BarItem("Tequila", R.drawable.tequila),
-            BarItem("Whiskey", R.drawable.tequila),
-            BarItem("Gin", R.drawable.tequila),
-            BarItem("Juice", R.drawable.tequila)
+            BarItem("Whiskey", R.drawable.whiskey),
+            BarItem("Gin", R.drawable.gin),
+            BarItem("Juice", R.drawable.juice),
         )
         recycler.adapter = BarItemAdapter(items)
 
