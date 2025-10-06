@@ -13,6 +13,7 @@ import android.content.Intent
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.lifecycle.lifecycleScope
+import android.view.View
 import kotlinx.coroutines.launch
 
 class DiscoverPage : AppCompatActivity() {
@@ -67,32 +68,44 @@ class DiscoverPage : AppCompatActivity() {
         alcoholView?.setOnClickListener { alcoholView.showDropDown() }
         ratingView?.setOnClickListener { ratingView.showDropDown() }
 
-        // Suggested Cocktails grid (API backed with fallback)
+        // Suggested Cocktails grid (API backed with loading / empty states)
         val rvSuggested: RecyclerView = findViewById(R.id.rv_discover_suggested)
+        val loadingContainer: View = findViewById(R.id.loading_container_discover)
+        val emptyContainer: View = findViewById(R.id.empty_container_discover)
         val spanCount = 2
         rvSuggested.layoutManager = GridLayoutManager(this, spanCount)
         rvSuggested.setHasFixedSize(true)
         val spacingPx = resources.getDimensionPixelSize(R.dimen.grid_spacing)
         rvSuggested.addItemDecoration(GridSpacingItemDecoration(spanCount, spacingPx, includeEdge = false))
 
-        val fallbackSuggested = listOf(
-            SuggestedCocktail("Cosmopolitan", 4.5, "Vodka", R.drawable.cosmopolitan),
-            SuggestedCocktail("Mojito", 4.2, "Rum", R.drawable.cosmopolitan),
-            SuggestedCocktail("Margarita", 4.7, "Tequila", R.drawable.cosmopolitan),
-            SuggestedCocktail("Old Fashioned", 4.6, "Whiskey", R.drawable.cosmopolitan),
-            SuggestedCocktail("Martini", 3.5, "Tequila", R.drawable.cosmopolitan),
-            SuggestedCocktail("Daiquiri", 4.6, "Whiskey", R.drawable.cosmopolitan)
-        )
-        val suggestedAdapter = SuggestedCocktailAdapter(fallbackSuggested.toMutableList())
+        val suggestedAdapter = SuggestedCocktailAdapter(mutableListOf())
         rvSuggested.adapter = suggestedAdapter
 
+        fun showLoading() {
+            loadingContainer.visibility = View.VISIBLE
+            rvSuggested.visibility = View.GONE
+            emptyContainer.visibility = View.GONE
+        }
+        fun showContent() {
+            loadingContainer.visibility = View.GONE
+            rvSuggested.visibility = View.VISIBLE
+            emptyContainer.visibility = View.GONE
+        }
+        fun showEmpty() {
+            loadingContainer.visibility = View.GONE
+            rvSuggested.visibility = View.GONE
+            emptyContainer.visibility = View.VISIBLE
+        }
+
+        showLoading()
         lifecycleScope.launch {
             val apiItems = CocktailApiRepository.fetchCocktails(limit = 10)
-            if (apiItems.isNotEmpty()) {
-                val enriched = CocktailImageProvider.enrichWithImages(apiItems)
-                suggestedAdapter.replaceAll(enriched)
+            val data = if (apiItems.isNotEmpty()) CocktailImageProvider.enrichWithImages(apiItems) else emptyList()
+            if (data.isNotEmpty()) {
+                suggestedAdapter.replaceAll(data)
+                showContent()
             } else {
-                Toast.makeText(this@DiscoverPage, "Using offline cocktail list", Toast.LENGTH_SHORT).show()
+                showEmpty()
             }
         }
     }

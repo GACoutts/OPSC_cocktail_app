@@ -12,6 +12,7 @@ import android.content.Intent
 import android.os.Build
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
+import android.view.View
 
 class MyBar : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,30 +72,42 @@ class MyBar : AppCompatActivity() {
         )
         recycler.adapter = BarItemAdapter(items)
 
-        // Suggested Cocktails section with API-backed data
+        // Suggested Cocktails section with API-backed data and state handling
         val rvSuggested: RecyclerView = findViewById(R.id.rv_suggested)
+        val loadingContainer: View = findViewById(R.id.loading_container_bar)
+        val emptyContainer: View = findViewById(R.id.empty_container_bar)
         rvSuggested.layoutManager = GridLayoutManager(this, spanCount)
         rvSuggested.setHasFixedSize(true)
         rvSuggested.addItemDecoration(GridSpacingItemDecoration(spanCount, spacingPx, includeEdge = false))
 
-        val fallbackSuggested = listOf(
-            SuggestedCocktail("Cosmopolitan", 4.5, "Vodka", R.drawable.cosmopolitan),
-            SuggestedCocktail("Mojito", 4.2, "Rum", R.drawable.cosmopolitan),
-            SuggestedCocktail("Margarita", 4.7, "Tequila", R.drawable.cosmopolitan),
-            SuggestedCocktail("Old Fashioned", 4.6, "Whiskey", R.drawable.cosmopolitan)
-        )
-        val suggestedAdapter = SuggestedCocktailAdapter(fallbackSuggested.toMutableList())
+        val suggestedAdapter = SuggestedCocktailAdapter(mutableListOf())
         rvSuggested.adapter = suggestedAdapter
 
-        // Fetch from API (10 items) and update, fallback if empty
+        fun showLoading() {
+            loadingContainer.visibility = View.VISIBLE
+            rvSuggested.visibility = View.GONE
+            emptyContainer.visibility = View.GONE
+        }
+        fun showContent() {
+            loadingContainer.visibility = View.GONE
+            rvSuggested.visibility = View.VISIBLE
+            emptyContainer.visibility = View.GONE
+        }
+        fun showEmpty() {
+            loadingContainer.visibility = View.GONE
+            rvSuggested.visibility = View.GONE
+            emptyContainer.visibility = View.VISIBLE
+        }
+
+        showLoading()
         lifecycleScope.launch {
             val apiItems = CocktailApiRepository.fetchCocktails(limit = 10)
-            if (apiItems.isNotEmpty()) {
-                val enriched = CocktailImageProvider.enrichWithImages(apiItems)
-                suggestedAdapter.replaceAll(enriched)
+            val data = if (apiItems.isNotEmpty()) CocktailImageProvider.enrichWithImages(apiItems) else emptyList()
+            if (data.isNotEmpty()) {
+                suggestedAdapter.replaceAll(data)
+                showContent()
             } else {
-                // Keep fallback; optionally inform user once
-                Toast.makeText(this@MyBar, "Using offline cocktail list", Toast.LENGTH_SHORT).show()
+                showEmpty()
             }
         }
     }

@@ -66,12 +66,66 @@
         android:layout_marginTop="9dp"
         android:padding="@dimen/grid_spacing"
         android:clipToPadding="false"
+        android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/tv_suggested_title"
         app:layout_constraintBottom_toTopOf="@id/app_footer"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginStart="@dimen/margin_side"
         android:layout_marginEnd="@dimen/margin_side"/>
+
+    <!-- Loading state for suggested -->
+    <LinearLayout
+        android:id="@+id/loading_container_bar"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:visibility="visible"
+        app:layout_constraintTop_toBottomOf="@id/tv_suggested_title"
+        app:layout_constraintBottom_toTopOf="@id/app_footer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="@dimen/margin_side"
+        android:layout_marginEnd="@dimen/margin_side">
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/loading"
+            android:textColor="@color/white"
+            android:textSize="16sp"/>
+    </LinearLayout>
+
+    <!-- Empty state card -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/empty_container_bar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="0dp"
+        app:cardBackgroundColor="@color/brown"
+        app:layout_constraintTop_toBottomOf="@id/tv_suggested_title"
+        app:layout_constraintBottom_toTopOf="@id/app_footer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="@dimen/margin_side"
+        android:layout_marginEnd="@dimen/margin_side">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="32dp"
+            android:text="@string/no_cocktails_found"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"/>
+    </com.google.android.material.card.MaterialCardView>
 
     <!-- Footer navigation bar -->
     <include
@@ -84,4 +138,3 @@
         app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-
