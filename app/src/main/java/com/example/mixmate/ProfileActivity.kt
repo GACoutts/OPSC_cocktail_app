@@ -3,8 +3,10 @@ package com.example.mixmate
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -15,9 +17,20 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
+import com.example.mixmate.data.remote.FirebaseRecipeRepository
+import com.example.mixmate.data.repository.RecipeRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.collect
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class ProfileActivity : AppCompatActivity() {
+
+    // Repository and adapter
+    private lateinit var recipeRepository: RecipeRepository
+    private lateinit var myRecipesAdapter: MyRecipesAdapter
+    private val activityScope = CoroutineScope(Dispatchers.Main)
 
     // Header views
     private lateinit var btnBack: ImageButton
@@ -66,7 +79,9 @@ class ProfileActivity : AppCompatActivity() {
         setupRecyclerViews()
         setupClickListeners()
         updateNavigationState()
+        initializeRepository()
         loadProfileData()
+        loadMyRecipes()
     }
 
     private fun initializeViews() {
@@ -106,8 +121,14 @@ class ProfileActivity : AppCompatActivity() {
 
     private fun setupRecyclerViews() {
         // Setup My Recipes RecyclerView
+        myRecipesAdapter = MyRecipesAdapter { recipe ->
+            // Navigate to RecipeDetailActivity
+            val intent = Intent(this, RecipeDetailActivity::class.java)
+            intent.putExtra(RecipeDetailActivity.EXTRA_RECIPE_ID, recipe.id)
+            startActivity(intent)
+        }
+        rvMyRecipes.adapter = myRecipesAdapter
         rvMyRecipes.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        // TODO: Set adapter when created
         
         // Setup Favorites RecyclerView
         rvFavorites.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
@@ -234,6 +255,31 @@ class ProfileActivity : AppCompatActivity() {
         finish()
     }
 
+    private fun initializeRepository() {
+        val customRecipeDao = MixMateApp.db.customRecipeDao()
+        val firebaseRepository = FirebaseRecipeRepository()
+        recipeRepository = RecipeRepository(customRecipeDao, firebaseRepository, activityScope)
+    }
+    
+    private fun loadMyRecipes() {
+        val userId = UserManager.getUsername(this)
+        
+        activityScope.launch {
+            recipeRepository.getAllRecipes(userId).collect { recipes ->
+                myRecipesAdapter.updateRecipes(recipes)
+                
+                // Show/hide empty state
+                if (recipes.isEmpty()) {
+                    tvMyRecipesEmpty.visibility = View.VISIBLE
+                    rvMyRecipes.visibility = View.GONE
+                } else {
+                    tvMyRecipesEmpty.visibility = View.GONE
+                    rvMyRecipes.visibility = View.VISIBLE
+                }
+            }
+        }
+    }
+
     private fun loadProfileData() {
         // Load user data from UserManager
         tvUsername.text = UserManager.getDisplayName(this)
@@ -241,7 +287,6 @@ class ProfileActivity : AppCompatActivity() {
         tvJoinDate.text = UserManager.getJoinDate(this)
         
         // TODO: Load profile picture from UserManager.getProfilePictureUri()
-        // TODO: Load user's recipes from API
         // TODO: Load user's favorites from Room database
     }
 

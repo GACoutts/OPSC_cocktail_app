@@ -22,6 +22,9 @@
             android:name=".SubmitRecipeActivity"
             android:exported="false" />
         <activity
+            android:name=".RecipeDetailActivity"
+            android:exported="false" />
+        <activity
             android:name=".ProfileActivity"
             android:exported="false" />
         <activity
