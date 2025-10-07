@@ -13,7 +13,7 @@ import com.example.mixmate.ui.BaseActivity
 import com.example.mixmate.ui.FooterTab
 import kotlinx.coroutines.launch
 
-abstract class HomePage : BaseActivity() {
+class HomePage : BaseActivity() {
     override fun activeTab() = FooterTab.HOME
 
     private lateinit var rvSuggested: RecyclerView
