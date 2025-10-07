@@ -167,6 +167,7 @@ public class SettingsActivity extends AppCompatActivity {
         cardLogout.setOnClickListener(v -> {
             Log.d(TAG, "Logout clicked");
             showLogoutDialog();
+
         });
     }
 

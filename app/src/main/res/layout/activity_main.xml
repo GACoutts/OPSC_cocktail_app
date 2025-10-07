@@ -10,12 +10,24 @@
     android:padding="24dp"
     tools:context=".MainActivity">
 
+    <!-- Heading -->
+    <TextView
+        android:id="@+id/txtvHeading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/sign_in"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:layout_marginBottom="32dp"/>
+
     <!-- emial field -->
     <EditText
         android:id="@+id/edtxEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="email"
+        android:hint="@string/email"
+        android:textColorHint="@color/white"
         android:inputType="textEmailAddress"
         android:ems="10"
         android:layout_marginBottom="16dp"/>
@@ -25,7 +37,8 @@
         android:id="@+id/edtxPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Password"
+        android:hint="@string/password"
+        android:textColorHint="@color/white"
         android:inputType="textPassword"
         android:ems="10"
         android:layout_marginBottom="24dp"/>
