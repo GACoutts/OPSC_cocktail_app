@@ -4,9 +4,6 @@
 
     <uses-permission android:name="android.permission.INTERNET"/>
 
-    <!-- Network access for Cocktail API -->
-    <uses-permission android:name="android.permission.INTERNET" />
-
     <application
         android:name=".MixMateApp"
         android:allowBackup="true"
@@ -60,10 +57,6 @@
 
         <activity
             android:name=".MyBar"
-            android:exported="false" />
-        <!-- If master already had a different details screen, keep it too -->
-        <activity
-            android:name=".RecipeDetailActivity"
             android:exported="false" />
 
     </application>

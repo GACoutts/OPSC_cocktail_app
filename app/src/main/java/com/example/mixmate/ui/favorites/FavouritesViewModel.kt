@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class FavouritesViewModel(
+    private val userId: String,
     private val repo: FavoritesRepository = FavoritesRepository()
 ) : ViewModel() {
 
@@ -22,12 +23,12 @@ class FavouritesViewModel(
     val items: StateFlow<List<FavoriteEntity>> =
         query
             .debounce(200)
-            .flatMapLatest { q -> if (q.isBlank()) repo.getAll() else repo.searchByName(q) }
+            .flatMapLatest { q -> if (q.isBlank()) repo.getAll(userId) else repo.searchByName(userId, q) }
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     fun setQuery(q: String) { query.value = q }
 
     fun remove(id: String) {
-        viewModelScope.launch { repo.deleteById(id) }
+        viewModelScope.launch { repo.deleteById(id, userId) }
     }
 }

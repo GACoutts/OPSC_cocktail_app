@@ -28,6 +28,18 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5" />
 
+        <ImageView
+            android:id="@+id/iv_favorite"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_margin="8dp"
+            android:src="@drawable/ic_heart_outline"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/favorite"
+            app:tint="@color/white"
+            app:layout_constraintTop_toTopOf="@id/img_photo"
+            app:layout_constraintEnd_toEndOf="@id/img_photo" />
+
         <TextView
             android:id="@+id/tv_name"
             android:layout_width="0dp"

@@ -7,14 +7,14 @@ import kotlinx.coroutines.flow.Flow
 class FavoritesRepository {
     private val dao = MixMateApp.db.favoriteDao()
 
-    fun getAll(): Flow<List<FavoriteEntity>> = dao.getAll()
+    fun getAll(userId: String): Flow<List<FavoriteEntity>> = dao.getAll(userId)
 
-    fun searchByName(query: String): Flow<List<FavoriteEntity>> =
-        dao.searchByName(query)
+    fun searchByName(userId: String, query: String): Flow<List<FavoriteEntity>> =
+        dao.searchByName(userId, query)
 
-    suspend fun getById(id: String): FavoriteEntity? = dao.getById(id)
+    suspend fun getById(id: String, userId: String): FavoriteEntity? = dao.getById(id, userId)
 
     suspend fun upsert(entity: FavoriteEntity) = dao.upsert(entity)
 
-    suspend fun deleteById(id: String) = dao.deleteById(id)
+    suspend fun deleteById(id: String, userId: String) = dao.deleteById(id, userId)
 }

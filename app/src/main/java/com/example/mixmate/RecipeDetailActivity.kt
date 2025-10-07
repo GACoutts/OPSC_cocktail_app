@@ -165,11 +165,9 @@ class RecipeDetailActivity : AppCompatActivity() {
     private fun loadRecipeFromDatabase(recipeId: Long) {
         lifecycleScope.launch {
             try {
-                val recipe = withContext(Dispatchers.IO) {
+                val loaded = withContext(Dispatchers.IO) {
                     val userId = UserManager.getCurrentUserUid() ?: ""
                     MixMateApp.db.customRecipeDao().getCustomRecipeById(recipeId, userId)
-                val loaded = withContext(Dispatchers.IO) {
-                    MixMateApp.db.customRecipeDao().getCustomRecipeById(recipeId)
                 }
                 if (loaded != null) {
                     populateViews(loaded)

@@ -122,8 +122,8 @@ adb uninstall com.example.mixmate
 
 **UI Layer**: Traditional XML-based layouts with Activities
 - `MainActivity` - Login screen (entry point)
-- `SignUpPage` - User registration  
-- `HomePage` - Main app interface after login
+- `SignUpActivity` - User registration  
+- `DiscoverPage` - Main app interface after login
 
 **Navigation**: Simple Intent-based navigation between activities
 
@@ -138,9 +138,9 @@ adb uninstall com.example.mixmate
 ## Development Workflow
 
 ### Git Guidelines
-- **Branching**: Use feature branches from main
+- **Branching**: Use feature branches from main - whenever working on a new task or feature, create a new branch for it and avoid working directly in the main branch
 - **Commits**: Follow Conventional Commits (e.g., `feat:`, `fix:`, `docs:`)
-- **Git Pager Rule**: Use `--no-pager` only for `git log`, `git diff`, and `git show`
+- **Git Pager Rule**: Use `--no-pager` only for git commands that typically paginate output like `git log`, `git diff`, and `git show`. Don't use `--no-pager` for commands like `git add`, `git commit`, `git push`, or `git status` as they never or rarely paginate
 
 ```bash
 # Correct usage
@@ -157,6 +157,9 @@ git status
 
 ### Server Management
 Run any long-running servers in a separate PowerShell or Command Prompt window outside of this chat environment to keep them always on.
+
+### File Management
+User manages all their files and data using OneDrive as their personal cloud storage solution.
 
 ### Code Review Checklist
 - [ ] Build passes locally
