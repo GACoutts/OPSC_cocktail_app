@@ -22,6 +22,7 @@ data class RecipeDetailsUi(
 )
 
 class RecipeDetailsViewModel(
+    private val userId: String,
     private val cocktails: CocktailRepository = CocktailRepository(),
     private val favs: FavoritesRepository = FavoritesRepository()
 ) : ViewModel() {
@@ -34,7 +35,7 @@ class RecipeDetailsViewModel(
         viewModelScope.launch {
             _ui.value = _ui.value.copy(loading = true, error = null)
 
-            val saved = favs.getById(cocktailId)
+            val saved = favs.getById(cocktailId, userId)
             if (saved != null) {
                 _ui.value = RecipeDetailsUi(
                     loading = false,
@@ -74,7 +75,7 @@ class RecipeDetailsViewModel(
         val s = _ui.value
         if (s.id.isBlank()) return
         viewModelScope.launch {
-            val exists = favs.getById(s.id)
+            val exists = favs.getById(s.id, userId)
             if (exists == null) {
                 favs.upsert(
                     FavoriteEntity(
@@ -82,12 +83,13 @@ class RecipeDetailsViewModel(
                         name = s.name,
                         imageUrl = s.imageUrl,
                         ingredients = s.ingredients,
-                        instructions = s.instructions
+                        instructions = s.instructions,
+                        userId = userId
                     )
                 )
                 _ui.value = s.copy(isFavorited = true)
             } else {
-                favs.deleteById(s.id)
+                favs.deleteById(s.id, userId)
                 _ui.value = s.copy(isFavorited = false)
             }
         }

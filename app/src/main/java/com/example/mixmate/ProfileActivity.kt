@@ -70,9 +70,11 @@ class ProfileActivity : AppCompatActivity() {
             // Apply top, left, right padding to root but not bottom
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0)
             
-            // Apply bottom padding directly to the footer
+            // Apply bottom padding directly to the footer with small top padding for consistent spacing
             val footer = findViewById<View>(R.id.footer_navigation)
-            footer?.setPadding(0, 0, 0, systemBars.bottom)
+            // Use smaller bottom padding to match other pages that use WindowCompat
+            val bottomPadding = systemBars.bottom / 2
+            footer?.setPadding(0, resources.getDimensionPixelSize(R.dimen.card_padding), 0, bottomPadding)
             
             insets
         }
@@ -128,13 +130,22 @@ class ProfileActivity : AppCompatActivity() {
         rvMyRecipes.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         
         // Setup Favorites RecyclerView
-        favoritesAdapter = FavoritesAdapter { favorite ->
-            // Navigate to cocktail detail activity
-            // TODO: Implement navigation to cocktail detail for favorites
-            // For now, we can show a toast or navigate to discover
-            val intent = Intent(this, DiscoverPage::class.java)
-            startActivity(intent)
-        }
+        favoritesAdapter = FavoritesAdapter(
+            onClick = { favorite ->
+                // Navigate to cocktail detail activity
+                // TODO: Implement navigation to cocktail detail for favorites
+                // For now, we can show a toast or navigate to discover
+                val intent = Intent(this, DiscoverPage::class.java)
+                startActivity(intent)
+            },
+            onDelete = { favorite ->
+                // Remove favorite
+                activityScope.launch {
+                    favoriteDao.delete(favorite)
+                    Toast.makeText(this@ProfileActivity, "Removed from favorites", Toast.LENGTH_SHORT).show()
+                }
+            }
+        )
         rvFavorites.adapter = favoritesAdapter
         rvFavorites.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
     }
@@ -241,7 +252,7 @@ class ProfileActivity : AppCompatActivity() {
         
         activityScope.launch {
             favoriteDao.getAll(userId).collect { favorites ->
-                favoritesAdapter.updateFavorites(favorites)
+                favoritesAdapter.submitList(favorites)
                 
                 // Show/hide empty state
                 if (favorites.isEmpty()) {

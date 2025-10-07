@@ -5,6 +5,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import android.os.Build
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.widget.ArrayAdapter
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import android.widget.ImageView
@@ -13,8 +15,6 @@ import android.content.Intent
 import androidx.lifecycle.lifecycleScope
 import android.view.View
 import kotlinx.coroutines.launch
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.mixmate.ui.BaseActivity
 import com.example.mixmate.ui.FooterTab
 
@@ -104,7 +104,7 @@ class DiscoverPage : BaseActivity() {
         )
         recycler.adapter = BarItemAdapter(items)
 
-        // --- Suggested Cocktails grid ---
+        // ----- Suggested cocktails grid -----
         val rvSuggested: RecyclerView = findViewById(R.id.rv_suggested)
         rvSuggested.layoutManager = GridLayoutManager(this, spanCount)
         rvSuggested.setHasFixedSize(true)
