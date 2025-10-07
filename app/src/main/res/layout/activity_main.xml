@@ -10,13 +10,13 @@
     android:padding="24dp"
     tools:context=".MainActivity">
 
-    <!-- Username field -->
+    <!-- emial field -->
     <EditText
-        android:id="@+id/edtxUserName"
+        android:id="@+id/edtxEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Username"
-        android:inputType="textPersonName"
+        android:hint="email"
+        android:inputType="textEmailAddress"
         android:ems="10"
         android:layout_marginBottom="16dp"/>
 

@@ -46,4 +46,6 @@
     <string name="amount" />
     <string name="unit" />
     <string name="remove_ingredient" />
+    <string name="email_address">email address</string>
+    <string name="date_of_birth_yyyy_mm_dd">date of birth (YYYY-MM-DD)</string>
 </resources>
