@@ -7,45 +7,47 @@
     <string name="surname">Surname</string>
     <string name="name">Name</string>
     <string name="sign_up_page">Sign Up Page</string>
-    <string name="back">Back</string>
+    <string name="back">back</string>
     <string name="sign_up">Sign Up</string>
-
-    <!-- Header -->
-    <string name="header_title_mix_mate">MixMate</string>
-    <string name="cd_logo">App logo</string>
-    <string name="cd_search">Search</string>
-
-    <!-- Discover Page -->
-    <string name="title_my_bar">My Bar</string>
-    <string name="title_suggested">Suggested Cocktails</string>
-
-    <!-- Bottom Navigation -->
-    <string name="cd_home">Home</string>
-    <string name="cd_discover">Discover</string>
-    <string name="cd_list">List</string>
-    <string name="cd_favourites">Favourites</string>
-    <string name="cd_profile">Profile</string>
-
-    <!-- Submit Recipe Activity -->
-    <string name="submit_recipe">Submit Recipe</string>
-    <string name="save">Save</string>
-    <string name="recipe_name">Recipe Name</string>
-    <string name="description">Description</string>
-    <string name="ingredients">Ingredients</string>
-    <string name="ingredient_name">Ingredient Name</string>
-    <string name="amount">Amount</string>
-    <string name="unit">Unit</string>
-    <string name="add_ingredient">Add Ingredient</string>
-    <string name="remove_ingredient">Remove Ingredient</string>
-    <string name="instructions">Instructions</string>
-    <string name="optional_details">Optional Details</string>
-    <string name="glassware">Glassware</string>
-    <string name="garnish">Garnish</string>
-    <string name="prep_time_minutes">Prep Time (minutes)</string>
-    <string name="difficulty">Difficulty</string>
-    <string name="recipe_image">Recipe Image</string>
-    <string name="tap_to_add_photo">Tap to add photo</string>
-    <string name="remove_image">Remove Image</string>
-    <string name="loading">Loading</string>
-    <string name="no_cocktails_found">No Cocktails Found</string>
+    <string name="main_trending_drink">Main Trending Drink</string>
+    <string name="action_search" />
+    <string name="nav_home" />
+    <string name="nav_explore" />
+    <string name="nav_list" />
+    <string name="nav_favorites" />
+    <string name="nav_profile" />
+    <string name="action_logout">action_logout</string>
+    <string name="title_my_bar" />
+    <string name="title_suggested" />
+    <string name="save" />
+    <string name="submit_recipe" />
+    <string name="recipe_image" />
+    <string name="tap_to_add_photo" />
+    <string name="remove_image" />
+    <string name="recipe_name" />
+    <string name="description" />
+    <string name="ingredients" />
+    <string name="add_ingredient" />
+    <string name="instructions" />
+    <string name="optional_details" />
+    <string name="glassware" />
+    <string name="garnish" />
+    <string name="prep_time_minutes" />
+    <string name="difficulty" />
+    <string name="cd_discover" />
+    <string name="cd_list" />
+    <string name="cd_favourites" />
+    <string name="cd_profile" />
+    <string name="cd_home" />
+    <string name="cd_logo" />
+    <string name="header_title_mix_mate" />
+    <string name="cd_search" />
+    <string name="ingredient_name" />
+    <string name="amount" />
+    <string name="unit" />
+    <string name="remove_ingredient" />
+    <string name="email_address">email address</string>
+    <string name="date_of_birth_yyyy_mm_dd">date of birth (YYYY-MM-DD)</string>
+    <string name="email">email</string>
+    <string name="sign_in">Sign In</string>
 </resources>
