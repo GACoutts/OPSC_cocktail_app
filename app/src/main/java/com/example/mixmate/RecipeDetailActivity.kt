@@ -127,7 +127,8 @@ class RecipeDetailActivity : AppCompatActivity() {
         CoroutineScope(Dispatchers.Main).launch {
             try {
                 val recipe = withContext(Dispatchers.IO) {
-                    MixMateApp.db.customRecipeDao().getCustomRecipeById(recipeId)
+                    val userId = UserManager.getCurrentUserUid() ?: ""
+                    MixMateApp.db.customRecipeDao().getCustomRecipeById(recipeId, userId)
                 }
                 
                 if (recipe != null) {

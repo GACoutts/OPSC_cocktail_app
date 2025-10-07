@@ -17,7 +17,14 @@
         android:theme="@style/Theme.MixMate"
         tools:targetApi="31">
         <activity
+            android:name=".SignUpActivity"
+            android:exported="false"
+            android:theme="@style/Theme.MixMate.NoActionBar" />
+        <activity
             android:name=".SettingsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".EditProfileActivity"
             android:exported="false" />
         <activity
             android:name=".SubmitRecipeActivity"
@@ -30,9 +37,6 @@
             android:exported="false" />
         <activity
             android:name=".HomePage"
-            android:exported="false" />
-        <activity
-            android:name=".SignUpPage"
             android:exported="false" />
         <activity
             android:name=".DiscoverPage"

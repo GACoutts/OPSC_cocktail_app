@@ -10,7 +10,6 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -24,12 +23,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.collect
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.example.mixmate.data.local.FavoriteDao
 
 class ProfileActivity : AppCompatActivity() {
 
     // Repository and adapter
     private lateinit var recipeRepository: RecipeRepository
     private lateinit var myRecipesAdapter: MyRecipesAdapter
+    private lateinit var favoritesAdapter: FavoritesAdapter
+    private lateinit var favoriteDao: FavoriteDao
     private val activityScope = CoroutineScope(Dispatchers.Main)
 
     // Header views
@@ -48,12 +50,6 @@ class ProfileActivity : AppCompatActivity() {
     private lateinit var rvFavorites: RecyclerView
     private lateinit var tvFavoritesEmpty: TextView
     
-    // Settings section views
-    private lateinit var cardEditProfile: MaterialCardView
-    private lateinit var cardNotifications: MaterialCardView
-    private lateinit var cardPrivacy: MaterialCardView
-    private lateinit var cardHelpSupport: MaterialCardView
-    private lateinit var cardLogout: MaterialCardView
     
     // FAB for creating recipes
     private lateinit var fabCreateRecipe: FloatingActionButton
@@ -82,6 +78,7 @@ class ProfileActivity : AppCompatActivity() {
         initializeRepository()
         loadProfileData()
         loadMyRecipes()
+        loadFavorites()
     }
 
     private fun initializeViews() {
@@ -101,12 +98,6 @@ class ProfileActivity : AppCompatActivity() {
         rvFavorites = findViewById(R.id.rv_favorites)
         tvFavoritesEmpty = findViewById(R.id.tv_favorites_empty)
         
-        // Settings section views
-        cardEditProfile = findViewById(R.id.card_edit_profile)
-        cardNotifications = findViewById(R.id.card_notifications)
-        cardPrivacy = findViewById(R.id.card_privacy)
-        cardHelpSupport = findViewById(R.id.card_help_support)
-        cardLogout = findViewById(R.id.card_logout)
         
         // FAB
         fabCreateRecipe = findViewById(R.id.fab_create_recipe)
@@ -131,8 +122,15 @@ class ProfileActivity : AppCompatActivity() {
         rvMyRecipes.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         
         // Setup Favorites RecyclerView
+        favoritesAdapter = FavoritesAdapter { favorite ->
+            // Navigate to cocktail detail activity
+            // TODO: Implement navigation to cocktail detail for favorites
+            // For now, we can show a toast or navigate to discover
+            val intent = Intent(this, DiscoverPage::class.java)
+            startActivity(intent)
+        }
+        rvFavorites.adapter = favoritesAdapter
         rvFavorites.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        // TODO: Set adapter when created
     }
 
     private fun setupClickListeners() {
@@ -153,34 +151,6 @@ class ProfileActivity : AppCompatActivity() {
             }
         }
         
-        // Settings navigation
-        cardEditProfile.setOnClickListener {
-            // TODO: Navigate to edit profile when EditProfileActivity is created
-            // val intent = Intent(this, EditProfileActivity::class.java)
-            // startActivity(intent)
-        }
-        
-        cardNotifications.setOnClickListener {
-            // TODO: Navigate to notifications settings
-            // val intent = Intent(this, NotificationSettingsActivity::class.java)
-            // startActivity(intent)
-        }
-        
-        cardPrivacy.setOnClickListener {
-            // TODO: Navigate to privacy settings
-            // val intent = Intent(this, PrivacySettingsActivity::class.java)
-            // startActivity(intent)
-        }
-        
-        cardHelpSupport.setOnClickListener {
-            // TODO: Navigate to help & support
-            // val intent = Intent(this, HelpSupportActivity::class.java)
-            // startActivity(intent)
-        }
-        
-        cardLogout.setOnClickListener {
-            showLogoutConfirmationDialog()
-        }
         
         // FAB click listener
         fabCreateRecipe.setOnClickListener {
@@ -233,36 +203,16 @@ class ProfileActivity : AppCompatActivity() {
         navFavourites.isSelected = false
     }
 
-    private fun showLogoutConfirmationDialog() {
-        AlertDialog.Builder(this)
-            .setTitle("Logout")
-            .setMessage("Are you sure you want to logout?")
-            .setPositiveButton("Logout") { _, _ ->
-                performLogout()
-            }
-            .setNegativeButton("Cancel", null)
-            .show()
-    }
-    
-    private fun performLogout() {
-        // Clear user data
-        UserManager.clearUserData(this)
-        
-        // Navigate back to MainActivity
-        val intent = Intent(this, MainActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)
-        finish()
-    }
 
     private fun initializeRepository() {
         val customRecipeDao = MixMateApp.db.customRecipeDao()
+        favoriteDao = MixMateApp.db.favoriteDao()
         val firebaseRepository = FirebaseRecipeRepository()
         recipeRepository = RecipeRepository(customRecipeDao, firebaseRepository, activityScope)
     }
     
     private fun loadMyRecipes() {
-        val userId = UserManager.getUsername(this)
+        val userId = UserManager.getCurrentUserUid() ?: UserManager.getUsername(this)
         
         activityScope.launch {
             recipeRepository.getAllRecipes(userId).collect { recipes ->
@@ -275,6 +225,25 @@ class ProfileActivity : AppCompatActivity() {
                 } else {
                     tvMyRecipesEmpty.visibility = View.GONE
                     rvMyRecipes.visibility = View.VISIBLE
+                }
+            }
+        }
+    }
+    
+    private fun loadFavorites() {
+        val userId = UserManager.getCurrentUserUid() ?: UserManager.getUsername(this)
+        
+        activityScope.launch {
+            favoriteDao.getAll(userId).collect { favorites ->
+                favoritesAdapter.updateFavorites(favorites)
+                
+                // Show/hide empty state
+                if (favorites.isEmpty()) {
+                    tvFavoritesEmpty.visibility = View.VISIBLE
+                    rvFavorites.visibility = View.GONE
+                } else {
+                    tvFavoritesEmpty.visibility = View.GONE
+                    rvFavorites.visibility = View.VISIBLE
                 }
             }
         }
