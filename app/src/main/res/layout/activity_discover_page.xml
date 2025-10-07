@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/discover_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/dark_brown">
+    android:background="@color/dark_brown"
+    tools:context=".DiscoverPage">
 
     <include
         android:id="@+id/app_header"
@@ -16,60 +20,293 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <TextView
-        android:id="@+id/tv_my_bar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:layout_marginStart="24dp"
-        android:text="@string/title_my_bar"
-        android:textColor="@color/white"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/app_header" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_bar_items"
+    <!-- Horizontally scrolling equal-width filter pills -->
+    <HorizontalScrollView
+        android:id="@+id/filters_scroller"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="9dp"
-        android:padding="@dimen/grid_spacing"
-        android:clipToPadding="false"
-        app:layout_constraintTop_toBottomOf="@id/tv_my_bar"
+        android:scrollbars="none"
+        android:fillViewport="false"
+        app:layout_constraintTop_toBottomOf="@id/app_header"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginStart="@dimen/margin_side"
-        android:layout_marginEnd="@dimen/margin_side"/>
+        app:layout_constraintEnd_toEndOf="parent">
 
-    <!-- Suggested Cocktails title -->
+        <LinearLayout
+            android:id="@+id/filters_row"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/margin_side"
+            android:paddingEnd="@dimen/margin_side"
+            android:paddingBottom="8dp">
+
+            <!-- Ingredient -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_filter_ingredient"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_width="@dimen/filter_pill_width"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                app:boxBackgroundColor="@color/brown"
+                app:boxStrokeColor="@android:color/transparent"
+                app:boxCornerRadiusTopStart="24dp"
+                app:boxCornerRadiusTopEnd="24dp"
+                app:boxCornerRadiusBottomStart="24dp"
+                app:boxCornerRadiusBottomEnd="24dp"
+                app:endIconMode="dropdown_menu"
+                app:endIconTint="@color/white"
+                app:hintTextColor="@color/white"
+                app:hintEnabled="false"
+                app:placeholderText="@null"
+                app:placeholderTextColor="@null">
+
+                <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                    android:id="@+id/ac_filter_ingredient"
+                    android:layout_width="match_parent"
+                    android:layout_height="36dp"
+                    android:hint="Ingredient"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/white"
+                    android:inputType="none"
+                    android:focusable="false"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:gravity="center"
+                    android:textAlignment="center"
+                    android:drawablePadding="6dp"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:dropDownWidth="wrap_content"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Alcohol Type -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_filter_alcohol"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_width="@dimen/filter_pill_width"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                app:boxBackgroundColor="@color/brown"
+                app:boxStrokeColor="@android:color/transparent"
+                app:boxCornerRadiusTopStart="24dp"
+                app:boxCornerRadiusTopEnd="24dp"
+                app:boxCornerRadiusBottomStart="24dp"
+                app:boxCornerRadiusBottomEnd="24dp"
+                app:endIconMode="dropdown_menu"
+                app:endIconTint="@color/white"
+                app:hintTextColor="@color/white"
+                app:hintEnabled="false"
+                app:placeholderText="@null"
+                app:placeholderTextColor="@null">
+
+                <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                    android:id="@+id/ac_filter_alcohol"
+                    android:layout_width="match_parent"
+                    android:layout_height="36dp"
+                    android:hint="Alcohol Type"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/white"
+                    android:inputType="none"
+                    android:focusable="false"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:gravity="center"
+                    android:textAlignment="center"
+                    android:drawablePadding="6dp"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:dropDownWidth="wrap_content"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Rating -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_filter_rating"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_width="@dimen/filter_pill_width"
+                android:layout_height="wrap_content"
+                app:boxBackgroundColor="@color/brown"
+                app:boxStrokeColor="@android:color/transparent"
+                app:boxCornerRadiusTopStart="24dp"
+                app:boxCornerRadiusTopEnd="24dp"
+                app:boxCornerRadiusBottomStart="24dp"
+                app:boxCornerRadiusBottomEnd="24dp"
+                app:endIconMode="dropdown_menu"
+                app:endIconTint="@color/white"
+                app:hintTextColor="@color/white"
+                app:hintEnabled="false"
+                app:placeholderText="@null"
+                app:placeholderTextColor="@null">
+
+                <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                    android:id="@+id/ac_filter_rating"
+                    android:layout_width="match_parent"
+                    android:layout_height="36dp"
+                    android:hint="Rating"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/white"
+                    android:inputType="none"
+                    android:focusable="false"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:gravity="center"
+                    android:textAlignment="center"
+                    android:drawablePadding="6dp"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:dropDownWidth="wrap_content"/>
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <!-- Sort By section title -->
     <TextView
-        android:id="@+id/tv_suggested_title"
+        android:id="@+id/tv_sort_by"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:layout_marginStart="24dp"
-        android:text="@string/title_suggested"
+        android:text="Sort By"
         android:textColor="@color/white"
         android:textSize="24sp"
         android:textStyle="bold"
+        android:layout_marginStart="@dimen/margin_side"
+        android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/rv_bar_items" />
+        app:layout_constraintTop_toBottomOf="@id/filters_scroller" />
+
+    <!-- Sort By segmented control container: switch to plain layout with custom bg to remove border -->
+    <LinearLayout
+        android:id="@+id/sort_segment_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_side"
+        android:layout_marginEnd="@dimen/margin_side"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/bg_segment_pill"
+        android:padding="6dp"
+        app:layout_constraintTop_toBottomOf="@id/tv_sort_by"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/sort_toggle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="0dp"
+            app:singleSelection="true"
+            app:selectionRequired="true">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_sort_popular"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:text="Popular"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:checked="true"
+                app:backgroundTint="@color/sort_segment_bg"
+                app:iconTint="@color/white"
+                app:strokeColor="@android:color/transparent"
+                app:strokeWidth="0dp"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_sort_newest"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:text="Newest"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                app:backgroundTint="@color/sort_segment_bg"
+                app:iconTint="@color/white"
+                app:strokeColor="@android:color/transparent"
+                app:strokeWidth="0dp"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_sort_top_rated"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:text="Top Rated"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                app:backgroundTint="@color/sort_segment_bg"
+                app:iconTint="@color/white"
+                app:strokeColor="@android:color/transparent"
+                app:strokeWidth="0dp"/>
+        </com.google.android.material.button.MaterialButtonToggleGroup>
+    </LinearLayout>
 
     <!-- Suggested Cocktails grid -->
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_suggested"
+        android:id="@+id/rv_discover_suggested"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="9dp"
         android:padding="@dimen/grid_spacing"
         android:clipToPadding="false"
-        app:layout_constraintTop_toBottomOf="@id/tv_suggested_title"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/sort_segment_container"
         app:layout_constraintBottom_toTopOf="@id/app_footer"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginStart="@dimen/margin_side"
         android:layout_marginEnd="@dimen/margin_side"/>
+
+    <!-- Loading state -->
+    <LinearLayout
+        android:id="@+id/loading_container_discover"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:visibility="visible"
+        app:layout_constraintTop_toBottomOf="@id/sort_segment_container"
+        app:layout_constraintBottom_toTopOf="@id/app_footer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="@dimen/margin_side"
+        android:layout_marginEnd="@dimen/margin_side">
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/loading"
+            android:textColor="@color/white"
+            android:textSize="16sp"/>
+    </LinearLayout>
+
+    <!-- Empty state -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/empty_container_discover"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="0dp"
+        app:cardBackgroundColor="@color/brown"
+        app:layout_constraintTop_toBottomOf="@id/sort_segment_container"
+        app:layout_constraintBottom_toTopOf="@id/app_footer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="@dimen/margin_side"
+        android:layout_marginEnd="@dimen/margin_side">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="32dp"
+            android:text="@string/no_cocktails_found"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"/>
+    </com.google.android.material.card.MaterialCardView>
 
     <!-- Footer navigation bar -->
     <include

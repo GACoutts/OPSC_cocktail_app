@@ -1,8 +1,12 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.MixMate" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+<style name="Base.Theme.MixMate" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Dark theme to match app design -->
+        <item name="android:windowBackground">@color/dark_brown</item>
+        <item name="colorSurface">@color/dark_brown</item>
+        <item name="colorOnSurface">@color/white</item>
+        <item name="colorPrimary">@color/grayish_green</item>
+        <item name="colorOnPrimary">@color/white</item>
     </style>
 
     <style name="Theme.MixMate" parent="Base.Theme.MixMate" />

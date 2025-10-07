@@ -29,11 +29,10 @@
                 android:id="@+id/img_thumb"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:padding="12dp"
+                android:padding="6dp"
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_heart"
-                android:contentDescription="@null"
-                app:tint="@color/white"/>
+                android:contentDescription="@null" />
         </FrameLayout>
 
         <TextView
@@ -52,4 +51,3 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </com.google.android.material.card.MaterialCardView>
-

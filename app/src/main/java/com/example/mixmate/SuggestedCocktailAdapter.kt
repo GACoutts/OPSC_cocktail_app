@@ -6,17 +6,19 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import java.util.Locale
 
 data class SuggestedCocktail(
     val name: String,
     val rating: Double,
     val category: String,
-    val imageRes: Int
+    val imageRes: Int = R.drawable.cosmopolitan, // default placeholder
+    val imageUrl: String? = null
 )
 
 class SuggestedCocktailAdapter(
-    private val items: List<SuggestedCocktail>
+    private val items: MutableList<SuggestedCocktail>
 ) : RecyclerView.Adapter<SuggestedCocktailAdapter.VH>() {
 
     class VH(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -33,10 +35,51 @@ class SuggestedCocktailAdapter(
 
     override fun onBindViewHolder(holder: VH, position: Int) {
         val item = items[position]
-        holder.photo.setImageResource(item.imageRes)
-        holder.name.text = item.name
+        val placeholder = item.imageRes
+        holder.photo.scaleType = android.widget.ImageView.ScaleType.CENTER_CROP
+        if (item.imageUrl.isNullOrBlank()) {
+            holder.photo.setImageResource(placeholder)
+        } else {
+            Glide.with(holder.photo.context)
+                .load(item.imageUrl)
+                .placeholder(placeholder)
+                .error(placeholder)
+                .centerCrop()
+                .into(holder.photo)
+        }
+        holder.name.text = capitalizeWords(item.name)
         holder.meta.text = String.format(Locale.getDefault(), "%.1f • %s", item.rating, item.category)
     }
 
     override fun getItemCount(): Int = items.size
+
+    fun replaceAll(newItems: List<SuggestedCocktail>) {
+        items.clear()
+        items.addAll(newItems)
+        notifyDataSetChanged()
+    }
+}
+
+fun capitalizeWords(raw: String): String = raw.trim()
+    .split(Regex("\\s+"))
+    .filter { it.isNotBlank() }
+    .joinToString(" ") { token ->
+        // Process hyphenated segments separately
+        token.split('-').joinToString("-") { segment ->
+            if (segment.isBlank()) "" else capitalizePossessiveSegment(segment)
+        }
+    }
+
+private fun capitalizePossessiveSegment(segment: String): String {
+    val parts = segment.split("'")
+    if (parts.size == 1) {
+        return parts[0].lowercase().replaceFirstChar { c -> if (c.isLowerCase()) c.titlecase(Locale.getDefault()) else c.toString() }
+    }
+    return parts.mapIndexed { index, part ->
+        if (part.isBlank()) "" else when {
+            index == 0 -> part.lowercase().replaceFirstChar { c -> if (c.isLowerCase()) c.titlecase(Locale.getDefault()) else c.toString() }
+            part.length == 1 -> part.lowercase() // possessive 's
+            else -> part.lowercase().replaceFirstChar { c -> if (c.isLowerCase()) c.titlecase(Locale.getDefault()) else c.toString() }
+        }
+    }.joinToString("'")
 }
