@@ -6,6 +6,7 @@ import android.widget.EditText
 import com.example.mixmate.ui.BaseActivity
 import com.example.mixmate.ui.FooterTab
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -26,7 +27,8 @@ class FavouritesActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_favourites)
 
-        vm = ViewModelProvider(this)[FavouritesViewModel::class.java]
+        val userId = UserManager.getCurrentUserUid() ?: UserManager.getUsername(this)
+        vm = ViewModelProvider(this, FavouritesViewModelFactory(userId))[FavouritesViewModel::class.java]
 
         val search = findViewById<EditText>(R.id.etSearch)
         val list = findViewById<RecyclerView>(R.id.rvFavs)
@@ -54,5 +56,15 @@ class FavouritesActivity : BaseActivity() {
                 adapter.submitList(items)
             }
         }
+    }
+}
+
+class FavouritesViewModelFactory(private val userId: String) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(FavouritesViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
+            return FavouritesViewModel(userId) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

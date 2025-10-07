@@ -6,10 +6,11 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
-import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.ViewModel
 import com.bumptech.glide.Glide
 import com.example.mixmate.R
+import com.example.mixmate.UserManager
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import androidx.lifecycle.ViewModelProvider
@@ -17,11 +18,14 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 
 class RecipeDetailsActivity : ComponentActivity() {
 
-    private val vm: RecipeDetailsViewModel by viewModels()
+    private lateinit var vm: RecipeDetailsViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_recipe_details)
+
+        val userId = UserManager.getCurrentUserUid() ?: "default_user"
+        vm = ViewModelProvider(this, RecipeDetailsViewModelFactory(userId))[RecipeDetailsViewModel::class.java]
 
         val ivPhoto = findViewById<ImageView>(R.id.ivPhoto)
         val tvName = findViewById<TextView>(R.id.tvName)
@@ -65,5 +69,15 @@ class RecipeDetailsActivity : ComponentActivity() {
         }
 
         btnFav.setOnClickListener { vm.toggleFavorite() }
+    }
+}
+
+class RecipeDetailsViewModelFactory(private val userId: String) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(RecipeDetailsViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
+            return RecipeDetailsViewModel(userId) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
