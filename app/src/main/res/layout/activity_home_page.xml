@@ -41,10 +41,10 @@
                 android:layout_height="?attr/actionBarSize"
                 android:background="@android:color/transparent"
                 app:layout_collapseMode="pin"
-                app:title="MixMate"
-                app:titleTextColor="@android:color/white"
                 app:logo="@drawable/mix_mate_transparent_logo"
-                app:menu="@menu/toolbar_menu" />
+                app:menu="@menu/toolbar_menu"
+                app:title="MixMate"
+                app:titleTextColor="@android:color/white" />
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
@@ -59,14 +59,13 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     <!-- Bottom Navigation -->
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomNav"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_gravity="bottom"
-        android:background="#1E1E1E"
-        app:itemIconTint="@color/selector_nav_item"
-        app:itemTextColor="@color/selector_nav_item"
-        app:menu="@menu/bottom_nav_menu" />
+    <include
+        android:id="@+id/app_footer"
+        layout="@layout/include_app_footer"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/footer_height"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
