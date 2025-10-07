@@ -57,6 +57,8 @@
         android:contentDescription="@string/cd_favourites"
         android:src="@drawable/sel_favourites"
         app:tint="@color/nav_icon_tint"
+        android:clickable="true"
+        android:focusable="true"
         app:layout_constraintStart_toEndOf="@id/nav_list"
         app:layout_constraintEnd_toStartOf="@id/nav_profile"
         app:layout_constraintTop_toTopOf="parent"

@@ -21,7 +21,8 @@ class MixMateApp : Application() {
         )
             .fallbackToDestructiveMigration()
             .build()
-            
+        println("MixMateApp started, DB created")
+
         // Initialize Firebase Auth listener for user state management
         UserManager.initializeAuthListener(this)
     }
