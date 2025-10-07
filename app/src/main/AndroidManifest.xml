@@ -19,8 +19,6 @@
         android:theme="@style/Theme.MixMate"
         tools:targetApi="31">
 
-
-
         <activity
             android:name=".SignUpActivity"
             android:exported="false"
@@ -33,9 +31,6 @@
             android:exported="false" />
         <activity
             android:name=".SubmitRecipeActivity"
-            android:exported="false" />
-        <activity
-            android:name=".RecipeDetailActivity"
             android:exported="false" />
         <activity
             android:name=".ProfileActivity"
@@ -60,20 +55,13 @@
         </activity>
 
         <activity
-            android:name=".ui.details.RecipeDetailsActivity"
-            android:exported="false" />
-        <activity
             android:name=".FavouritesActivity"
             android:exported="false" />
-
-
 
         <activity
             android:name=".MyBar"
             android:exported="false" />
         <!-- If master already had a different details screen, keep it too -->
-        <activity android:name=".RecipeDetailActivity" android:exported="false" />
-
         <activity
             android:name=".RecipeDetailActivity"
             android:exported="false" />
