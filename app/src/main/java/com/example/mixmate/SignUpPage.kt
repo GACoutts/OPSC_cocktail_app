@@ -9,13 +9,18 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.google.firebase.auth.FirebaseAuth
+import java.time.LocalDate
+import java.time.Period
 
 class SignUpPage : AppCompatActivity() {
 
+    private lateinit var auth: FirebaseAuth
     private lateinit var edtxName: EditText
     private lateinit var edtxSurname: EditText
-    private lateinit var edtxUsername: EditText
+    private lateinit var edtxEmail: EditText
     private lateinit var edtxPassword: EditText
+    private lateinit var edtxDate: EditText
     private lateinit var btnSignUp: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,63 +33,61 @@ class SignUpPage : AppCompatActivity() {
             insets
         }
 
+        auth = FirebaseAuth.getInstance()
         initializeViews()
         setupClickListeners()
     }
-    
+
     private fun initializeViews() {
         edtxName = findViewById(R.id.edtxName)
         edtxSurname = findViewById(R.id.edtxSurname)
-        edtxUsername = findViewById(R.id.edtxWantUsername)
+        edtxEmail = findViewById(R.id.edtxEmail)
         edtxPassword = findViewById(R.id.edtxWantPassword)
+        edtxDate = findViewById(R.id.edtxDate)
         btnSignUp = findViewById(R.id.btnSignUp)
     }
-    
+
     private fun setupClickListeners() {
-        btnSignUp.setOnClickListener {
-            handleSignUp()
-        }
+        btnSignUp.setOnClickListener { handleSignUp() }
     }
-    
+
     private fun handleSignUp() {
         val name = edtxName.text.toString().trim()
         val surname = edtxSurname.text.toString().trim()
-        val username = edtxUsername.text.toString().trim()
+        val email = edtxEmail.text.toString().trim()
         val password = edtxPassword.text.toString().trim()
-        
-        // Basic validation
-        when {
-            name.isEmpty() -> {
-                edtxName.error = "Name is required"
-                edtxName.requestFocus()
-                return
-            }
-            surname.isEmpty() -> {
-                edtxSurname.error = "Surname is required"
-                edtxSurname.requestFocus()
-                return
-            }
-            username.isEmpty() -> {
-                edtxUsername.error = "Username is required"
-                edtxUsername.requestFocus()
-                return
-            }
-            password.length < 6 -> {
-                edtxPassword.error = "Password must be at least 6 characters"
-                edtxPassword.requestFocus()
-                return
-            }
+        val dateInput = edtxDate.text.toString().trim()
+
+        if (name.isEmpty() || surname.isEmpty() || email.isEmpty() || password.length < 6 || dateInput.isEmpty()) {
+            Toast.makeText(this, "Please fill all fields correctly", Toast.LENGTH_SHORT).show()
+            return
         }
-        
-        // Save user data
-        UserManager.saveUserData(this, name, surname, username)
-        
-        // Show success message
-        Toast.makeText(this, "Account created successfully!", Toast.LENGTH_SHORT).show()
-        
-        // Navigate to main app (DiscoverPage)
-        val intent = Intent(this, DiscoverPage::class.java)
-        startActivity(intent)
-        finish() // Close signup page
+
+        // --- AGE VALIDATION ---
+        try {
+            val birthDate = LocalDate.parse(dateInput) // expects "YYYY-MM-DD"
+            val today = LocalDate.now()
+            val age = Period.between(birthDate, today).years
+
+            if (age < 18) {
+                Toast.makeText(this, "You must be at least 18 years old to sign up.", Toast.LENGTH_SHORT).show()
+                return
+            }
+        } catch (e: Exception) {
+            Toast.makeText(this, "Invalid date format. Use YYYY-MM-DD", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // --- CREATE USER ---
+        auth.createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Toast.makeText(this, "Account created successfully!", Toast.LENGTH_SHORT).show()
+                    startActivity(Intent(this, DiscoverPage::class.java))
+                    finish()
+                } else {
+                    Toast.makeText(this, "Error: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
     }
 }
