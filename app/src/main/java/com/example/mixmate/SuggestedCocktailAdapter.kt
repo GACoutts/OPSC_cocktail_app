@@ -7,6 +7,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
+import com.example.mixmate.data.local.FavoriteEntity
 import java.util.Locale
 
 data class SuggestedCocktail(
@@ -14,18 +17,22 @@ data class SuggestedCocktail(
     val rating: Double,
     val category: String,
     val imageRes: Int = R.drawable.cosmopolitan,   // local fallback
-    val imageUrl: String? = null                   // remote image (optional)
+    val imageUrl: String? = null,                  // remote image (optional)
+    val cocktailId: String? = null,                // for favorites functionality
+    var isFavorite: Boolean = false                // favorite status
 )
 
 class SuggestedCocktailAdapter(
     private val items: MutableList<SuggestedCocktail>,
-    private val onItemClick: ((SuggestedCocktail) -> Unit)? = null
+    private val onItemClick: ((SuggestedCocktail) -> Unit)? = null,
+    private val onFavoriteClick: ((SuggestedCocktail, Boolean) -> Unit)? = null
 ) : RecyclerView.Adapter<SuggestedCocktailAdapter.VH>() {
 
     class VH(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val photo: ImageView = itemView.findViewById(R.id.img_photo)
         val name: TextView = itemView.findViewById(R.id.tv_name)
         val meta: TextView = itemView.findViewById(R.id.tv_meta)
+        val favoriteIcon: ImageView = itemView.findViewById(R.id.iv_favorite)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
@@ -55,6 +62,14 @@ class SuggestedCocktailAdapter(
         holder.name.text = capitalizeWords(item.name)
         holder.meta.text = String.format(Locale.getDefault(), "%.1f • %s", item.rating, item.category)
 
+        // Favorite icon
+        updateFavoriteIcon(holder.favoriteIcon, item.isFavorite)
+        holder.favoriteIcon.setOnClickListener {
+            item.isFavorite = !item.isFavorite
+            updateFavoriteIcon(holder.favoriteIcon, item.isFavorite)
+            onFavoriteClick?.invoke(item, item.isFavorite)
+        }
+
         // Click → open details (either delegate to lambda or default to RecipeDetailActivity)
         holder.itemView.setOnClickListener {
             onItemClick?.invoke(item) ?: run {
@@ -74,6 +89,14 @@ class SuggestedCocktailAdapter(
         items.clear()
         items.addAll(newItems)
         notifyDataSetChanged()
+    }
+
+    private fun updateFavoriteIcon(iconView: ImageView, isFavorite: Boolean) {
+        if (isFavorite) {
+            iconView.setImageResource(R.drawable.ic_heart_filled)
+        } else {
+            iconView.setImageResource(R.drawable.ic_heart_outline)
+        }
     }
 }
 

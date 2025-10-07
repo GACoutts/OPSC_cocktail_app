@@ -1,37 +1,29 @@
 package com.example.mixmate
 
 import android.os.Bundle
-import androidx.core.content.ContextCompat
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import android.os.Build
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.widget.ArrayAdapter
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import android.widget.ImageView
 import android.widget.Toast
 import android.content.Intent
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.lifecycle.lifecycleScope
 import android.view.View
 import kotlinx.coroutines.launch
-import com.example.mixmate.ui.BaseActivity
-import com.example.mixmate.ui.FooterTab
+import com.example.mixmate.data.local.FavoriteEntity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
-class DiscoverPage : BaseActivity() {
-
-    override fun activeTab() = FooterTab.DISCOVER
-
+class DiscoverPage : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // Ensure content is laid out below the system status bar
         WindowCompat.setDecorFitsSystemWindows(window, true)
         setContentView(R.layout.activity_discover_page)
-
-        // Match system nav bar to footer (light icons)
-        val footerColor = ContextCompat.getColor(this, R.color.dark_brown_navbar)
-        window.navigationBarColor = footerColor
         WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightNavigationBars = false
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             window.isNavigationBarContrastEnforced = false
@@ -54,7 +46,9 @@ class DiscoverPage : BaseActivity() {
         navList?.setOnClickListener {
             startActivity(Intent(this, MyBar::class.java))
         }
-        navFav?.setOnClickListener { Toast.makeText(this, "Favourites coming soon", Toast.LENGTH_SHORT).show() }
+        navFav?.setOnClickListener {
+            startActivity(Intent(this, FavouritesActivity::class.java))
+        }
         navProfile?.setOnClickListener {
             startActivity(Intent(this, ProfileActivity::class.java))
         }
@@ -80,45 +74,25 @@ class DiscoverPage : BaseActivity() {
         ratingView?.setOnClickListener { ratingView.showDropDown() }
 
         // Suggested Cocktails grid (API backed with loading / empty states)
+        val rvSuggested: RecyclerView = findViewById(R.id.rv_suggested)
         val loadingContainer: View = findViewById(R.id.loading_container_discover)
         val emptyContainer: View = findViewById(R.id.empty_container_discover)
-        // --- My Bar grid ---
-        val recycler: RecyclerView = findViewById(R.id.rv_bar_items)
-        // ----- My Bar chips grid -----
         val spanCount = 2
-        recycler.layoutManager = GridLayoutManager(this, spanCount)
-        recycler.setHasFixedSize(true)
-        val spacingPx = resources.getDimensionPixelSize(R.dimen.grid_spacing)
-
-        recycler.layoutManager = GridLayoutManager(this, spanCount)
-        recycler.setHasFixedSize(true)
-        recycler.addItemDecoration(GridSpacingItemDecoration(spanCount, spacingPx, includeEdge = false))
-
-        val items = listOf(
-            BarItem("Vodka", R.drawable.tequila),
-            BarItem("Rum", R.drawable.tequila),
-            BarItem("Tequila", R.drawable.tequila),
-            BarItem("Whiskey", R.drawable.tequila),
-            BarItem("Gin", R.drawable.tequila),
-            BarItem("Juice", R.drawable.tequila)
-        )
-        recycler.adapter = BarItemAdapter(items)
-
-        // ----- Suggested cocktails grid -----
-        val rvSuggested: RecyclerView = findViewById(R.id.rv_suggested)
         rvSuggested.layoutManager = GridLayoutManager(this, spanCount)
         rvSuggested.setHasFixedSize(true)
+        val spacingPx = resources.getDimensionPixelSize(R.dimen.grid_spacing)
         rvSuggested.addItemDecoration(GridSpacingItemDecoration(spanCount, spacingPx, includeEdge = false))
 
-        val suggested = listOf(
-            SuggestedCocktail("Cosmopolitan", 4.5, "Vodka", R.drawable.cosmopolitan),
-            SuggestedCocktail("Mojito", 4.2, "Rum", R.drawable.cosmopolitan),
-            SuggestedCocktail("Margarita", 4.7, "Tequila", R.drawable.cosmopolitan),
-            SuggestedCocktail("Old Fashioned", 4.6, "Whiskey", R.drawable.cosmopolitan)
+        val suggestedAdapter = SuggestedCocktailAdapter(
+            items = mutableListOf(),
+            onItemClick = null, // Use default behavior
+            onFavoriteClick = { cocktail, isFavorite ->
+                // Handle favorite toggle
+                lifecycleScope.launch {
+                    handleFavoriteToggle(cocktail, isFavorite)
+                }
+            }
         )
-        // Adapter expects a MutableList in your project — convert once here
-        rvSuggested.adapter = SuggestedCocktailAdapter(suggested.toMutableList())
-        val suggestedAdapter = SuggestedCocktailAdapter(mutableListOf())
         rvSuggested.adapter = suggestedAdapter
 
         fun showLoading() {
@@ -146,6 +120,30 @@ class DiscoverPage : BaseActivity() {
                 showContent()
             } else {
                 showEmpty()
+            }
+        }
+    }
+
+    private suspend fun handleFavoriteToggle(cocktail: SuggestedCocktail, isFavorite: Boolean) {
+        withContext(Dispatchers.IO) {
+            val userId = UserManager.getCurrentUserUid() ?: UserManager.getUsername(this@DiscoverPage)
+            val favoriteDao = MixMateApp.db.favoriteDao()
+            
+            if (isFavorite) {
+                // Add to favorites
+                val favoriteEntity = FavoriteEntity(
+                    cocktailId = cocktail.cocktailId ?: cocktail.name.hashCode().toString(),
+                    name = cocktail.name,
+                    imageUrl = cocktail.imageUrl ?: "",
+                    ingredients = "", // Will be populated when recipe details are loaded
+                    instructions = "", // Will be populated when recipe details are loaded
+                    userId = userId
+                )
+                favoriteDao.upsert(favoriteEntity)
+            } else {
+                // Remove from favorites
+                val cocktailId = cocktail.cocktailId ?: cocktail.name.hashCode().toString()
+                favoriteDao.deleteById(cocktailId, userId)
             }
         }
     }

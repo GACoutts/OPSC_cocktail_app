@@ -55,6 +55,7 @@
     <string name="no_cocktails_found">No cocktails found</string>
     <string name="not_specified">Not specified</string>
     <string name="minutes_fmt">%1$d mins</string>
+    <string name="favorite">Add to favorites</string>
 
 
 
