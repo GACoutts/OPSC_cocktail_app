@@ -1,28 +1,26 @@
 package com.example.mixmate
 
+import android.os.Build
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import androidx.core.content.ContextCompat
-import android.widget.ImageView
-import android.widget.Toast
-import android.content.Intent
-import android.os.Build
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.mixmate.ui.BaseActivity
 import com.example.mixmate.ui.FooterTab
 
 class DiscoverPage : BaseActivity() {
+
     override fun activeTab() = FooterTab.DISCOVER
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Ensure content is laid out below the system status bar
+        // Layout below the status bar
         WindowCompat.setDecorFitsSystemWindows(window, true)
         setContentView(R.layout.activity_discover_page)
 
-        // Make the system nav bar match the footer color and keep icons light
+        // Match system nav bar to footer (light icons)
         val footerColor = ContextCompat.getColor(this, R.color.dark_brown_navbar)
         window.navigationBarColor = footerColor
         WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightNavigationBars = false
@@ -30,34 +28,14 @@ class DiscoverPage : BaseActivity() {
             window.isNavigationBarContrastEnforced = false
         }
 
-        // Footer selection state
-        val navHome = findViewById<ImageView>(R.id.nav_home)
-        val navDiscover = findViewById<ImageView>(R.id.nav_discover)
-        val navList = findViewById<ImageView>(R.id.nav_list)
-        val navFav = findViewById<ImageView>(R.id.nav_favourites)
-        val navProfile = findViewById<ImageView>(R.id.nav_profile)
-        navDiscover?.isSelected = true
-
-        navHome?.setOnClickListener {
-            if (!navHome.isSelected) {
-                startActivity(Intent(this, HomePage::class.java))
-                finish()
-            }
-        }
-        navDiscover?.setOnClickListener {
-            // Already here
-        }
-        navList?.setOnClickListener { Toast.makeText(this, "List coming soon", Toast.LENGTH_SHORT).show() }
-        navFav?.setOnClickListener { Toast.makeText(this, "Favourites coming soon", Toast.LENGTH_SHORT).show() }
-        navProfile?.setOnClickListener { Toast.makeText(this, "Profile coming soon", Toast.LENGTH_SHORT).show() }
-
-        val recycler: RecyclerView = findViewById(R.id.rv_bar_items)
+        // ----- My Bar chips grid -----
         val spanCount = 2
-        recycler.layoutManager = GridLayoutManager(this, spanCount)
-        recycler.setHasFixedSize(true)
-
         val spacingPx = resources.getDimensionPixelSize(R.dimen.grid_spacing)
-        recycler.addItemDecoration(GridSpacingItemDecoration(spanCount, spacingPx, includeEdge = false))
+
+        val rvBar: RecyclerView = findViewById(R.id.rv_bar_items)
+        rvBar.layoutManager = GridLayoutManager(this, spanCount)
+        rvBar.setHasFixedSize(true)
+        rvBar.addItemDecoration(GridSpacingItemDecoration(spanCount, spacingPx, includeEdge = false))
 
         val items = listOf(
             BarItem("Vodka", R.drawable.tequila),
@@ -67,9 +45,9 @@ class DiscoverPage : BaseActivity() {
             BarItem("Gin", R.drawable.tequila),
             BarItem("Juice", R.drawable.tequila)
         )
-        recycler.adapter = BarItemAdapter(items)
+        rvBar.adapter = BarItemAdapter(items)
 
-        // Suggested Cocktails section
+        // ----- Suggested cocktails grid -----
         val rvSuggested: RecyclerView = findViewById(R.id.rv_suggested)
         rvSuggested.layoutManager = GridLayoutManager(this, spanCount)
         rvSuggested.setHasFixedSize(true)
@@ -81,6 +59,7 @@ class DiscoverPage : BaseActivity() {
             SuggestedCocktail("Margarita", 4.7, "Tequila", R.drawable.cosmopolitan),
             SuggestedCocktail("Old Fashioned", 4.6, "Whiskey", R.drawable.cosmopolitan)
         )
-        rvSuggested.adapter = SuggestedCocktailAdapter(suggested)
+        // Adapter expects a MutableList in your project — convert once here
+        rvSuggested.adapter = SuggestedCocktailAdapter(suggested.toMutableList())
     }
 }

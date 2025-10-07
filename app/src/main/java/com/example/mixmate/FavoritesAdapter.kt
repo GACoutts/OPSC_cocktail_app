@@ -18,6 +18,10 @@ class FavoritesAdapter(
     private val onDelete: (FavoriteEntity) -> Unit
 ) : ListAdapter<FavoriteEntity, FavoritesAdapter.VH>(DIFF) {
 
+    init {
+        setHasStableIds(true)
+    }
+
     object DIFF : DiffUtil.ItemCallback<FavoriteEntity>() {
         override fun areItemsTheSame(o: FavoriteEntity, n: FavoriteEntity) = o.cocktailId == n.cocktailId
         override fun areContentsTheSame(o: FavoriteEntity, n: FavoriteEntity) = o == n
@@ -28,6 +32,9 @@ class FavoritesAdapter(
         val title: TextView = v.findViewById(R.id.tvTitle)
         val remove: ImageButton = v.findViewById(R.id.btnRemove)
     }
+
+    override fun getItemId(position: Int): Long =
+        getItem(position).cocktailId.hashCode().toLong()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.item_favorite, parent, false)
@@ -40,11 +47,13 @@ class FavoritesAdapter(
         h.title.text = item.name
         h.image.contentDescription = item.name
 
-        // Ensure images are cached to disk so they show when offline
+        // Cache to disk so images show offline
         Glide.with(h.itemView)
             .load(item.imageUrl)
             .diskCacheStrategy(DiskCacheStrategy.ALL)
             .centerCrop()
+            .placeholder(R.drawable.ic_default_cocktail)
+            .error(R.drawable.ic_default_cocktail)
             .into(h.image)
 
         h.itemView.setOnClickListener {
@@ -57,8 +66,8 @@ class FavoritesAdapter(
         }
     }
 
-    // Good hygiene: clear Glide when a view is recycled
     override fun onViewRecycled(holder: VH) {
+        // Prevent image flicker/memory leaks when views are reused
         Glide.with(holder.itemView).clear(holder.image)
         super.onViewRecycled(holder)
     }

@@ -40,5 +40,10 @@
 
         <!-- If master already had a different details screen, keep it too -->
         <activity android:name=".RecipeDetailActivity" android:exported="false" />
+
+        <activity
+            android:name=".RecipeDetailActivity"
+            android:exported="false" />
+
     </application>
 </manifest>
