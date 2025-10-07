@@ -9,6 +9,7 @@
     android:background="@color/dark_brown"
     tools:context=".DiscoverPage">
 
+    <!-- Header -->
     <include
         android:id="@+id/app_header"
         layout="@layout/include_app_header"
@@ -18,15 +19,14 @@
         android:layout_marginEnd="@dimen/margin_side"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"/>
 
-    <!-- Horizontally scrolling equal-width filter pills -->
+    <!-- Filter pills (safe defaults; no custom drawables) -->
     <HorizontalScrollView
         android:id="@+id/filters_scroller"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:scrollbars="none"
-        android:fillViewport="false"
         app:layout_constraintTop_toBottomOf="@id/app_header"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -44,10 +44,10 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/til_filter_ingredient"
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                android:layout_width="@dimen/filter_pill_width"
+                android:layout_width="120dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
-                app:boxBackgroundColor="@color/brown"
+                app:boxBackgroundColor="@color/dark_brown_navbar"
                 app:boxStrokeColor="@android:color/transparent"
                 app:boxCornerRadiusTopStart="24dp"
                 app:boxCornerRadiusTopEnd="24dp"
@@ -55,10 +55,7 @@
                 app:boxCornerRadiusBottomEnd="24dp"
                 app:endIconMode="dropdown_menu"
                 app:endIconTint="@color/white"
-                app:hintTextColor="@color/white"
-                app:hintEnabled="false"
-                app:placeholderText="@null"
-                app:placeholderTextColor="@null">
+                app:hintEnabled="false">
 
                 <com.google.android.material.textfield.MaterialAutoCompleteTextView
                     android:id="@+id/ac_filter_ingredient"
@@ -67,26 +64,23 @@
                     android:hint="Ingredient"
                     android:textColor="@color/white"
                     android:textColorHint="@color/white"
-                    android:inputType="none"
                     android:focusable="false"
-                    android:maxLines="1"
+                    android:inputType="none"
                     android:singleLine="true"
                     android:gravity="center"
                     android:textAlignment="center"
-                    android:drawablePadding="6dp"
                     android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:dropDownWidth="wrap_content"/>
+                    android:paddingEnd="10dp"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Alcohol Type -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/til_filter_alcohol"
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                android:layout_width="@dimen/filter_pill_width"
+                android:layout_width="120dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
-                app:boxBackgroundColor="@color/brown"
+                app:boxBackgroundColor="@color/dark_brown_navbar"
                 app:boxStrokeColor="@android:color/transparent"
                 app:boxCornerRadiusTopStart="24dp"
                 app:boxCornerRadiusTopEnd="24dp"
@@ -94,10 +88,7 @@
                 app:boxCornerRadiusBottomEnd="24dp"
                 app:endIconMode="dropdown_menu"
                 app:endIconTint="@color/white"
-                app:hintTextColor="@color/white"
-                app:hintEnabled="false"
-                app:placeholderText="@null"
-                app:placeholderTextColor="@null">
+                app:hintEnabled="false">
 
                 <com.google.android.material.textfield.MaterialAutoCompleteTextView
                     android:id="@+id/ac_filter_alcohol"
@@ -106,25 +97,22 @@
                     android:hint="Alcohol Type"
                     android:textColor="@color/white"
                     android:textColorHint="@color/white"
-                    android:inputType="none"
                     android:focusable="false"
-                    android:maxLines="1"
+                    android:inputType="none"
                     android:singleLine="true"
                     android:gravity="center"
                     android:textAlignment="center"
-                    android:drawablePadding="6dp"
                     android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:dropDownWidth="wrap_content"/>
+                    android:paddingEnd="10dp"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Rating -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/til_filter_rating"
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                android:layout_width="@dimen/filter_pill_width"
+                android:layout_width="120dp"
                 android:layout_height="wrap_content"
-                app:boxBackgroundColor="@color/brown"
+                app:boxBackgroundColor="@color/dark_brown_navbar"
                 app:boxStrokeColor="@android:color/transparent"
                 app:boxCornerRadiusTopStart="24dp"
                 app:boxCornerRadiusTopEnd="24dp"
@@ -132,10 +120,7 @@
                 app:boxCornerRadiusBottomEnd="24dp"
                 app:endIconMode="dropdown_menu"
                 app:endIconTint="@color/white"
-                app:hintTextColor="@color/white"
-                app:hintEnabled="false"
-                app:placeholderText="@null"
-                app:placeholderTextColor="@null">
+                app:hintEnabled="false">
 
                 <com.google.android.material.textfield.MaterialAutoCompleteTextView
                     android:id="@+id/ac_filter_rating"
@@ -144,53 +129,77 @@
                     android:hint="Rating"
                     android:textColor="@color/white"
                     android:textColorHint="@color/white"
-                    android:inputType="none"
                     android:focusable="false"
-                    android:maxLines="1"
+                    android:inputType="none"
                     android:singleLine="true"
                     android:gravity="center"
                     android:textAlignment="center"
-                    android:drawablePadding="6dp"
                     android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:dropDownWidth="wrap_content"/>
+                    android:paddingEnd="10dp"/>
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
     </HorizontalScrollView>
 
-    <!-- Sort By section title -->
+    <!-- My Bar title -->
+    <TextView
+        android:id="@+id/tv_my_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_side"
+        android:layout_marginTop="8dp"
+        android:text="My Bar"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/filters_scroller"/>
+
+    <!-- My Bar grid -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_bar_items"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_side"
+        android:layout_marginEnd="@dimen/margin_side"
+        android:layout_marginTop="9dp"
+        android:clipToPadding="false"
+        android:padding="@dimen/grid_spacing"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_my_bar"/>
+
+    <!-- Sort By title -->
     <TextView
         android:id="@+id/tv_sort_by"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_side"
+        android:layout_marginTop="16dp"
         android:text="Sort By"
         android:textColor="@color/white"
         android:textSize="24sp"
         android:textStyle="bold"
-        android:layout_marginStart="@dimen/margin_side"
-        android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/filters_scroller" />
+        app:layout_constraintTop_toBottomOf="@id/rv_bar_items"/>
 
-    <!-- Sort By segmented control container: switch to plain layout with custom bg to remove border -->
+    <!-- Sort segmented control (no custom bg) -->
     <LinearLayout
         android:id="@+id/sort_segment_container"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_side"
         android:layout_marginEnd="@dimen/margin_side"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/bg_segment_pill"
+        android:layout_marginTop="8dp"
+        android:background="@color/dark_brown_navbar"
         android:padding="6dp"
-        app:layout_constraintTop_toBottomOf="@id/tv_sort_by"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_sort_by">
 
         <com.google.android.material.button.MaterialButtonToggleGroup
             android:id="@+id/sort_toggle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="0dp"
             app:singleSelection="true"
             app:selectionRequired="true">
 
@@ -204,8 +213,7 @@
                 android:textAllCaps="false"
                 android:textColor="@color/white"
                 android:checked="true"
-                app:backgroundTint="@color/sort_segment_bg"
-                app:iconTint="@color/white"
+                app:backgroundTint="@color/dark_brown_navbar"
                 app:strokeColor="@android:color/transparent"
                 app:strokeWidth="0dp"/>
 
@@ -218,8 +226,7 @@
                 android:text="Newest"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
-                app:backgroundTint="@color/sort_segment_bg"
-                app:iconTint="@color/white"
+                app:backgroundTint="@color/dark_brown_navbar"
                 app:strokeColor="@android:color/transparent"
                 app:strokeWidth="0dp"/>
 
@@ -232,8 +239,7 @@
                 android:text="Top Rated"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
-                app:backgroundTint="@color/sort_segment_bg"
-                app:iconTint="@color/white"
+                app:backgroundTint="@color/dark_brown_navbar"
                 app:strokeColor="@android:color/transparent"
                 app:strokeWidth="0dp"/>
         </com.google.android.material.button.MaterialButtonToggleGroup>
@@ -241,19 +247,18 @@
 
     <!-- Suggested Cocktails grid -->
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_discover_suggested"
+        android:id="@+id/rv_suggested"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginStart="@dimen/margin_side"
+        android:layout_marginEnd="@dimen/margin_side"
         android:layout_marginTop="9dp"
-        android:padding="@dimen/grid_spacing"
         android:clipToPadding="false"
-        android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/sort_segment_container"
-        app:layout_constraintBottom_toTopOf="@id/app_footer"
+        android:padding="@dimen/grid_spacing"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginStart="@dimen/margin_side"
-        android:layout_marginEnd="@dimen/margin_side"/>
+        app:layout_constraintTop_toBottomOf="@id/sort_segment_container"
+        app:layout_constraintBottom_toTopOf="@id/app_footer"/>
 
     <!-- Loading state -->
     <LinearLayout
@@ -262,21 +267,23 @@
         android:layout_height="0dp"
         android:orientation="vertical"
         android:gravity="center"
-        android:visibility="visible"
-        app:layout_constraintTop_toBottomOf="@id/sort_segment_container"
-        app:layout_constraintBottom_toTopOf="@id/app_footer"
+        android:visibility="gone"
+        android:layout_marginStart="@dimen/margin_side"
+        android:layout_marginEnd="@dimen/margin_side"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginStart="@dimen/margin_side"
-        android:layout_marginEnd="@dimen/margin_side">
+        app:layout_constraintTop_toBottomOf="@id/sort_segment_container"
+        app:layout_constraintBottom_toTopOf="@id/app_footer">
+
         <ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:text="@string/loading"
+            android:text="Loading…"
             android:textColor="@color/white"
             android:textSize="16sp"/>
     </LinearLayout>
@@ -287,20 +294,21 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:visibility="gone"
+        android:layout_marginStart="@dimen/margin_side"
+        android:layout_marginEnd="@dimen/margin_side"
         app:cardCornerRadius="16dp"
         app:cardElevation="0dp"
-        app:cardBackgroundColor="@color/brown"
-        app:layout_constraintTop_toBottomOf="@id/sort_segment_container"
-        app:layout_constraintBottom_toTopOf="@id/app_footer"
+        app:cardBackgroundColor="@color/dark_brown_navbar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginStart="@dimen/margin_side"
-        android:layout_marginEnd="@dimen/margin_side">
+        app:layout_constraintTop_toBottomOf="@id/sort_segment_container"
+        app:layout_constraintBottom_toTopOf="@id/app_footer">
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="32dp"
-            android:text="@string/no_cocktails_found"
+            android:text="No cocktails found"
             android:textAlignment="center"
             android:gravity="center"
             android:textColor="@color/white"
@@ -308,7 +316,7 @@
             android:textStyle="bold"/>
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Footer navigation bar -->
+    <!-- Footer -->
     <include
         android:id="@+id/app_footer"
         layout="@layout/include_app_footer"
@@ -316,6 +324,5 @@
         android:layout_height="@dimen/footer_height"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
-
+        app:layout_constraintBottom_toBottomOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

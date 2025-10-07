@@ -13,12 +13,13 @@ data class SuggestedCocktail(
     val name: String,
     val rating: Double,
     val category: String,
-    val imageRes: Int = R.drawable.cosmopolitan, // default placeholder
-    val imageUrl: String? = null
+    val imageRes: Int = R.drawable.cosmopolitan,   // local fallback
+    val imageUrl: String? = null                   // remote image (optional)
 )
 
 class SuggestedCocktailAdapter(
-    private val items: MutableList<SuggestedCocktail>
+    private val items: MutableList<SuggestedCocktail>,
+    private val onItemClick: ((SuggestedCocktail) -> Unit)? = null
 ) : RecyclerView.Adapter<SuggestedCocktailAdapter.VH>() {
 
     class VH(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -35,20 +36,36 @@ class SuggestedCocktailAdapter(
 
     override fun onBindViewHolder(holder: VH, position: Int) {
         val item = items[position]
-        val placeholder = item.imageRes
-        holder.photo.scaleType = android.widget.ImageView.ScaleType.CENTER_CROP
+
+        // Image
+        holder.photo.scaleType = ImageView.ScaleType.CENTER_CROP
+        val ph = item.imageRes
         if (item.imageUrl.isNullOrBlank()) {
-            holder.photo.setImageResource(placeholder)
+            holder.photo.setImageResource(ph)
         } else {
             Glide.with(holder.photo.context)
                 .load(item.imageUrl)
-                .placeholder(placeholder)
-                .error(placeholder)
+                .placeholder(ph)
+                .error(ph)
                 .centerCrop()
                 .into(holder.photo)
         }
+
+        // Text
         holder.name.text = capitalizeWords(item.name)
         holder.meta.text = String.format(Locale.getDefault(), "%.1f • %s", item.rating, item.category)
+
+        // Click → open details (either delegate to lambda or default to RecipeDetailActivity)
+        holder.itemView.setOnClickListener {
+            onItemClick?.invoke(item) ?: run {
+                RecipeDetailActivity.launch(
+                    context = holder.itemView.context,
+                    name = item.name,
+                    imageUrl = item.imageUrl,
+                    externalId = null
+                )
+            }
+        }
     }
 
     override fun getItemCount(): Int = items.size
@@ -59,6 +76,8 @@ class SuggestedCocktailAdapter(
         notifyDataSetChanged()
     }
 }
+
+/* -------- helpers -------- */
 
 fun capitalizeWords(raw: String): String = raw.trim()
     .split(Regex("\\s+"))
@@ -73,13 +92,19 @@ fun capitalizeWords(raw: String): String = raw.trim()
 private fun capitalizePossessiveSegment(segment: String): String {
     val parts = segment.split("'")
     if (parts.size == 1) {
-        return parts[0].lowercase().replaceFirstChar { c -> if (c.isLowerCase()) c.titlecase(Locale.getDefault()) else c.toString() }
+        return parts[0].lowercase().replaceFirstChar { c ->
+            if (c.isLowerCase()) c.titlecase(Locale.getDefault()) else c.toString()
+        }
     }
     return parts.mapIndexed { index, part ->
         if (part.isBlank()) "" else when {
-            index == 0 -> part.lowercase().replaceFirstChar { c -> if (c.isLowerCase()) c.titlecase(Locale.getDefault()) else c.toString() }
+            index == 0 -> part.lowercase().replaceFirstChar { c ->
+                if (c.isLowerCase()) c.titlecase(Locale.getDefault()) else c.toString()
+            }
             part.length == 1 -> part.lowercase() // possessive 's
-            else -> part.lowercase().replaceFirstChar { c -> if (c.isLowerCase()) c.titlecase(Locale.getDefault()) else c.toString() }
+            else -> part.lowercase().replaceFirstChar { c ->
+                if (c.isLowerCase()) c.titlecase(Locale.getDefault()) else c.toString()
+            }
         }
     }.joinToString("'")
 }
