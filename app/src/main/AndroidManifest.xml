@@ -1,8 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Network for Retrofit/TheCocktailDB -->
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- Network access for Cocktail API -->
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:name=".MixMateApp"
@@ -15,35 +16,45 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MixMate"
         tools:targetApi="31">
-
-        <!-- Our new screens -->
-        <activity android:name=".FavouritesActivity" android:exported="false" />
-        <activity android:name=".ui.details.RecipeDetailsActivity" android:exported="false" />
-
-        <!-- Keep teammates’ screens -->
-        <activity android:name=".SettingsActivity" android:exported="false" />
-        <activity android:name=".SubmitRecipeActivity" android:exported="false" />
-        <activity android:name=".ProfileActivity" android:exported="false" />
-
-        <!-- Existing app screens -->
-        <activity android:name=".HomePage" android:exported="false" />
-        <activity android:name=".SignUpPage" android:exported="false" />
-        <activity android:name=".MainActivity" android:exported="false" />
-
-        <!-- Single launcher (keep the one your app uses; Discover is fine) -->
-        <activity android:name=".DiscoverPage" android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
-        <!-- If master already had a different details screen, keep it too -->
-        <activity android:name=".RecipeDetailActivity" android:exported="false" />
-
+        <activity
+            android:name=".SignUpActivity"
+            android:exported="false"
+            android:theme="@style/Theme.MixMate.NoActionBar" />
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".EditProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".SubmitRecipeActivity"
+            android:exported="false" />
         <activity
             android:name=".RecipeDetailActivity"
             android:exported="false" />
+        <activity
+            android:name=".ProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".HomePage"
+            android:exported="false" />
+        <activity
+            android:name=".DiscoverPage"
+            android:exported="false">
 
+        </activity>
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+        </activity>
+        <activity
+            android:name=".MyBar"
+            android:exported="false" />
     </application>
 </manifest>

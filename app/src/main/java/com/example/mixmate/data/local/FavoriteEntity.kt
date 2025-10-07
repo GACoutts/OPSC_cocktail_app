@@ -10,5 +10,6 @@ data class FavoriteEntity(
     val imageUrl: String,
     val ingredients: String,              // multi-line text  saved for offline
     val instructions: String,
+    val userId: String, // Firebase user ID to associate favorite with user
     val savedAt: Long = System.currentTimeMillis()
 )

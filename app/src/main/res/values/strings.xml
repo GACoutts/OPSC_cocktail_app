@@ -17,8 +17,8 @@
     <string name="nav_favorites" />
     <string name="nav_profile" />
     <string name="action_logout">action_logout</string>
-    <string name="title_my_bar">My Bar</string>
-    <string name="title_suggested">Suggested Cocktails</string>
+    <string name="title_my_bar" />
+    <string name="title_suggested" />
     <string name="save" />
     <string name="submit_recipe" />
     <string name="recipe_image" />
@@ -34,11 +34,11 @@
     <string name="garnish" />
     <string name="prep_time_minutes" />
     <string name="difficulty" />
-    <string name="cd_discover">Discover</string>
-    <string name="cd_list">My Bar</string>
-    <string name="cd_favourites">Favourites</string>
-    <string name="cd_profile">Profile</string>
-    <string name="cd_home">Home</string>
+    <string name="cd_discover" />
+    <string name="cd_list" />
+    <string name="cd_favourites" />
+    <string name="cd_profile" />
+    <string name="cd_home" />
     <string name="cd_logo" />
     <string name="header_title_mix_mate" />
     <string name="cd_search" />
@@ -50,10 +50,8 @@
     <string name="date_of_birth_yyyy_mm_dd">date of birth (YYYY-MM-DD)</string>
     <string name="email">email</string>
     <string name="sign_in">Sign In</string>
-    <string name="empty_discover">Nothing to show yet</string>
-    <string name="loading">Loading…</string>
+    
+    <!-- Loading and state messages -->
+    <string name="loading">Loading...</string>
     <string name="no_cocktails_found">No cocktails found</string>
-    <string name="not_specified">Not specified</string>
-    <string name="minutes_fmt">%1$d mins</string>
-
 </resources>

@@ -379,21 +379,21 @@ class SubmitRecipeActivity : AppCompatActivity() {
             garnish = etGarnish.text.toString().trim().ifEmpty { null },
             preparationTime = etPreparationTime.text.toString().trim().toIntOrNull(),
             difficulty = etDifficulty.text.toString().trim().ifEmpty { null },
-            imageUri = selectedImageUri?.toString()
+            imageUri = selectedImageUri?.toString(),
+            userId = getCurrentUserId() ?: "" // Include current user ID
         )
     }
     
     private fun getCurrentUserId(): String? {
-        // TODO: Implement proper user authentication with Firebase Auth
-        // For now, return a placeholder or get from your UserManager
         return try {
             if (UserManager.isLoggedIn(this)) {
-                UserManager.getUsername(this) // Use username as user ID for now
+                // Use Firebase UID as primary identifier, fallback to username if not available
+                UserManager.getCurrentUserUid() ?: UserManager.getUsername(this)
             } else {
-                "anonymous_user"
+                null // Don't allow anonymous recipe creation
             }
         } catch (e: Exception) {
-            "anonymous_user" // Fallback for offline usage
+            null // Return null if there's an error - user should be logged in
         }
     }
 
