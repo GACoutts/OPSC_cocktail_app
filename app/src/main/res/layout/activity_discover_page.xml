@@ -140,34 +140,6 @@
         </LinearLayout>
     </HorizontalScrollView>
 
-    <!-- My Bar title -->
-    <TextView
-        android:id="@+id/tv_my_bar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/margin_side"
-        android:layout_marginTop="8dp"
-        android:text="My Bar"
-        android:textColor="@color/white"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/filters_scroller"/>
-
-    <!-- My Bar grid -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_bar_items"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/margin_side"
-        android:layout_marginEnd="@dimen/margin_side"
-        android:layout_marginTop="9dp"
-        android:clipToPadding="false"
-        android:padding="@dimen/grid_spacing"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_my_bar"/>
-
     <!-- Sort By title -->
     <TextView
         android:id="@+id/tv_sort_by"
@@ -180,7 +152,7 @@
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/rv_bar_items"/>
+        app:layout_constraintTop_toBottomOf="@id/filters_scroller"/>
 
     <!-- Sort segmented control (no custom bg) -->
     <LinearLayout
