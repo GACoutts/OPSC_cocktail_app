@@ -67,8 +67,13 @@ class ProfileActivity : AppCompatActivity() {
         setContentView(R.layout.activity_profile)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            // Apply padding but don't affect the footer (bottom padding should be 0)
+            // Apply top, left, right padding to root but not bottom
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0)
+            
+            // Apply bottom padding directly to the footer
+            val footer = findViewById<View>(R.id.footer_navigation)
+            footer?.setPadding(0, 0, 0, systemBars.bottom)
+            
             insets
         }
 
