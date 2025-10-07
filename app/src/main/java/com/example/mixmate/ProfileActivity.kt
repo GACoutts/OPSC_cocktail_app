@@ -199,9 +199,8 @@ class ProfileActivity : AppCompatActivity() {
         }
         
         navFavourites.setOnClickListener {
-            // TODO: Navigate to favourites page when created
-            // val intent = Intent(this, FavouritesActivity::class.java)
-            // startActivity(intent)
+            val intent = Intent(this, FavouritesActivity::class.java)
+            startActivity(intent)
         }
         
         navProfile.setOnClickListener {

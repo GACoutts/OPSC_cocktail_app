@@ -56,6 +56,10 @@
             android:exported="false" />
 
         <activity
+            android:name=".ui.details.RecipeDetailsActivity"
+            android:exported="false" />
+
+        <activity
             android:name=".MyBar"
             android:exported="false" />
 
