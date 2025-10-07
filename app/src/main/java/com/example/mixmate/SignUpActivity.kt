@@ -10,6 +10,10 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
+import java.time.LocalDate
+import java.time.Period
+import android.text.TextWatcher
+import android.text.Editable
 
 /**
  * Sign up activity handling Firebase Authentication and user registration
@@ -31,6 +35,8 @@ class SignUpActivity : AppCompatActivity() {
     private lateinit var etPassword: TextInputEditText
     private lateinit var tilConfirmPassword: TextInputLayout
     private lateinit var etConfirmPassword: TextInputEditText
+    private lateinit var tilDateOfBirth: TextInputLayout
+    private lateinit var etDateOfBirth: TextInputEditText
     private lateinit var btnSignUp: Button
     private lateinit var tvLogin: TextView
     private lateinit var progressBar: ProgressBar
@@ -60,9 +66,14 @@ class SignUpActivity : AppCompatActivity() {
         etPassword = findViewById(R.id.etPassword)
         tilConfirmPassword = findViewById(R.id.tilConfirmPassword)
         etConfirmPassword = findViewById(R.id.etConfirmPassword)
+        tilDateOfBirth = findViewById(R.id.tilDateOfBirth)
+        etDateOfBirth = findViewById(R.id.etDateOfBirth)
         btnSignUp = findViewById(R.id.btnSignUp)
         tvLogin = findViewById(R.id.tvLogin)
         progressBar = findViewById(R.id.progressBar)
+        
+        // Set up date formatting helper
+        setupDateFormatting()
     }
 
     private fun setupClickListeners() {
@@ -71,7 +82,7 @@ class SignUpActivity : AppCompatActivity() {
         }
 
         tvLogin.setOnClickListener {
-            startActivity(Intent(this, LoginActivity::class.java))
+            startActivity(Intent(this, MainActivity::class.java))
             finish()
         }
     }
@@ -83,8 +94,9 @@ class SignUpActivity : AppCompatActivity() {
         val email = etEmail.text.toString().trim()
         val password = etPassword.text.toString().trim()
         val confirmPassword = etConfirmPassword.text.toString().trim()
+        val dateOfBirth = etDateOfBirth.text.toString().trim()
 
-        if (!validateInput(name, surname, username, email, password, confirmPassword)) {
+        if (!validateInput(name, surname, username, email, password, confirmPassword, dateOfBirth)) {
             return
         }
 
@@ -128,20 +140,32 @@ class SignUpActivity : AppCompatActivity() {
 
         user.updateProfile(profileUpdates)
             .addOnCompleteListener { profileTask ->
-                showLoading(false)
-                
                 if (profileTask.isSuccessful) {
-                    // Save additional user data locally
-                    UserManager.saveUserData(this, name, surname, username)
-                    
-                    // Initialize auth listener
-                    UserManager.initializeAuthListener(this)
-                    
-                    Toast.makeText(this, "Account created successfully! Welcome to MixMate!", Toast.LENGTH_SHORT).show()
-                    navigateToHome()
+                    // Save username to Firestore before signing out
+                    UserManager.saveUsernameToFirestore(
+                        userId = user.uid,
+                        username = username,
+                        onSuccess = {
+                            showLoading(false)
+                            // Sign out the user and redirect to login
+                            auth.signOut()
+                            Toast.makeText(this, "Account created successfully! Please sign in to continue.", Toast.LENGTH_LONG).show()
+                            navigateToLogin()
+                        },
+                        onFailure = { exception ->
+                            showLoading(false)
+                            // Sign out even if Firestore save failed
+                            auth.signOut()
+                            Toast.makeText(this, "Account created, but there was an issue saving your profile. Please sign in.", Toast.LENGTH_LONG).show()
+                            navigateToLogin()
+                        }
+                    )
                 } else {
-                    Toast.makeText(this, "Profile update failed, but account was created.", Toast.LENGTH_SHORT).show()
-                    navigateToHome()
+                    showLoading(false)
+                    // Sign out even if profile update failed
+                    auth.signOut()
+                    Toast.makeText(this, "Account created, but profile setup had issues. Please sign in.", Toast.LENGTH_LONG).show()
+                    navigateToLogin()
                 }
             }
     }
@@ -152,16 +176,20 @@ class SignUpActivity : AppCompatActivity() {
         username: String, 
         email: String, 
         password: String, 
-        confirmPassword: String
+        confirmPassword: String,
+        dateOfBirth: String
     ): Boolean {
         var isValid = true
 
         // Validate name
         if (name.isEmpty()) {
-            tilName.error = "Name is required"
+            tilName.error = "First name is required"
             isValid = false
         } else if (name.length < 2) {
-            tilName.error = "Name must be at least 2 characters"
+            tilName.error = "First name must be at least 2 characters"
+            isValid = false
+        } else if (!name.matches(Regex("^[a-zA-Z]+(\\s+[a-zA-Z]+)*$"))) {
+            tilName.error = "First name can only contain letters and spaces"
             isValid = false
         } else {
             tilName.error = null
@@ -169,10 +197,13 @@ class SignUpActivity : AppCompatActivity() {
 
         // Validate surname
         if (surname.isEmpty()) {
-            tilSurname.error = "Surname is required"
+            tilSurname.error = "Last name is required"
             isValid = false
         } else if (surname.length < 2) {
-            tilSurname.error = "Surname must be at least 2 characters"
+            tilSurname.error = "Last name must be at least 2 characters"
+            isValid = false
+        } else if (!surname.matches(Regex("^[a-zA-Z]+(\\s+[a-zA-Z]+)*$"))) {
+            tilSurname.error = "Last name can only contain letters and spaces"
             isValid = false
         } else {
             tilSurname.error = null
@@ -185,8 +216,17 @@ class SignUpActivity : AppCompatActivity() {
         } else if (username.length < 3) {
             tilUsername.error = "Username must be at least 3 characters"
             isValid = false
+        } else if (username.length > 20) {
+            tilUsername.error = "Username must be less than 20 characters"
+            isValid = false
         } else if (!username.matches(Regex("^[a-zA-Z0-9_]+$"))) {
             tilUsername.error = "Username can only contain letters, numbers, and underscores"
+            isValid = false
+        } else if (username.startsWith("_") || username.endsWith("_")) {
+            tilUsername.error = "Username cannot start or end with an underscore"
+            isValid = false
+        } else if (username.contains("__")) {
+            tilUsername.error = "Username cannot contain consecutive underscores"
             isValid = false
         } else {
             tilUsername.error = null
@@ -225,6 +265,45 @@ class SignUpActivity : AppCompatActivity() {
             tilConfirmPassword.error = null
         }
 
+        // Validate date of birth and age
+        if (dateOfBirth.isEmpty()) {
+            tilDateOfBirth.error = "Date of birth is required"
+            isValid = false
+        } else {
+            // Check basic format first
+            if (!dateOfBirth.matches(Regex("^\\d{4}-\\d{2}-\\d{2}$"))) {
+                tilDateOfBirth.error = "Date must be in YYYY-MM-DD format (e.g., 2000-01-15)"
+                isValid = false
+            } else {
+                try {
+                    val birthDate = LocalDate.parse(dateOfBirth)
+                    val today = LocalDate.now()
+                    val age = Period.between(birthDate, today).years
+                    
+                    // Check if date is in the future
+                    if (birthDate.isAfter(today)) {
+                        tilDateOfBirth.error = "Date of birth cannot be in the future"
+                        isValid = false
+                    } else if (age < 18) {
+                        tilDateOfBirth.error = "You must be at least 18 years old to sign up"
+                        isValid = false
+                    } else if (age > 120) {
+                        tilDateOfBirth.error = "Please enter a valid date of birth"
+                        isValid = false
+                    } else {
+                        tilDateOfBirth.error = null
+                    }
+                } catch (e: Exception) {
+                    tilDateOfBirth.error = when {
+                        e.message?.contains("Invalid value for MonthOfYear") == true -> "Invalid month (must be 01-12)"
+                        e.message?.contains("Invalid value for DayOfMonth") == true -> "Invalid day for this month"
+                        else -> "Invalid date. Please use YYYY-MM-DD format"
+                    }
+                    isValid = false
+                }
+            }
+        }
+
         return isValid
     }
 
@@ -234,8 +313,41 @@ class SignUpActivity : AppCompatActivity() {
         tvLogin.isEnabled = !show
     }
 
-    private fun navigateToHome() {
+    private fun navigateToLogin() {
         startActivity(Intent(this, MainActivity::class.java))
         finish()
+    }
+    
+    private fun setupDateFormatting() {
+        etDateOfBirth.addTextChangedListener(object : TextWatcher {
+            private var isUpdating = false
+            private val pattern = "####-##-##"
+            
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            
+            override fun afterTextChanged(s: Editable?) {
+                if (isUpdating) return
+                
+                val input = s.toString().replace("-", "")
+                if (input.length <= 8) {
+                    isUpdating = true
+                    
+                    val formatted = StringBuilder()
+                    for (i in input.indices) {
+                        if (i == 4 || i == 6) {
+                            formatted.append("-")
+                        }
+                        formatted.append(input[i])
+                    }
+                    
+                    etDateOfBirth.setText(formatted.toString())
+                    etDateOfBirth.setSelection(formatted.length)
+                    
+                    isUpdating = false
+                }
+            }
+        })
     }
 }

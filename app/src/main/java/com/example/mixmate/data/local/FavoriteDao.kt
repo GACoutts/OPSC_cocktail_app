@@ -10,18 +10,18 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface FavoriteDao {
 
-    @Query("SELECT * FROM favorites ORDER BY savedAt DESC")
-    fun getAll(): Flow<List<FavoriteEntity>>
+    @Query("SELECT * FROM favorites WHERE userId = :userId ORDER BY savedAt DESC")
+    fun getAll(userId: String): Flow<List<FavoriteEntity>>
 
-    @Query("SELECT * FROM favorites WHERE name LIKE '%' || :query || '%' ORDER BY savedAt DESC")
-    fun searchByName(query: String): Flow<List<FavoriteEntity>>
+    @Query("SELECT * FROM favorites WHERE userId = :userId AND name LIKE '%' || :query || '%' ORDER BY savedAt DESC")
+    fun searchByName(userId: String, query: String): Flow<List<FavoriteEntity>>
 
-    @Query("SELECT * FROM favorites WHERE cocktailId = :id LIMIT 1")
-    suspend fun getById(id: String): FavoriteEntity?
+    @Query("SELECT * FROM favorites WHERE cocktailId = :id AND userId = :userId LIMIT 1")
+    suspend fun getById(id: String, userId: String): FavoriteEntity?
 
     // handy if you ever want a reactive heart toggle state
-    @Query("SELECT EXISTS(SELECT 1 FROM favorites WHERE cocktailId = :id)")
-    fun isFavoriteFlow(id: String): Flow<Boolean>
+    @Query("SELECT EXISTS(SELECT 1 FROM favorites WHERE cocktailId = :id AND userId = :userId)")
+    fun isFavoriteFlow(id: String, userId: String): Flow<Boolean>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(entity: FavoriteEntity)
@@ -29,6 +29,6 @@ interface FavoriteDao {
     @Delete
     suspend fun delete(entity: FavoriteEntity)
 
-    @Query("DELETE FROM favorites WHERE cocktailId = :id")
-    suspend fun deleteById(id: String)
+    @Query("DELETE FROM favorites WHERE cocktailId = :id AND userId = :userId")
+    suspend fun deleteById(id: String, userId: String)
 }

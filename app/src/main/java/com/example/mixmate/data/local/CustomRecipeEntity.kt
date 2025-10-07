@@ -21,6 +21,7 @@ data class CustomRecipeEntity(
     val preparationTime: Int? = null, // in minutes
     val difficulty: String? = null,
     val imageUri: String? = null, // Local file path or URI
+    val userId: String, // Firebase user ID to associate recipe with user
     val createdAt: Long = System.currentTimeMillis(),
     val updatedAt: Long = System.currentTimeMillis()
 )

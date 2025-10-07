@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -25,6 +26,7 @@ object UserManager {
     private const val KEY_USER_UID = "user_uid"
     
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
+    private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
     
     private fun getPrefs(context: Context): SharedPreferences {
         return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -57,7 +59,6 @@ object UserManager {
             putString(KEY_USER_EMAIL, user.email)
             putString(KEY_USER_NAME, user.displayName?.substringBefore(" ") ?: "")
             putString(KEY_USER_SURNAME, user.displayName?.substringAfter(" ", "") ?: "")
-            putString(KEY_USERNAME, user.displayName ?: user.email?.substringBefore("@") ?: "")
             putString(KEY_PROFILE_PICTURE_URI, user.photoUrl?.toString() ?: "")
             // Set join date to current time if not previously set
             if (!prefs.contains(KEY_JOIN_DATE)) {
@@ -65,6 +66,59 @@ object UserManager {
             }
             apply()
         }
+        
+        // Fetch username from Firestore and update SharedPreferences
+        getUsernameFromFirestore(user.uid,
+            onSuccess = { firestoreUsername ->
+                prefs.edit().apply {
+                    putString(KEY_USERNAME, firestoreUsername ?: user.email?.substringBefore("@") ?: "")
+                    apply()
+                }
+            },
+            onFailure = { 
+                // Fallback to email prefix if Firestore fails
+                prefs.edit().apply {
+                    putString(KEY_USERNAME, user.email?.substringBefore("@") ?: "")
+                    apply()
+                }
+            }
+        )
+    }
+    
+    /**
+     * Save username to Firestore for a given user ID
+     */
+    fun saveUsernameToFirestore(
+        userId: String, 
+        username: String, 
+        onSuccess: () -> Unit = {}, 
+        onFailure: (Exception) -> Unit = {}
+    ) {
+        val userData = hashMapOf(
+            "username" to username
+        )
+        
+        firestore.collection("users").document(userId)
+            .set(userData)
+            .addOnSuccessListener { onSuccess() }
+            .addOnFailureListener { exception -> onFailure(exception) }
+    }
+    
+    /**
+     * Retrieve username from Firestore for a given user ID
+     */
+    fun getUsernameFromFirestore(
+        userId: String,
+        onSuccess: (String?) -> Unit,
+        onFailure: (Exception) -> Unit = {}
+    ) {
+        firestore.collection("users").document(userId)
+            .get()
+            .addOnSuccessListener { document ->
+                val username = document.getString("username")
+                onSuccess(username)
+            }
+            .addOnFailureListener { exception -> onFailure(exception) }
     }
     
     /**

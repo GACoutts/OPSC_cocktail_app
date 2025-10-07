@@ -38,7 +38,7 @@ class RecipeRepository(
         scope.launch { syncWithFirebase(userId) }
         
         // Return local data immediately
-        return localDao.getAllCustomRecipes()
+        return localDao.getAllCustomRecipes(userId)
     }
 
     /**
@@ -131,8 +131,8 @@ class RecipeRepository(
     /**
      * Search recipes locally
      */
-    fun searchRecipes(query: String): Flow<List<CustomRecipeEntity>> {
-        return localDao.searchCustomRecipes(query)
+    fun searchRecipes(userId: String, query: String): Flow<List<CustomRecipeEntity>> {
+        return localDao.searchCustomRecipes(userId, query)
     }
 
     /**
@@ -213,6 +213,7 @@ fun FirebaseRecipe.toCustomRecipeEntity(): CustomRecipeEntity {
         preparationTime = preparationTime,
         difficulty = difficulty,
         imageUri = imageUrl,
+        userId = userId, // Include userId from Firebase recipe
         createdAt = createdAt,
         updatedAt = updatedAt
     )

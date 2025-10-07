@@ -9,9 +9,11 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.materialswitch.MaterialSwitch;
@@ -20,7 +22,6 @@ public class SettingsActivity extends AppCompatActivity {
 
     private static final String TAG = "SettingsActivity";
     private static final String PREFS_NAME = "app_preferences";
-    private static final String KEY_DARK_MODE = "dark_mode";
     private static final String KEY_PUSH_NOTIFICATIONS = "push_notifications";
     private static final String KEY_RECIPE_UPDATES = "recipe_updates";
     private static final String KEY_MEASUREMENT_UNITS = "measurement_units";
@@ -29,7 +30,7 @@ public class SettingsActivity extends AppCompatActivity {
     private ImageButton btnBack;
     private MaterialCardView cardEditProfile, cardChangePassword, cardUnits, cardPrivacy,
             cardHelpSupport, cardAbout, cardLogout;
-    private MaterialSwitch switchDarkMode, switchPushNotifications, switchRecipeUpdates;
+    private MaterialSwitch switchPushNotifications, switchRecipeUpdates;
     private TextView tvCurrentUnits;
 
     // Preferences
@@ -38,11 +39,14 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        // Apply dark theme before setting content view
-        applyTheme();
-        
+        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_settings);
+        
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            var systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
 
         // Initialize preferences
         sharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
@@ -54,16 +58,6 @@ public class SettingsActivity extends AppCompatActivity {
         Log.d(TAG, "Settings activity initialized");
     }
 
-    private void applyTheme() {
-        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        boolean isDarkMode = prefs.getBoolean(KEY_DARK_MODE, true); // Default to dark mode
-        
-        if (isDarkMode) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-        } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-        }
-    }
 
     private void initializeViews() {
         try {
@@ -77,7 +71,6 @@ public class SettingsActivity extends AppCompatActivity {
             // Preferences section
             cardUnits = findViewById(R.id.card_units);
             tvCurrentUnits = findViewById(R.id.tv_current_units);
-            switchDarkMode = findViewById(R.id.switch_dark_mode);
 
             // Notifications section
             switchPushNotifications = findViewById(R.id.switch_push_notifications);
@@ -108,8 +101,13 @@ public class SettingsActivity extends AppCompatActivity {
         // Account section
         cardEditProfile.setOnClickListener(v -> {
             Log.d(TAG, "Edit Profile clicked");
-            Toast.makeText(this, "Edit Profile - Coming soon!", Toast.LENGTH_SHORT).show();
-            // TODO: Navigate to EditProfileActivity
+            try {
+                Intent intent = new Intent(this, EditProfileActivity.class);
+                startActivity(intent);
+            } catch (Exception e) {
+                Log.e(TAG, "Error starting EditProfileActivity: " + e.getMessage());
+                Toast.makeText(this, "Error opening Edit Profile", Toast.LENGTH_SHORT).show();
+            }
         });
 
         cardChangePassword.setOnClickListener(v -> {
@@ -124,13 +122,6 @@ public class SettingsActivity extends AppCompatActivity {
             showUnitsDialog();
         });
 
-        switchDarkMode.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            Log.d(TAG, "Dark mode switched: " + isChecked);
-            saveBooleanPreference(KEY_DARK_MODE, isChecked);
-            
-            // Show restart dialog for theme change
-            showThemeChangeDialog();
-        });
 
         // Notifications section
         switchPushNotifications.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -173,9 +164,6 @@ public class SettingsActivity extends AppCompatActivity {
 
     private void loadPreferences() {
         try {
-            // Load Dark Mode preference
-            boolean isDarkMode = sharedPreferences.getBoolean(KEY_DARK_MODE, true);
-            switchDarkMode.setChecked(isDarkMode);
 
             // Load Notifications preferences
             boolean pushNotifications = sharedPreferences.getBoolean(KEY_PUSH_NOTIFICATIONS, true);
@@ -240,20 +228,6 @@ public class SettingsActivity extends AppCompatActivity {
                 .show();
     }
 
-    private void showThemeChangeDialog() {
-        new AlertDialog.Builder(this)
-                .setTitle("Theme Changed")
-                .setMessage("The app needs to restart to apply the theme change. Restart now?")
-                .setPositiveButton("Restart", (dialog, which) -> {
-                    // Restart the app by going to DiscoverPage
-                    Intent intent = new Intent(this, DiscoverPage.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(intent);
-                    finish();
-                })
-                .setNegativeButton("Later", (dialog, which) -> dialog.dismiss())
-                .show();
-    }
 
     private void openPrivacyPolicy() {
         try {
@@ -314,24 +288,39 @@ public class SettingsActivity extends AppCompatActivity {
 
     private void performLogout() {
         try {
-            Log.d(TAG, "Performing logout");
+            Log.d(TAG, "Starting logout process");
             
-            // Clear user data using UserManager
-            UserManager.INSTANCE.clearUserData(this);
+            // Sign out user from Firebase and clear local data using UserManager
+            UserManager.INSTANCE.signOut(this);
+            
+            Log.d(TAG, "UserManager.signOut() completed");
+            
+            // Additional verification - check if user is still logged in
+            boolean stillLoggedIn = UserManager.INSTANCE.isLoggedIn(this);
+            Log.d(TAG, "User still logged in after signOut: " + stillLoggedIn);
             
             // Show logout message
             Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show();
             
-            // Navigate to MainActivity and clear the back stack
+            Log.d(TAG, "Navigating to MainActivity (login screen)");
+            
+            // Navigate to MainActivity (login screen) and clear the back stack
             Intent intent = new Intent(this, MainActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            
+            // Add extra flag to ensure complete task clearing
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            
+            // Add extra data to indicate this is a logout scenario
+            intent.putExtra("logout", true);
+            
             startActivity(intent);
             finish();
             
-            Log.d(TAG, "Logout completed");
+            Log.d(TAG, "Logout process completed - should now be on login screen");
         } catch (Exception e) {
-            Log.e(TAG, "Error during logout", e);
-            Toast.makeText(this, "Error during logout", Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "Error during logout process", e);
+            Toast.makeText(this, "Error during logout: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 

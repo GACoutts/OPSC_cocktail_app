@@ -7,6 +7,10 @@
         <item name="colorOnSurface">@color/white</item>
         <item name="colorPrimary">@color/grayish_green</item>
         <item name="colorOnPrimary">@color/white</item>
+        <!-- Force dark status bar -->
+        <item name="android:statusBarColor">@color/dark_brown</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:navigationBarColor">@color/dark_brown</item>
     </style>
 
     <style name="Theme.MixMate" parent="Base.Theme.MixMate" />
@@ -15,7 +19,7 @@
     <style name="Theme.MixMate.NoActionBar" parent="Theme.MixMate">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:windowLightStatusBar" tools:targetApi="M">true</item>
+        <item name="android:statusBarColor">@color/dark_brown</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="M">false</item>
     </style>
 </resources>

@@ -379,7 +379,8 @@ class SubmitRecipeActivity : AppCompatActivity() {
             garnish = etGarnish.text.toString().trim().ifEmpty { null },
             preparationTime = etPreparationTime.text.toString().trim().toIntOrNull(),
             difficulty = etDifficulty.text.toString().trim().ifEmpty { null },
-            imageUri = selectedImageUri?.toString()
+            imageUri = selectedImageUri?.toString(),
+            userId = getCurrentUserId() ?: "" // Include current user ID
         )
     }
     
