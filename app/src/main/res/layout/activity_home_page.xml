@@ -42,7 +42,6 @@
                 android:background="@android:color/transparent"
                 app:layout_collapseMode="pin"
                 app:logo="@drawable/mix_mate_transparent_logo"
-                app:menu="@menu/toolbar_menu"
                 app:title="MixMate"
                 app:titleTextColor="@android:color/white" />
 
