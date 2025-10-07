@@ -1,22 +1,15 @@
 package com.example.mixmate
 
-import android.os.Build
 import android.os.Bundle
-import androidx.core.content.ContextCompat
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.os.Build
 import android.widget.ArrayAdapter
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import android.widget.ImageView
 import android.widget.Toast
 import android.content.Intent
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import androidx.lifecycle.lifecycleScope
 import android.view.View
 import kotlinx.coroutines.launch
@@ -87,7 +80,6 @@ class DiscoverPage : BaseActivity() {
         ratingView?.setOnClickListener { ratingView.showDropDown() }
 
         // Suggested Cocktails grid (API backed with loading / empty states)
-        val rvSuggested: RecyclerView = findViewById(R.id.rv_discover_suggested)
         val loadingContainer: View = findViewById(R.id.loading_container_discover)
         val emptyContainer: View = findViewById(R.id.empty_container_discover)
         // --- My Bar grid ---
@@ -98,10 +90,9 @@ class DiscoverPage : BaseActivity() {
         recycler.setHasFixedSize(true)
         val spacingPx = resources.getDimensionPixelSize(R.dimen.grid_spacing)
 
-        val rvBar: RecyclerView = findViewById(R.id.rv_bar_items)
-        rvBar.layoutManager = GridLayoutManager(this, spanCount)
-        rvBar.setHasFixedSize(true)
-        rvBar.addItemDecoration(GridSpacingItemDecoration(spanCount, spacingPx, includeEdge = false))
+        recycler.layoutManager = GridLayoutManager(this, spanCount)
+        recycler.setHasFixedSize(true)
+        recycler.addItemDecoration(GridSpacingItemDecoration(spanCount, spacingPx, includeEdge = false))
 
         val items = listOf(
             BarItem("Vodka", R.drawable.tequila),
@@ -111,14 +102,12 @@ class DiscoverPage : BaseActivity() {
             BarItem("Gin", R.drawable.tequila),
             BarItem("Juice", R.drawable.tequila)
         )
-        rvBar.adapter = BarItemAdapter(items)
+        recycler.adapter = BarItemAdapter(items)
 
-        // ----- Suggested cocktails grid -----
         // --- Suggested Cocktails grid ---
         val rvSuggested: RecyclerView = findViewById(R.id.rv_suggested)
         rvSuggested.layoutManager = GridLayoutManager(this, spanCount)
         rvSuggested.setHasFixedSize(true)
-        val spacingPx = resources.getDimensionPixelSize(R.dimen.grid_spacing)
         rvSuggested.addItemDecoration(GridSpacingItemDecoration(spanCount, spacingPx, includeEdge = false))
 
         val suggested = listOf(
