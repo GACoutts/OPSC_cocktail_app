@@ -21,5 +21,8 @@ class MixMateApp : Application() {
         )
             .fallbackToDestructiveMigration()
             .build()
+            
+        // Initialize Firebase Auth listener for user state management
+        UserManager.initializeAuthListener(this)
     }
 }

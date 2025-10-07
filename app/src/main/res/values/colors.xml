@@ -33,4 +33,9 @@
 
     <!-- example background / accents (optional) -->
     <color name="mixmate_background">#1E0F0F</color>
+    
+    <!-- Authentication screen colors -->
+    <color name="background_color">@color/dark_brown</color>
+    <color name="primary_color">@color/grayish_green</color>
+    <color name="text_color">@color/white</color>
 </resources>

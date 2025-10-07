@@ -245,11 +245,11 @@ class ProfileActivity : AppCompatActivity() {
     }
     
     private fun performLogout() {
-        // Clear user data
-        UserManager.clearUserData(this)
+        // Sign out user from Firebase and clear local data
+        UserManager.signOut(this)
         
-        // Navigate back to MainActivity
-        val intent = Intent(this, MainActivity::class.java)
+        // Navigate back to login screen
+        val intent = Intent(this, LoginActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
         finish()
@@ -262,7 +262,7 @@ class ProfileActivity : AppCompatActivity() {
     }
     
     private fun loadMyRecipes() {
-        val userId = UserManager.getUsername(this)
+        val userId = UserManager.getCurrentUserUid() ?: UserManager.getUsername(this)
         
         activityScope.launch {
             recipeRepository.getAllRecipes(userId).collect { recipes ->

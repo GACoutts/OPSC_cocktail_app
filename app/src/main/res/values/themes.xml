@@ -10,4 +10,12 @@
     </style>
 
     <style name="Theme.MixMate" parent="Base.Theme.MixMate" />
+    
+    <!-- Theme without action bar for authentication screens -->
+    <style name="Theme.MixMate.NoActionBar" parent="Theme.MixMate">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="M">true</item>
+    </style>
 </resources>

@@ -44,6 +44,7 @@ android {
 
     buildFeatures {
         buildConfig = true
+        dataBinding = true
     }
 
     compileOptions {
@@ -90,6 +91,9 @@ dependencies {
     implementation(libs.glide)
     kapt(libs.glideCompiler)
 
-    //firbase connection
-    implementation("com.google.firebase:firebase-auth:23.1.0")
+    // Firebase (using BOM for version management)
+    implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
+    implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("com.google.firebase:firebase-firestore-ktx")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
 }

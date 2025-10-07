@@ -50,4 +50,8 @@
     <string name="date_of_birth_yyyy_mm_dd">date of birth (YYYY-MM-DD)</string>
     <string name="email">email</string>
     <string name="sign_in">Sign In</string>
+    
+    <!-- Loading and state messages -->
+    <string name="loading">Loading...</string>
+    <string name="no_cocktails_found">No cocktails found</string>
 </resources>
