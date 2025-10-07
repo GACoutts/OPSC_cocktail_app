@@ -7,6 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/dark_brown">
 
+    <!-- Header -->
     <include
         android:id="@+id/app_header"
         layout="@layout/include_app_header"
@@ -18,12 +19,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- My Bar title -->
     <TextView
         android:id="@+id/tv_my_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:layout_marginStart="24dp"
+        android:layout_marginStart="@dimen/margin_side"
         android:text="@string/title_my_bar"
         android:textColor="@color/white"
         android:textSize="24sp"
@@ -31,18 +33,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/app_header" />
 
+    <!-- My Bar grid -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_bar_items"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="9dp"
+        android:layout_marginStart="@dimen/margin_side"
+        android:layout_marginEnd="@dimen/margin_side"
         android:padding="@dimen/grid_spacing"
         android:clipToPadding="false"
         app:layout_constraintTop_toBottomOf="@id/tv_my_bar"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginStart="@dimen/margin_side"
-        android:layout_marginEnd="@dimen/margin_side"/>
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Suggested Cocktails title -->
     <TextView
@@ -50,7 +53,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:layout_marginStart="24dp"
+        android:layout_marginStart="@dimen/margin_side"
         android:text="@string/title_suggested"
         android:textColor="@color/white"
         android:textSize="24sp"
@@ -64,40 +67,42 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="9dp"
+        android:layout_marginStart="@dimen/margin_side"
+        android:layout_marginEnd="@dimen/margin_side"
         android:padding="@dimen/grid_spacing"
         android:clipToPadding="false"
         android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/tv_suggested_title"
         app:layout_constraintBottom_toTopOf="@id/app_footer"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginStart="@dimen/margin_side"
-        android:layout_marginEnd="@dimen/margin_side"/>
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Loading state for suggested -->
+    <!-- Loading state -->
     <LinearLayout
         android:id="@+id/loading_container_bar"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:orientation="vertical"
         android:gravity="center"
-        android:visibility="visible"
+        android:visibility="gone"
+        android:layout_marginStart="@dimen/margin_side"
+        android:layout_marginEnd="@dimen/margin_side"
         app:layout_constraintTop_toBottomOf="@id/tv_suggested_title"
         app:layout_constraintBottom_toTopOf="@id/app_footer"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginStart="@dimen/margin_side"
-        android:layout_marginEnd="@dimen/margin_side">
+        app:layout_constraintEnd_toEndOf="parent">
+
         <ProgressBar
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:text="@string/loading"
             android:textColor="@color/white"
-            android:textSize="16sp"/>
+            android:textSize="16sp" />
     </LinearLayout>
 
     <!-- Empty state card -->
@@ -106,15 +111,16 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:visibility="gone"
+        android:layout_marginStart="@dimen/margin_side"
+        android:layout_marginEnd="@dimen/margin_side"
         app:cardCornerRadius="16dp"
         app:cardElevation="0dp"
-        app:cardBackgroundColor="@color/brown"
+        app:cardBackgroundColor="@color/dark_brown_navbar"
         app:layout_constraintTop_toBottomOf="@id/tv_suggested_title"
         app:layout_constraintBottom_toTopOf="@id/app_footer"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginStart="@dimen/margin_side"
-        android:layout_marginEnd="@dimen/margin_side">
+        app:layout_constraintEnd_toEndOf="parent">
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -124,10 +130,10 @@
             android:gravity="center"
             android:textColor="@color/white"
             android:textSize="18sp"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Footer navigation bar -->
+    <!-- Footer -->
     <include
         android:id="@+id/app_footer"
         layout="@layout/include_app_footer"
@@ -136,5 +142,4 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

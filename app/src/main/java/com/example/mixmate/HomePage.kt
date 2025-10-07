@@ -1,3 +1,5 @@
+package com.example.mixmate
+
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.lifecycleScope

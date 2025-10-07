@@ -90,8 +90,12 @@ dependencies {
     implementation(libs.glide)
     kapt(libs.glideCompiler)
 
-    //firbase connection
+    //firebase connection
     implementation(platform("com.google.firebase:firebase-bom:33.2.0"))
     implementation("com.google.firebase:firebase-firestore-ktx")
     implementation("com.google.firebase:firebase-auth-ktx")
+
+
+
+
 }
