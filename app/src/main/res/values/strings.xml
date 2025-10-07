@@ -50,4 +50,6 @@
     <string name="date_of_birth_yyyy_mm_dd">date of birth (YYYY-MM-DD)</string>
     <string name="email">email</string>
     <string name="sign_in">Sign In</string>
+    <string name="no_cocktails_found" />
+    <string name="loading" />
 </resources>

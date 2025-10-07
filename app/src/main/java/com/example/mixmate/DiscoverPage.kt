@@ -47,7 +47,7 @@ class DiscoverPage : BaseActivity() {
         recycler.adapter = BarItemAdapter(items)
 
         // --- Suggested Cocktails grid ---
-        val rvSuggested: RecyclerView = findViewById(R.id.rv_suggested)
+        val rvSuggested: RecyclerView = findViewById(R.id.rv_discover_suggested)
         rvSuggested.layoutManager = GridLayoutManager(this, spanCount)
         rvSuggested.setHasFixedSize(true)
         rvSuggested.addItemDecoration(GridSpacingItemDecoration(spanCount, spacingPx, includeEdge = false))
@@ -58,6 +58,7 @@ class DiscoverPage : BaseActivity() {
             SuggestedCocktail("Margarita", 4.7, "Tequila", R.drawable.cosmopolitan),
             SuggestedCocktail("Old Fashioned", 4.6, "Whiskey", R.drawable.cosmopolitan)
         )
-        rvSuggested.adapter = SuggestedCocktailAdapter(suggested)
+        rvSuggested.adapter = SuggestedCocktailAdapter(suggested.toMutableList())
+
     }
 }
