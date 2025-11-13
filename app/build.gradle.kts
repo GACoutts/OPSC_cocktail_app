@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     id("org.jetbrains.kotlin.kapt")
     alias(libs.plugins.google.gms.google.services)
+    id("io.realm.kotlin") version "3.0.0"
 }
 
 android {
@@ -79,6 +80,9 @@ dependencies {
     implementation(libs.roomRuntime)
     implementation(libs.roomKtx)
     kapt(libs.roomCompiler)
+
+    //realm db
+    implementation("io.realm.kotlin:library-base:1.16.0")
 
     // Lifecycle
     implementation(libs.lifecycleViewModel)
