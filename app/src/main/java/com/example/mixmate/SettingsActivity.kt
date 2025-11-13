@@ -57,11 +57,11 @@ class SettingsActivity : AppCompatActivity() {
 
     companion object {
         private const val PREFS_NAME = "MixMateSettings"
-        private const val KEY_THEME = "theme_mode"
-        private const val KEY_LANGUAGE = "app_language"
-        private const val KEY_UNITS = "measurement_units"
-        private const val KEY_PUSH_NOTIFICATIONS = "push_notifications"
-        private const val KEY_RECIPE_UPDATES = "recipe_updates"
+        const val KEY_THEME = "theme_mode"
+        const val KEY_LANGUAGE = "app_language"
+        const val KEY_UNITS = "measurement_units"
+        const val KEY_PUSH_NOTIFICATIONS = "push_notifications"
+        const val KEY_RECIPE_UPDATES = "recipe_updates"
         
         // Theme modes
         const val THEME_DARK = "dark"
