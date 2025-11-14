@@ -91,27 +91,41 @@ class DiscoverPage : AppCompatActivity() {
         // Setup filter listeners
         ingredientView?.setOnItemClickListener { _, _, position, _ ->
             val selected = resources.getStringArray(R.array.ingredient_options)[position]
-            filterViewModel.filterByIngredient(selected)
+            if (selected.isEmpty()) {
+                filterViewModel.clearIngredientFilter()
+                ingredientView.setText("")
+            } else {
+                filterViewModel.filterByIngredient(selected)
+            }
         }
 
         alcoholView?.setOnItemClickListener { _, _, position, _ ->
             val selected = resources.getStringArray(R.array.alcohol_type_options)[position]
-            filterViewModel.filterByCategory(selected)
+            if (selected.isEmpty()) {
+                filterViewModel.clearCategoryFilter()
+                alcoholView.setText("")
+            } else {
+                filterViewModel.filterByCategory(selected)
+            }
         }
 
         ratingView?.setOnItemClickListener { _, _, position, _ ->
             val ratings = resources.getStringArray(R.array.rating_options)
             val selected = ratings[position]
             
-            val minRating = when (selected) {
-                "4.5+" -> 4.5
-                "4.0+" -> 4.0
-                "3.5+" -> 3.5
-                "3.0+" -> 3.0
-                else -> 0.0
+            if (selected.isEmpty()) {
+                filterViewModel.clearRatingFilter()
+                ratingView.setText("")
+            } else {
+                val minRating = when (selected) {
+                    "4.5+" -> 4.5
+                    "4.0+" -> 4.0
+                    "3.5+" -> 3.5
+                    "3.0+" -> 3.0
+                    else -> 0.0
+                }
+                filterViewModel.filterByRating(minRating)
             }
-            
-            filterViewModel.filterByRating(minRating)
         }
 
         // Do not set default text; keep empty. Ensure tapping opens the menu.

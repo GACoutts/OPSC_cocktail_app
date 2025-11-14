@@ -35,39 +35,38 @@ class RecipeDetailsViewModel(
         viewModelScope.launch {
             _ui.value = _ui.value.copy(loading = true, error = null)
 
-            val saved = favs.getById(cocktailId, userId)
-            if (saved != null) {
-                _ui.value = RecipeDetailsUi(
-                    loading = false,
-                    id = saved.cocktailId,
-                    name = saved.name,
-                    imageUrl = saved.imageUrl,
-                    ingredients = saved.ingredients,
-                    instructions = saved.instructions,
-                    isFavorited = true
-                )
-                return@launch
-            }
+            try {
+                val saved = favs.getById(cocktailId, userId)
+                if (saved != null) {
+                    _ui.value = RecipeDetailsUi(
+                        loading = false,
+                        id = saved.cocktailId,
+                        name = saved.name,
+                        imageUrl = saved.imageUrl,
+                        ingredients = saved.ingredients,
+                        instructions = saved.instructions,
+                        isFavorited = true
+                    )
+                    return@launch
+                }
 
-            runCatching { cocktails.getDrinkById(cocktailId) }
-                .onSuccess { drink ->
-                    if (drink == null) {
-                        _ui.value = _ui.value.copy(loading = false, error = "Not found")
-                    } else {
-                        _ui.value = RecipeDetailsUi(
-                            loading = false,
-                            id = drink.idDrink.orEmpty(),
-                            name = drink.strDrink.orEmpty(),
-                            imageUrl = drink.strDrinkThumb.orEmpty(),
-                            ingredients = formatIngredients(drink),
-                            instructions = drink.strInstructions.orEmpty(),
-                            isFavorited = false
-                        )
-                    }
+                val drink = cocktails.getDrinkById(cocktailId)
+                if (drink == null) {
+                    _ui.value = _ui.value.copy(loading = false, error = "Not found")
+                } else {
+                    _ui.value = RecipeDetailsUi(
+                        loading = false,
+                        id = drink.idDrink.orEmpty(),
+                        name = drink.strDrink.orEmpty(),
+                        imageUrl = drink.strDrinkThumb.orEmpty(),
+                        ingredients = formatIngredients(drink),
+                        instructions = drink.strInstructions.orEmpty(),
+                        isFavorited = false
+                    )
                 }
-                .onFailure { e ->
-                    _ui.value = _ui.value.copy(loading = false, error = e.message ?: "Error")
-                }
+            } catch (e: Exception) {
+                _ui.value = _ui.value.copy(loading = false, error = e.message ?: "Error loading recipe")
+            }
         }
     }
 
