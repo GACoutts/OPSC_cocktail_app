@@ -29,6 +29,10 @@ class MyBar : AppCompatActivity() {
     private lateinit var loadingContainer: View
     private lateinit var emptyContainer: View
 
+    // Alcohol types and ingredients lists
+    private lateinit var alcoholItems: List<BarItem>
+    private lateinit var ingredientItems: List<BarItem>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // Ensure content is laid out below the system status bar
@@ -70,36 +74,48 @@ class MyBar : AppCompatActivity() {
         navFav?.setOnClickListener {
             startActivity(Intent(this, FavouritesActivity::class.java))
         }
-        navFav?.setOnClickListener { Toast.makeText(this, getString(R.string.favourites_coming_soon), Toast.LENGTH_SHORT).show() }
         navProfile?.setOnClickListener {
             startActivity(Intent(this, ProfileActivity::class.java))
         }
 
-        val recycler: RecyclerView = findViewById(R.id.rv_bar_items)
         val spanCount = 2
-        recycler.layoutManager = GridLayoutManager(this, spanCount)
-        recycler.setHasFixedSize(true)
-
         val spacingPx = resources.getDimensionPixelSize(R.dimen.grid_spacing)
-        recycler.addItemDecoration(GridSpacingItemDecoration(spanCount, spacingPx, includeEdge = false))
 
-        // Load ingredients from array resources
-        val ingredientNames = resources.getStringArray(R.array.mybar_ingredients).toList()
-        val items = ingredientNames.map { ingredient ->
-            BarItem(ingredient, R.drawable.ic_ingredient) // Using generic ingredient icon
+        // Setup Alcohol Types RecyclerView
+        val rvAlcoholTypes: RecyclerView = findViewById(R.id.rv_alcohol_types)
+        rvAlcoholTypes.layoutManager = GridLayoutManager(this, spanCount)
+        rvAlcoholTypes.setHasFixedSize(true)
+        rvAlcoholTypes.addItemDecoration(GridSpacingItemDecoration(spanCount, spacingPx, includeEdge = false))
+
+        val alcoholNames = resources.getStringArray(R.array.ingredient_options).toList()
+        alcoholItems = alcoholNames.map { alcohol ->
+            BarItem(alcohol, R.drawable.ic_ingredient)
         }
-        
-        val barAdapter = BarItemAdapter(items) { _, _ ->
+
+        val alcoholAdapter = BarItemAdapter(alcoholItems) { _, _ ->
             lifecycleScope.launch {
-                val selectedIngredients = items.filter { it.isSelected }.map { it.title }
-                if (selectedIngredients.isNotEmpty()) {
-                    loadSuggestedByMultipleIngredients(selectedIngredients)
-                } else {
-                    loadDefaultSuggested()
-                }
+                updateSuggestions()
             }
         }
-        recycler.adapter = barAdapter
+        rvAlcoholTypes.adapter = alcoholAdapter
+
+        // Setup Ingredients RecyclerView
+        val rvIngredients: RecyclerView = findViewById(R.id.rv_bar_items)
+        rvIngredients.layoutManager = GridLayoutManager(this, spanCount)
+        rvIngredients.setHasFixedSize(true)
+        rvIngredients.addItemDecoration(GridSpacingItemDecoration(spanCount, spacingPx, includeEdge = false))
+
+        val ingredientNames = resources.getStringArray(R.array.mybar_ingredients).toList()
+        ingredientItems = ingredientNames.map { ingredient ->
+            BarItem(ingredient, R.drawable.ic_ingredient)
+        }
+
+        val ingredientAdapter = BarItemAdapter(ingredientItems) { _, _ ->
+            lifecycleScope.launch {
+                updateSuggestions()
+            }
+        }
+        rvIngredients.adapter = ingredientAdapter
 
         // Suggested Cocktails section with API-backed data and state handling
         rvSuggested = findViewById(R.id.rv_suggested)
@@ -145,6 +161,19 @@ class MyBar : AppCompatActivity() {
         loadingContainer.visibility = View.GONE
         rvSuggested.visibility = View.GONE
         emptyContainer.visibility = View.VISIBLE
+    }
+
+    private suspend fun updateSuggestions() {
+        val selectedAlcohols = alcoholItems.filter { it.isSelected }.map { it.title }
+        val selectedIngredients = ingredientItems.filter { it.isSelected }.map { it.title }
+        
+        val allSelected = selectedAlcohols + selectedIngredients
+        
+        if (allSelected.isNotEmpty()) {
+            loadSuggestedByMultipleIngredients(allSelected)
+        } else {
+            loadDefaultSuggested()
+        }
     }
 
     private suspend fun loadDefaultSuggested() {

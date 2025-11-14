@@ -33,17 +33,59 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/app_header" />
 
-    <!-- My Bar grid -->
+    <!-- Alcohol Types subtitle -->
+    <TextView
+        android:id="@+id/tv_alcohol_types"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginStart="@dimen/margin_side"
+        android:text="@string/alcohol_types"
+        android:textColor="@color/light_brown"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_my_bar" />
+
+    <!-- Alcohol Types grid -->
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_bar_items"
+        android:id="@+id/rv_alcohol_types"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="9dp"
+        android:layout_marginTop="8dp"
         android:layout_marginStart="@dimen/margin_side"
         android:layout_marginEnd="@dimen/margin_side"
         android:padding="@dimen/grid_spacing"
         android:clipToPadding="false"
-        app:layout_constraintTop_toBottomOf="@id/tv_my_bar"
+        app:layout_constraintTop_toBottomOf="@id/tv_alcohol_types"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Ingredients subtitle -->
+    <TextView
+        android:id="@+id/tv_ingredients"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="@dimen/margin_side"
+        android:text="@string/other_ingredients"
+        android:textColor="@color/light_brown"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/rv_alcohol_types" />
+
+    <!-- Ingredients grid -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_bar_items"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="@dimen/margin_side"
+        android:layout_marginEnd="@dimen/margin_side"
+        android:padding="@dimen/grid_spacing"
+        android:clipToPadding="false"
+        app:layout_constraintTop_toBottomOf="@id/tv_ingredients"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
