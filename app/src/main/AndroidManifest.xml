@@ -60,6 +60,10 @@
             android:exported="false" />
 
         <activity
+            android:name=".RecipeDetailActivity"
+            android:exported="false" />
+
+        <activity
             android:name=".MyBar"
             android:exported="false" />
 

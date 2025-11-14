@@ -25,7 +25,8 @@ data class SuggestedCocktail(
 class SuggestedCocktailAdapter(
     private val items: MutableList<SuggestedCocktail>,
     private val onItemClick: ((SuggestedCocktail) -> Unit)? = null,
-    private val onFavoriteClick: ((SuggestedCocktail, Boolean) -> Unit)? = null
+    private val onFavoriteClick: ((SuggestedCocktail, Boolean) -> Unit)? = null,
+    private val getFavoriteState: ((String) -> Boolean)? = null  // NEW: function to get real-time favorite state
 ) : RecyclerView.Adapter<SuggestedCocktailAdapter.VH>() {
 
     class VH(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -62,12 +63,14 @@ class SuggestedCocktailAdapter(
         holder.name.text = capitalizeWords(item.name)
         holder.meta.text = String.format(Locale.getDefault(), "%.1f • %s", item.rating, item.category)
 
-        // Favorite icon
-        updateFavoriteIcon(holder.favoriteIcon, item.isFavorite)
+        // Favorite icon - use real state from repository if available
+        val isFavorited = item.cocktailId?.let { getFavoriteState?.invoke(it) } ?: item.isFavorite
+        updateFavoriteIcon(holder.favoriteIcon, isFavorited)
         holder.favoriteIcon.setOnClickListener {
-            item.isFavorite = !item.isFavorite
-            updateFavoriteIcon(holder.favoriteIcon, item.isFavorite)
-            onFavoriteClick?.invoke(item, item.isFavorite)
+            val newState = !isFavorited
+            item.isFavorite = newState  // Update in-memory for immediate UI feedback
+            updateFavoriteIcon(holder.favoriteIcon, newState)
+            onFavoriteClick?.invoke(item, newState)
         }
 
         // Click → open details (either delegate to lambda or default to RecipeDetailActivity)
