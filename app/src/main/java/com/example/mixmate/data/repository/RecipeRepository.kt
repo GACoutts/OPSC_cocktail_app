@@ -1,19 +1,13 @@
 package com.example.mixmate.data.repository
 
 import android.util.Log
-import androidx.room.util.copy
 import com.example.mixmate.MixMateApp
-import com.example.mixmate.data.local.CustomRecipeDao
 import com.example.mixmate.data.local.CustomRecipeEntity
-import com.example.mixmate.data.local.CustomIngredientRealm
 import com.example.mixmate.data.remote.FirebaseRecipeRepository
 import com.example.mixmate.data.remote.FirebaseRecipe
-import com.example.mixmate.data.remote.FirebaseIngredient
 import io.realm.kotlin.Realm
 import io.realm.kotlin.ext.query
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.asFlow
@@ -42,7 +36,7 @@ class RecipeRepository(
 
     fun getAllRecipes(userId: String): List<CustomRecipeEntity> {
         // Start background sync
-        scope.launch { syncWithFirebase(userId) }
+        scope.launch { forceSyncWithFirebase(userId) }
         return realm.query<CustomRecipeEntity>("userId == $0", userId).find()
     }
 
@@ -93,7 +87,7 @@ class RecipeRepository(
     suspend fun updateRecipe(recipe: CustomRecipeEntity, userId: String): Result<Unit> {
         return try {
             // Update locally via Realm DAO
-            customRecipeDao.updateCustomRecipe(recipe.copy(updatedAt = System.currentTimeMillis()))
+            customRecipeDao.updateCustomRecipe(recipe.updatedAt)
 
             // Sync to Firebase in background
             scope.launch {

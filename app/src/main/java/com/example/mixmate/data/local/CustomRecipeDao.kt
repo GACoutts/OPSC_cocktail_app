@@ -61,7 +61,7 @@ class CustomRecipeDao(private val realm: Realm) {
     }
 
     // UPDATE
-    suspend fun updateCustomRecipe(recipe: CustomRecipeEntity) {
+    suspend fun updateCustomRecipe(recipe: Long) {
         realm.write {
             copyToRealm(recipe, updatePolicy = UpdatePolicy.ALL)
         }
