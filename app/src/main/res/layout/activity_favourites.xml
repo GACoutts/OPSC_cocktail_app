@@ -48,7 +48,7 @@
             android:layout_height="67dp"
             android:backgroundTint="@color/white"
             android:drawablePadding="8dp"
-            android:hint="Search favourites"
+            android:hint="@string/search_favourites_hint"
             android:padding="8dp"
             android:textColor="@color/white"
             android:textColorHint="@color/white" />
