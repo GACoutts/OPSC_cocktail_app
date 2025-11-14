@@ -87,11 +87,12 @@ class DiscoverPage : AppCompatActivity() {
         // Setup filter listeners
         ingredientView?.setOnItemClickListener { _, _, position, _ ->
             val selected = resources.getStringArray(R.array.ingredient_options)[position]
-            if (selected.isNotBlank()) {
-                filterViewModel.filterByIngredient(selected)
-            } else {
-                filterViewModel.clearIngredientFilter()
-            }
+            filterViewModel.filterByIngredient(selected)
+        }
+
+        alcoholView?.setOnItemClickListener { _, _, position, _ ->
+            val selected = resources.getStringArray(R.array.alcohol_type_options)[position]
+            filterViewModel.filterByCategory(selected)
         }
 
         ratingView?.setOnItemClickListener { _, _, position, _ ->
@@ -106,11 +107,7 @@ class DiscoverPage : AppCompatActivity() {
                 else -> 0.0
             }
             
-            if (minRating > 0.0) {
-                filterViewModel.filterByRating(minRating)
-            } else {
-                filterViewModel.clearRatingFilter()
-            }
+            filterViewModel.filterByRating(minRating)
         }
 
         // Do not set default text; keep empty. Ensure tapping opens the menu.
