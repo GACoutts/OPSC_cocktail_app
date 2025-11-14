@@ -37,15 +37,16 @@ class RecipeDetailsActivity : ComponentActivity() {
         val tvInstructions = findViewById<TextView>(R.id.tvInstructions)
         val btnFav = findViewById<ImageButton>(R.id.btnFav)
 
+        // Get name and image from intent (always available)
+        val cocktailName = intent.getStringExtra("cocktail_name") ?: "Cocktail"
+        val cocktailImage = intent.getStringExtra("cocktail_image") ?: ""
+
+        vm.setInitial(cocktailName, cocktailImage)
+
         val id = intent.getStringExtra("cocktail_id")
-        if (id.isNullOrBlank()) {
-            Toast.makeText(this, getString(R.string.toast_missing_recipe_details), Toast.LENGTH_SHORT).show()
-
-            finish()
-            return
+        if (!id.isNullOrBlank()) {
+            vm.load(id)
         }
-
-        vm.load(id)
 
         lifecycleScope.launch {
             vm.ui.collectLatest { s ->
@@ -58,7 +59,7 @@ class RecipeDetailsActivity : ComponentActivity() {
                         .load(s.imageUrl)
                         .into(ivPhoto)
                 } else {
-                    ivPhoto.setImageResource(R.drawable.ic_launcher_foreground)
+                        ivPhoto.setImageResource(R.drawable.ic_launcher_foreground)
                 }
 
                 btnFav.setImageResource(
