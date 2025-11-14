@@ -119,7 +119,7 @@
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/rv_bar_items" />
+        app:layout_constraintTop_toBottomOf="@id/rv_alcohol_types" />
 
     <!-- Suggested Cocktails grid -->
     <androidx.recyclerview.widget.RecyclerView
