@@ -71,6 +71,9 @@
     <string name="push_notifications_sub">Receive app notifications</string>
     <string name="recipe_updates">Recipe Updates</string>
     <string name="recipe_updates_sub">Get notified about new recipes</string>
+    <string name="daily_cocktail_facts">Daily Cocktail Facts</string>
+    <string name="daily_cocktail_facts_sub">Receive fun facts at 8 AM &amp; 8 PM</string>
+    <string name="daily_facts_icon_cd">Daily facts icon</string>
     <string name="section_privacy_support">Privacy &amp; Support</string>
     <string name="privacy_policy">Privacy Policy</string>
     <string name="help_support">Help &amp; Support</string>
@@ -161,21 +164,28 @@
     <string name="error_description_required">Description is required</string>
     <string name="error_instructions_required">Instructions are required</string>
     <string name="toast_ingredient_required">At least one ingredient is required</string>
-    <string name="toast_recipe_saved_syncing">Recipe saved successfully! (Syncing to cloud...)</string>
+    <string name="toast_recipe_saved_syncing">Recipe saved successfully! (Syncing to cloud…)</string>
     <string name="toast_failed_save_recipe">Failed to save recipe: %1$s</string>
     <string name="toast_error_saving_recipe">Error saving recipe: %1$s</string>
 
     <!-- Profile activity toasts -->
-    <string name="toast_opening_settings">Opening Settings...</string>
+    <string name="toast_opening_settings">Opening Settings…</string>
     <string name="toast_error_opening_settings">Error opening Settings</string>
-    <string name="toast_opening_submit_recipe">Opening Submit Recipe...</string>
+    <string name="toast_opening_submit_recipe">Opening Submit Recipe…</string>
     <string name="toast_error_opening_submit_recipe">Error opening Submit Recipe</string>
     <string name="toast_removed_from_favorites">Removed from favorites</string>
 
     <!-- Add missing literals for UI -->
     <string name="camera">Camera</string>
     <string name="gallery">Gallery</string>
-    <string name="at_prefix">@</string>
+    <string name="at_prefix"><![CDATA[@]]></string>
+    <string name="sign_in">Sign In</string>
+    <!-- Notification permission dialog strings -->
+    <string name="notification_permission_rationale_title">Enable Notifications</string>
+    <string name="notification_permission_rationale_message">MixMate would like to send you daily cocktail facts at 8 AM and 8 PM. Enable notifications to receive these fun facts!</string>
+    <string name="notification_permission_enable">Allow</string>
+    <string name="notification_permission_not_now">Not Now</string>
+    <string name="notification_permission_required">Notification permission required</string>
 
     <!-- MyBar sections -->
     <string name="alcohol_types">Alcohol Types</string>

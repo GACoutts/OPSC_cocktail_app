@@ -379,68 +379,6 @@
 
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Language -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/card_language"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
-                android:clickable="true"
-                android:focusable="true"
-                app:cardBackgroundColor="@color/dark_brown_navbar"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="2dp"
-                app:rippleColor="@color/light_brown">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="16dp"
-                    android:gravity="center_vertical">
-
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/ic_language"
-                        app:tint="@color/light_brown"
-                        android:layout_marginEnd="16dp"
-                        android:contentDescription="@string/pref_language" />
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/pref_language"
-                            android:textColor="@color/white"
-                            android:textSize="16sp" />
-
-                        <TextView
-                            android:id="@+id/tv_current_language"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/language_english"
-                            android:textColor="@color/light_brown"
-                            android:textSize="14sp" />
-
-                    </LinearLayout>
-
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/ic_go_forward"
-                        app:tint="@color/light_brown" />
-
-                </LinearLayout>
-
-            </com.google.android.material.card.MaterialCardView>
-
-
             <!-- Notifications Section -->
             <TextView
                 android:layout_width="match_parent"
@@ -567,28 +505,14 @@
 
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Privacy & Support Section -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:text="@string/section_privacy_support"
-                android:textColor="@color/white"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <!-- Privacy Policy -->
+            <!-- Daily Cocktail Facts -->
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/card_privacy"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:clickable="true"
-                android:focusable="true"
+                android:layout_marginBottom="24dp"
                 app:cardBackgroundColor="@color/dark_brown_navbar"
                 app:cardCornerRadius="12dp"
-                app:cardElevation="2dp"
-                app:rippleColor="@color/light_brown">
+                app:cardElevation="2dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -600,24 +524,40 @@
                     <ImageView
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:src="@drawable/ic_profile_full_name"
+                        android:src="@drawable/ic_cocktail"
                         app:tint="@color/light_brown"
                         android:layout_marginEnd="16dp"
-                        android:contentDescription="@string/profile_icon_cd" />
+                        android:contentDescription="@string/daily_facts_icon_cd" />
 
-                    <TextView
+                    <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="@string/privacy_policy"
-                        android:textColor="@color/white"
-                        android:textSize="16sp" />
+                        android:orientation="vertical">
 
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/ic_go_forward"
-                        app:tint="@color/light_brown" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/daily_cocktail_facts"
+                            android:textColor="@color/white"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/daily_cocktail_facts_sub"
+                            android:textColor="@color/light_brown"
+                            android:textSize="14sp" />
+
+                    </LinearLayout>
+
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/switch_daily_facts"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="false"
+                        app:thumbTint="@color/white"
+                        app:trackTint="@color/grayish_green" />
 
                 </LinearLayout>
 
@@ -656,6 +596,52 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="@string/help_support"
+                        android:textColor="@color/white"
+                        android:textSize="16sp" />
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_go_forward"
+                        app:tint="@color/light_brown" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Privacy Policy -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_privacy"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:clickable="true"
+                android:focusable="true"
+                app:cardBackgroundColor="@color/dark_brown_navbar"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                app:rippleColor="@color/light_brown">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="16dp"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_profile_full_name"
+                        app:tint="@color/light_brown"
+                        android:layout_marginEnd="16dp"
+                        android:contentDescription="@string/profile_icon_cd" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/privacy_policy"
                         android:textColor="@color/white"
                         android:textSize="16sp" />
 

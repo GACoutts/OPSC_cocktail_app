@@ -5,6 +5,7 @@ package com.example.mixmate
 import android.app.Application
 import androidx.room.Room
 import com.example.mixmate.data.local.AppDatabase
+import com.example.mixmate.notifications.NotificationHelper
 
 class MixMateApp : Application() {
     companion object {
@@ -29,5 +30,8 @@ class MixMateApp : Application() {
 
         // Initialize Firebase Auth listener for user state management
         UserManager.initializeAuthListener(this)
+
+        // Create notification channel for push notifications
+        NotificationHelper.createNotificationChannel(this)
     }
 }
