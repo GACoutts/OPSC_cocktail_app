@@ -10,11 +10,13 @@ import androidx.recyclerview.widget.RecyclerView
 // Simple data model for a bar item
 data class BarItem(
     val title: String,
-    val iconRes: Int
+    val iconRes: Int,
+    var isSelected: Boolean = false
 )
 
 class BarItemAdapter(
-    private val items: List<BarItem>
+    private val items: List<BarItem>,
+    private val onItemClick: ((BarItem, Boolean) -> Unit)? = null
 ) : RecyclerView.Adapter<BarItemAdapter.VH>() {
 
     class VH(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -32,6 +34,17 @@ class BarItemAdapter(
         val item = items[position]
         holder.title.text = item.title
         holder.icon.setImageResource(item.iconRes)
+        
+        // Update visual state based on selection
+        holder.itemView.isSelected = item.isSelected
+        holder.itemView.alpha = if (item.isSelected) 1.0f else 0.6f
+        
+        holder.itemView.setOnClickListener {
+            item.isSelected = !item.isSelected
+            holder.itemView.isSelected = item.isSelected
+            holder.itemView.alpha = if (item.isSelected) 1.0f else 0.6f
+            onItemClick?.invoke(item, item.isSelected)
+        }
     }
 
     override fun getItemCount(): Int = items.size
