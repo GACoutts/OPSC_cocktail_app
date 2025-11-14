@@ -1,5 +1,6 @@
 package com.example.mixmate.ui.discover
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mixmate.SuggestedCocktail
@@ -69,7 +70,7 @@ class FilterViewModel : ViewModel() {
                     if (drink.idDrink == null || drink.strDrink == null) {
                         return@mapNotNull null
                     }
-                    
+
                     val rating = try {
                         // Use a default rating based on position (popularity)
                         5.0 - (response.drinks.indexOf(drink) * 0.1).coerceAtMost(2.0)
@@ -101,6 +102,7 @@ class FilterViewModel : ViewModel() {
      * Clear ingredient filter and reload all
      */
     fun clearIngredientFilter() {
+        Log.d("FilterViewModel", "Clearing ingredient filter")
         _selectedIngredient.value = null
         applyAllFilters()
     }
@@ -109,6 +111,7 @@ class FilterViewModel : ViewModel() {
      * Filter cocktails by category (drink type)
      */
     fun filterByCategory(category: String) {
+        Log.d("FilterViewModel", "Filtering by category: $category")
         _selectedCategory.value = category
         applyAllFilters()
     }
@@ -117,6 +120,7 @@ class FilterViewModel : ViewModel() {
      * Clear category filter
      */
     fun clearCategoryFilter() {
+        Log.d("FilterViewModel", "Clearing category filter")
         _selectedCategory.value = null
         applyAllFilters()
     }
@@ -125,6 +129,7 @@ class FilterViewModel : ViewModel() {
      * Filter by minimum rating
      */
     fun filterByRating(minRating: Double) {
+        Log.d("FilterViewModel", "Filtering by rating: $minRating")
         _selectedRating.value = minRating
         applyAllFilters()
     }
@@ -133,6 +138,7 @@ class FilterViewModel : ViewModel() {
      * Clear rating filter
      */
     fun clearRatingFilter() {
+        Log.d("FilterViewModel", "Clearing rating filter")
         _selectedRating.value = null
         applyAllFilters()
     }
@@ -157,16 +163,30 @@ class FilterViewModel : ViewModel() {
      * Apply all active filters to the cocktail list
      */
     private fun applyAllFilters() {
+        Log.d("FilterViewModel", "Applying filters. Total cocktails: ${allCocktails.size}")
+        Log.d("FilterViewModel", "Selected category: ${_selectedCategory.value}")
+        Log.d("FilterViewModel", "Selected rating: ${_selectedRating.value}")
+
         var result = allCocktails
 
         // Apply category filter (drink type)
         _selectedCategory.value?.let { category ->
-            result = result.filter { it.category == category }
+            Log.d("FilterViewModel", "Filtering by category: $category")
+            result = result.filter {
+                val matches = it.category.equals(category, ignoreCase = true) ||
+                it.category.contains(category, ignoreCase = true)
+                if (matches) {
+                    Log.d("FilterViewModel", "Match found: ${it.name} with category ${it.category}")
+                }
+                matches
+            }
+            Log.d("FilterViewModel", "After category filter: ${result.size} cocktails")
         }
 
         // Apply rating filter
         _selectedRating.value?.let { minRating ->
             result = result.filter { it.rating >= minRating }
+            Log.d("FilterViewModel", "After rating filter: ${result.size} cocktails")
         }
 
         // Apply sort order
@@ -176,6 +196,7 @@ class FilterViewModel : ViewModel() {
             SortOrder.TOP_RATED -> result.sortedByDescending { it.rating }  // Sort by rating descending
         }
 
+        Log.d("FilterViewModel", "Final filtered count: ${result.size}")
         _filteredCocktails.value = result
     }
 
