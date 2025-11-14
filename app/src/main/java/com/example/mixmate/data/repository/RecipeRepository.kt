@@ -1,5 +1,6 @@
 package com.example.mixmate.data.repository
 
+import android.net.Uri
 import android.util.Log
 import com.example.mixmate.data.local.CustomRecipeDao
 import com.example.mixmate.data.local.CustomRecipeEntity
@@ -7,12 +8,14 @@ import com.example.mixmate.data.local.CustomIngredient
 import com.example.mixmate.data.remote.FirebaseRecipeRepository
 import com.example.mixmate.data.remote.FirebaseRecipe
 import com.example.mixmate.data.remote.FirebaseIngredient
+import com.example.mixmate.data.remote.FirebaseStorageHelper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * Hybrid repository implementing offline-first strategy
@@ -36,27 +39,51 @@ class RecipeRepository(
     fun getAllRecipes(userId: String): Flow<List<CustomRecipeEntity>> {
         // Start background sync
         scope.launch { syncWithFirebase(userId) }
-        
+
         // Return local data immediately
         return localDao.getAllCustomRecipes(userId)
     }
 
     /**
      * Save a new recipe (offline-first)
-     * Saves locally first, then syncs to Firebase
+     * Saves locally first, then syncs to Firebase with image upload
      */
     suspend fun saveRecipe(recipe: CustomRecipeEntity, userId: String, isPublic: Boolean = false): Result<Long> {
         return try {
-            // Save locally first
-            val localId = localDao.insertCustomRecipe(recipe)
+            // Upload image to Firebase Storage if present
+            val imageUrl = recipe.imageUri?.let { localUri ->
+                if (!FirebaseStorageHelper.isFirebaseStorageUrl(localUri)) {
+                    // It's a local URI, upload to Firebase Storage
+                    Log.d(TAG, "Uploading image to Firebase Storage...")
+                    withContext(Dispatchers.IO) {
+                        FirebaseStorageHelper.uploadRecipeImage(
+                            imageUri = Uri.parse(localUri),
+                            userId = userId,
+                            recipeId = null // Will generate unique ID
+                        )
+                    }
+                } else {
+                    // Already a Firebase Storage URL
+                    localUri
+                }
+            }
+
+            // Save locally with Firebase Storage URL
+            val recipeToSave = if (imageUrl != null && imageUrl != recipe.imageUri) {
+                recipe.copy(imageUri = imageUrl)
+            } else {
+                recipe
+            }
+
+            val localId = localDao.insertCustomRecipe(recipeToSave)
             Log.d(TAG, "Recipe saved locally with ID: $localId")
-            
+
             // Sync to Firebase in background
             scope.launch {
                 try {
-                    val firebaseRecipe = recipe.toFirebaseRecipe(userId, isPublic)
+                    val firebaseRecipe = recipeToSave.toFirebaseRecipe(userId, isPublic)
                     val result = firebaseRepo.saveRecipe(firebaseRecipe)
-                    
+
                     if (result.isSuccess) {
                         // Update local record with Firebase ID
                         val firebaseId = result.getOrNull()
@@ -69,7 +96,7 @@ class RecipeRepository(
                     Log.w(TAG, "Firebase sync failed, recipe saved locally only", e)
                 }
             }
-            
+
             Result.success(localId)
         } catch (e: Exception) {
             Log.e(TAG, "Failed to save recipe locally", e)
@@ -78,25 +105,49 @@ class RecipeRepository(
     }
 
     /**
-     * Update an existing recipe
+     * Update an existing recipe with image upload support
      */
     suspend fun updateRecipe(recipe: CustomRecipeEntity, userId: String): Result<Unit> {
         return try {
-            // Update locally first
-            localDao.updateCustomRecipe(recipe.copy(updatedAt = System.currentTimeMillis()))
-            
+            // Upload new image to Firebase Storage if present and it's a local URI
+            val imageUrl = recipe.imageUri?.let { localUri ->
+                            if (!FirebaseStorageHelper.isFirebaseStorageUrl(localUri)) {
+                    // It's a local URI, upload to Firebase Storage
+                    Log.d(TAG, "Uploading updated image to Firebase Storage...")
+                    withContext(Dispatchers.IO) {
+                        FirebaseStorageHelper.uploadRecipeImage(
+                            imageUri = Uri.parse(localUri),
+                            userId = userId,
+                            recipeId = recipe.id.toString()
+                        )
+                    }
+                } else {
+                                // Already a Firebase Storage URL
+                    localUri
+                }
+            }
+
+            // Update locally with Firebase Storage URL
+            val recipeToUpdate = if (imageUrl != null && imageUrl != recipe.imageUri) {
+                recipe.copy(imageUri = imageUrl, updatedAt = System.currentTimeMillis())
+            } else {
+                recipe.copy(updatedAt = System.currentTimeMillis())
+            }
+
+            localDao.updateCustomRecipe(recipeToUpdate)
+
             // Sync to Firebase in background
-            scope.launch {
+                        scope.launch {
                 try {
-                    val firebaseRecipe = recipe.toFirebaseRecipe(userId, false) // Assume not public for updates
+                    val firebaseRecipe = recipeToUpdate.toFirebaseRecipe(userId, false) // Assume not public for updates
                     // In a real implementation, you'd need to track Firebase IDs
                     Log.d(TAG, "Recipe updated locally, Firebase sync would happen here")
                 } catch (e: Exception) {
                     Log.w(TAG, "Firebase update failed, recipe updated locally only", e)
                 }
             }
-            
-            Result.success(Unit)
+
+                        Result.success(Unit)
         } catch (e: Exception) {
             Log.e(TAG, "Failed to update recipe", e)
             Result.failure(e)
@@ -110,7 +161,7 @@ class RecipeRepository(
         return try {
             // Delete locally first
             localDao.deleteCustomRecipe(recipe)
-            
+
             // Delete from Firebase in background
             scope.launch {
                 try {
@@ -120,7 +171,7 @@ class RecipeRepository(
                     Log.w(TAG, "Firebase deletion failed, recipe deleted locally", e)
                 }
             }
-            
+
             Result.success(Unit)
         } catch (e: Exception) {
             Log.e(TAG, "Failed to delete recipe", e)
@@ -154,7 +205,7 @@ class RecipeRepository(
             // 2. Handle conflicts (last-write-wins, user choice, etc.)
             // 3. Sync new recipes from Firebase to local
             // 4. Upload unsynced local recipes to Firebase
-            
+
             Log.d(TAG, "Firebase sync completed for user: $userId")
         } catch (e: Exception) {
             Log.w(TAG, "Firebase sync failed, continuing with local data", e)

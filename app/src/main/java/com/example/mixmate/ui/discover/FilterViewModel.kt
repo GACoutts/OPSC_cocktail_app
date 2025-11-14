@@ -32,7 +32,7 @@ class FilterViewModel : ViewModel() {
     private val _selectedSort = MutableStateFlow(SortOrder.POPULAR)
     val selectedSort: StateFlow<SortOrder> = _selectedSort
 
-    // State: Filtered cocktails
+    // Filtered cocktails output
     private val _filteredCocktails = MutableStateFlow<List<SuggestedCocktail>>(emptyList())
     val filteredCocktails: StateFlow<List<SuggestedCocktail>> = _filteredCocktails
 
@@ -44,6 +44,9 @@ class FilterViewModel : ViewModel() {
 
     // Cache of all cocktails loaded
     private var allCocktails: List<SuggestedCocktail> = emptyList()
+
+    // Keep original cocktails for reset
+    private var originalCocktails: List<SuggestedCocktail> = emptyList()
 
     enum class SortOrder {
         POPULAR,  // Most viewed/liked (keep original order from API)
@@ -99,11 +102,15 @@ class FilterViewModel : ViewModel() {
     }
 
     /**
-     * Clear ingredient filter and reload all
+     * Clear ingredient filter and restore original cocktails
      */
     fun clearIngredientFilter() {
-        Log.d("FilterViewModel", "Clearing ingredient filter")
+        Log.d("FilterViewModel", "Clearing ingredient filter, restoring original cocktails")
         _selectedIngredient.value = null
+        // Restore original cocktails when ingredient filter is cleared
+        if (originalCocktails.isNotEmpty()) {
+            allCocktails = originalCocktails
+        }
         applyAllFilters()
     }
 
@@ -156,25 +163,31 @@ class FilterViewModel : ViewModel() {
      */
     fun setInitialCocktails(cocktails: List<SuggestedCocktail>) {
         allCocktails = cocktails
+        originalCocktails = cocktails // Save original for reset
         applyAllFilters()
     }
 
     /**
      * Apply all active filters to the cocktail list
+     * Now supports multiple filters simultaneously
      */
     private fun applyAllFilters() {
         Log.d("FilterViewModel", "Applying filters. Total cocktails: ${allCocktails.size}")
+        Log.d("FilterViewModel", "Selected ingredient: ${_selectedIngredient.value}")
         Log.d("FilterViewModel", "Selected category: ${_selectedCategory.value}")
         Log.d("FilterViewModel", "Selected rating: ${_selectedRating.value}")
 
         var result = allCocktails
 
-        // Apply category filter (drink type)
+        // Apply ingredient filter (if set, this already filtered the list)
+        // No additional filtering needed as ingredient filter fetches specific cocktails
+
+        // Apply category filter (drink type) - works with ingredient filter
         _selectedCategory.value?.let { category ->
             Log.d("FilterViewModel", "Filtering by category: $category")
             result = result.filter {
                 val matches = it.category.equals(category, ignoreCase = true) ||
-                it.category.contains(category, ignoreCase = true)
+                        it.category.contains(category, ignoreCase = true)
                 if (matches) {
                     Log.d("FilterViewModel", "Match found: ${it.name} with category ${it.category}")
                 }
@@ -183,7 +196,7 @@ class FilterViewModel : ViewModel() {
             Log.d("FilterViewModel", "After category filter: ${result.size} cocktails")
         }
 
-        // Apply rating filter
+        // Apply rating filter - works with both ingredient and category filters
         _selectedRating.value?.let { minRating ->
             result = result.filter { it.rating >= minRating }
             Log.d("FilterViewModel", "After rating filter: ${result.size} cocktails")

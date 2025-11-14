@@ -12,6 +12,8 @@ import android.content.Intent
 import android.os.Build
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import android.view.View
 import com.example.mixmate.data.local.FavoriteEntity
 import com.example.mixmate.ui.favorites.SharedFavoritesViewModel
@@ -139,6 +141,7 @@ class MyBar : AppCompatActivity() {
                         updateSuggestedTitleConstraint(true)
 
                     }
+
                     R.id.btn_ingredients -> {
                         rvAlcoholTypes.visibility = View.GONE
                         rvIngredients.visibility = View.VISIBLE
@@ -197,9 +200,9 @@ class MyBar : AppCompatActivity() {
 
     private suspend fun updateSuggestions() {
         val selectedAlcohols = alcoholItems.filter { it.isSelected }.map { it.title }
-val selectedIngredients = ingredientItems.filter { it.isSelected }.map { it.title }
+        val selectedIngredients = ingredientItems.filter { it.isSelected }.map { it.title }
 
-val allSelected = selectedAlcohols + selectedIngredients
+        val allSelected = selectedAlcohols + selectedIngredients
 
         if (allSelected.isNotEmpty()) {
             loadSuggestedByMultipleIngredients(allSelected)
@@ -209,29 +212,67 @@ val allSelected = selectedAlcohols + selectedIngredients
     }
 
     private suspend fun loadDefaultSuggested() {
-        val apiItems = CocktailApiRepository.fetchCocktails(limit = 50)
-        val data = if (apiItems.isNotEmpty()) CocktailImageProvider.enrichWithImages(apiItems) else emptyList()
-        updateSuggestedList(data)
+        showLoading()
+        try {
+            // Get rotating alcohol type
+            val alcoholType = MyBarRotatingHelper.getRotatingAlcoholType(this)
+            android.util.Log.d("MyBar", "Loading default cocktails for: $alcoholType")
+
+            // Load cocktails filtered by the rotating alcohol type
+            loadSuggestedByIngredient(alcoholType)
+        } catch (e: Exception) {
+            android.util.Log.e("MyBar", "Error loading rotating suggestions, fallback to generic", e)
+            // Fallback to generic cocktails
+            val apiItems = CocktailApiRepository.fetchCocktails(limit = 50)
+            val data = if (apiItems.isNotEmpty()) CocktailImageProvider.enrichWithImages(apiItems) else emptyList()
+
+            // Load favorite states
+            data.forEach { cocktail ->
+                cocktail.cocktailId?.let { id ->
+                    val isFav = favoritesViewModel.isFavorite(id).firstOrNull() ?: false
+                    favoriteStates[id] = isFav
+                    cocktail.isFavorite = isFav
+                }
+            }
+
+            updateSuggestedList(data)
+        }
     }
 
     private suspend fun loadSuggestedByIngredient(ingredient: String) {
+        showLoading()
         val apiResponse = try {
             val api = com.example.mixmate.data.remote.CocktailApi.create()
-            api.filterByIngredient(ingredient)
+            withContext(Dispatchers.IO) {
+                api.filterByIngredient(ingredient)
+            }
         } catch (e: Exception) {
+            android.util.Log.e("MyBar", "Error filtering by ingredient: $ingredient", e)
             null
         }
 
-        val cocktails = apiResponse?.drinks?.map { drink ->
+        val cocktails = apiResponse?.drinks?.mapIndexed { index, drink ->
+            val rating = 5.0 - (index * 0.1).coerceAtMost(2.0) // Generate ratings based on position
             SuggestedCocktail(
                 name = drink.strDrink ?: "Unknown",
-                rating = 0.0,
+                rating = rating,
                 category = ingredient,
                 imageUrl = drink.strDrinkThumb,
                 cocktailId = drink.idDrink,
                 isFavorite = false
             )
         } ?: emptyList()
+
+        android.util.Log.d("MyBar", "Loaded ${cocktails.size} cocktails for $ingredient")
+
+        // Load favorite states
+        cocktails.forEach { cocktail ->
+            cocktail.cocktailId?.let { id ->
+                val isFav = favoritesViewModel.isFavorite(id).firstOrNull() ?: false
+                favoriteStates[id] = isFav
+                cocktail.isFavorite = isFav
+            }
+        }
 
         updateSuggestedList(cocktails)
     }
@@ -240,22 +281,26 @@ val allSelected = selectedAlcohols + selectedIngredients
         showLoading()
         try {
             val api = com.example.mixmate.data.remote.CocktailApi.create()
-val allCocktails = mutableSetOf<SuggestedCocktail>()
+                        val allCocktails = mutableSetOf<SuggestedCocktail>()
+
+            android.util.Log.d("MyBar", "Loading cocktails for ${ingredients.size} ingredients: $ingredients")
 
             // Fetch cocktails for each selected ingredient
             for (ingredient in ingredients) {
                 try {
-                    val apiResponse = api.filterByIngredient(ingredient)
+                    val apiResponse = withContext(Dispatchers.IO) {
+                        api.filterByIngredient(ingredient)
+                                                }
                     apiResponse.drinks?.forEachIndexed { index, drink ->
                         if (drink.idDrink != null && drink.strDrink != null) {
                             // Calculate rating based on position (popularity)
-val rating = 5.0 - (index * 0.1).coerceAtMost(2.0)
+                            val rating = 5.0 - (index * 0.1).coerceAtMost(2.0)
 
                             allCocktails.add(
                                 SuggestedCocktail(
                                     name = drink.strDrink,
                                     rating = rating,
-                                    category = ingredients.joinToString(", "),
+                                    category = ingredient,
                                     imageUrl = drink.strDrinkThumb,
                                     cocktailId = drink.idDrink,
                                     isFavorite = false
@@ -263,14 +308,28 @@ val rating = 5.0 - (index * 0.1).coerceAtMost(2.0)
                             )
                         }
                     }
+                                android.util.Log.d("MyBar", "Added cocktails for $ingredient, total now: ${allCocktails.size}")
                 } catch (e: Exception) {
+                    android.util.Log.e("MyBar", "Error loading ingredient: $ingredient", e)
                     // Continue with next ingredient if one fails
                     continue
                 }
-}
+            }
+
+            android.util.Log.d("MyBar", "Total unique cocktails loaded: ${allCocktails.size}")
+
+            // Load favorite states
+            allCocktails.forEach { cocktail ->
+                cocktail.cocktailId?.let { id ->
+                    val isFav = favoritesViewModel.isFavorite(id).firstOrNull() ?: false
+                    favoriteStates[id] = isFav
+                    cocktail.isFavorite = isFav
+                }
+            }
 
             updateSuggestedList(allCocktails.toList())
         } catch (e: Exception) {
+            android.util.Log.e("MyBar", "Error in loadSuggestedByMultipleIngredients", e)
             updateSuggestedList(emptyList())
         }
     }
