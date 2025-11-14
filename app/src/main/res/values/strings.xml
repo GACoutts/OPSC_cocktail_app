@@ -49,14 +49,130 @@
     <string name="email_address">email address</string>
     <string name="date_of_birth_yyyy_mm_dd">date of birth (YYYY-MM-DD)</string>
     <string name="email">email</string>
-    <string name="sign_in">Sign In</string>
+    <string name="sign_in_label">Sign In</string>
     <string name="empty_discover">Nothing to show yet</string>
     <string name="loading">Loading…</string>
     <string name="no_cocktails_found">No cocktails found</string>
     <string name="not_specified">Not specified</string>
     <string name="minutes_fmt">%1$d mins</string>
     <string name="favorite">Add to favorites</string>
+    <string name="settings_title">Settings</string>
+    <string name="section_account">Account</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="edit_profile_sub">Update your profile information</string>
+    <string name="change_password">Change Password</string>
+    <string name="change_password_sub">Update your account security</string>
+    <string name="section_preferences">Preferences</string>
+    <string name="measurement_units">Measurement Units</string>
+    <string name="units_metric">Metric (ml, cl)</string>
+    <string name="section_notifications">Notifications</string>
+    <string name="push_notifications">Push Notifications</string>
+    <string name="push_notifications_sub">Receive app notifications</string>
+    <string name="recipe_updates">Recipe Updates</string>
+    <string name="recipe_updates_sub">Get notified about new recipes</string>
+    <string name="section_privacy_support">Privacy &amp; Support</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="help_support">Help &amp; Support</string>
+    <string name="about_mixmate">About MixMate</string>
+    <string name="version_fmt">Version %1$s</string>
+    <string name="logout">Logout</string>
 
+    <!-- Settings strings (runtime) -->
+    <string name="units_dialog_title">Measurement Units</string>
+    <string name="dialog_ok">OK</string>
+    <string name="dialog_cancel">Cancel</string>
+    <string name="dialog_logout_title">Logout</string>
+    <string name="dialog_logout_message">Are you sure you want to logout?</string>
+    <string name="units_changed_to">Units changed to %1$s</string>
+    <string name="toast_error_init_settings">Error initializing settings</string>
+    <string name="toast_error_open_edit_profile">Error opening Edit Profile</string>
+    <string name="toast_change_password_coming">Change Password - Coming soon!</string>
+    <string name="toast_push_enabled">Push notifications enabled</string>
+    <string name="toast_push_disabled">Push notifications disabled</string>
+    <string name="toast_recipe_updates_enabled">Recipe updates enabled</string>
+    <string name="toast_recipe_updates_disabled">Recipe updates disabled</string>
+    <string name="toast_error_loading_settings">Error loading settings</string>
+    <string name="toast_error_saving_setting">Error saving setting</string>
+    <string name="toast_privacy_policy_coming">Privacy Policy - Coming soon!</string>
+    <string name="toast_no_email_app">No email app found</string>
+    <string name="toast_help_support_coming">Help &amp; Support - Coming soon!</string>
+    <string name="toast_thanks_rating_coming">Thank you! Rating coming soon.</string>
+    <string name="toast_logged_out">Logged out successfully</string>
+    <string name="toast_error_logout">Error during logout: %1$s</string>
 
+    <!-- Sign up / auth -->
+    <string name="create_account">Create Account</string>
+    <string name="join_community">Join the MixMate community</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="dob_hint">Date of Birth (YYYY-MM-DD)</string>
+    <string name="username_hint">Username</string>
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Password</string>
+    <string name="confirm_password_hint">Confirm Password</string>
+    <string name="already_have_account">Already have an account? </string>
 
+    <!-- Submit recipe / dialogs -->
+    <string name="select_image">Select Image</string>
+    <string name="discard_changes_title">Discard Changes?</string>
+    <string name="discard_changes_message">You have unsaved changes. Are you sure you want to leave?</string>
+    <string name="discard">Discard</string>
+
+    <!-- General labels -->
+    <string name="recipe_name_label">Recipe Name</string>
+    <string name="about_version_short">Version 1.0.0</string>
+    <string name="notifications_icon_cd">Notifications icon</string>
+    <string name="units_icon_cd">Units icon</string>
+    <string name="password_icon_cd">Password icon</string>
+    <string name="profile_icon_cd">Profile icon</string>
+    <string name="recipe_updates_icon_cd">Recipe updates icon</string>
+    <string name="about_icon_cd">About icon</string>
+    <string name="logout_icon_cd">Logout icon</string>
+
+    <!-- Toasters / errors used elsewhere -->
+    <string name="toast_missing_recipe_details">Missing recipe details</string>
+    <string name="toast_recipe_not_found">Recipe not found</string>
+    <string name="toast_error_generic">Error: %1$s</string>
+    <string name="favourites_coming_soon">Favourites coming soon</string>
+    <string name="units_imperial">Imperial (fl oz, cups)</string>
+    <string name="units_both">Both</string>
+
+    <!-- Language settings -->
+    <string name="pref_language">Language</string>
+    <string name="pref_language_sub">Change app language</string>
+    <string name="select_language">Select Language</string>
+    <string name="language_english">English</string>
+    <string name="language_afrikaans">Afrikaans</string>
+
+    <!-- Edit profile -->
+    <string name="toast_error_open_image_picker">Error opening image picker</string>
+    <string name="toast_error_loading_selected_image">Error loading selected image</string>
+    <string name="error_display_name_required">Display name is required</string>
+    <string name="error_username_required">Username is required</string>
+    <string name="error_email_required">Email is required</string>
+    <string name="error_email_invalid">Please enter a valid email address</string>
+    <string name="toast_profile_updated_success">Profile updated successfully</string>
+    <string name="toast_error_saving_profile_changes">Error saving profile changes</string>
+
+    <!-- Submit recipe -->
+    <string name="toast_permission_required_image">Permission required to upload image</string>
+    <string name="error_recipe_name_required">Recipe name is required</string>
+    <string name="error_description_required">Description is required</string>
+    <string name="error_instructions_required">Instructions are required</string>
+    <string name="toast_ingredient_required">At least one ingredient is required</string>
+    <string name="toast_recipe_saved_syncing">Recipe saved successfully! (Syncing to cloud...)</string>
+    <string name="toast_failed_save_recipe">Failed to save recipe: %1$s</string>
+    <string name="toast_error_saving_recipe">Error saving recipe: %1$s</string>
+
+    <!-- Profile activity toasts -->
+    <string name="toast_opening_settings">Opening Settings...</string>
+    <string name="toast_error_opening_settings">Error opening Settings</string>
+    <string name="toast_opening_submit_recipe">Opening Submit Recipe...</string>
+    <string name="toast_error_opening_submit_recipe">Error opening Submit Recipe</string>
+    <string name="toast_removed_from_favorites">Removed from favorites</string>
+
+    <!-- Add missing literals for UI -->
+    <string name="camera">Camera</string>
+    <string name="gallery">Gallery</string>
+    <string name="at_prefix">@</string>
 </resources>

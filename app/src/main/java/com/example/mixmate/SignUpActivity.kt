@@ -41,6 +41,10 @@ class SignUpActivity : AppCompatActivity() {
     private lateinit var tvLogin: TextView
     private lateinit var progressBar: ProgressBar
 
+    override fun attachBaseContext(newBase: android.content.Context) {
+        super.attachBaseContext(LocaleHelper.onAttach(newBase))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_up)

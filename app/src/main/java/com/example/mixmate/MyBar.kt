@@ -15,6 +15,10 @@ import kotlinx.coroutines.launch
 import android.view.View
 
 class MyBar : AppCompatActivity() {
+    override fun attachBaseContext(newBase: android.content.Context) {
+        super.attachBaseContext(LocaleHelper.onAttach(newBase))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // Ensure content is laid out below the system status bar
@@ -49,7 +53,7 @@ class MyBar : AppCompatActivity() {
         }
         // Already on My Bar
         navList?.setOnClickListener { /* no-op */ }
-        navFav?.setOnClickListener { Toast.makeText(this, "Favourites coming soon", Toast.LENGTH_SHORT).show() }
+        navFav?.setOnClickListener { Toast.makeText(this, getString(R.string.favourites_coming_soon), Toast.LENGTH_SHORT).show() }
         navProfile?.setOnClickListener {
             startActivity(Intent(this, ProfileActivity::class.java))
         }

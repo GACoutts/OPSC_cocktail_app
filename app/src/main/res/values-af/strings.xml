@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">MixMate</string>
+    <string name="settings_title">Instellings</string>
+    <string name="section_account">Rekening</string>
+    <string name="edit_profile">Wysig profiel</string>
+    <string name="edit_profile_sub">Werk jou profielinligting by</string>
+    <string name="change_password">Verander wagwoord</string>
+    <string name="change_password_sub">Werk jou rekeningsekuriteit by</string>
+    <string name="section_preferences">Voorkeure</string>
+    <string name="measurement_units">Maatstelsels</string>
+    <string name="units_metric">Metriek (ml, cl)</string>
+    <string name="units_imperial">Imperiaal (fl oz, koppies)</string>
+    <string name="units_both">Albei</string>
+    <string name="section_notifications">Kennisgewings</string>
+    <string name="push_notifications">Stootkennisgewings</string>
+    <string name="push_notifications_sub">Ontvang programkennisgewings</string>
+    <string name="recipe_updates">Resep-opdaterings</string>
+    <string name="recipe_updates_sub">Kry kennisgewings oor nuwe resepte</string>
+    <string name="section_privacy_support">Privaatheid &amp; Ondersteuning</string>
+    <string name="privacy_policy">Privaatheidsbeleid</string>
+    <string name="help_support">Hulp &amp; Ondersteuning</string>
+    <string name="about_mixmate">Oor MixMate</string>
+    <string name="version_fmt">Weergawe %1$s</string>
+    <string name="about_version_short">Weergawe 1.0.0</string>
+    <string name="logout">Teken uit</string>
+
+    <string name="units_dialog_title">Maatstelsels</string>
+    <string name="dialog_ok">OK</string>
+    <string name="dialog_cancel">Kanselleer</string>
+    <string name="dialog_logout_title">Teken uit</string>
+    <string name="dialog_logout_message">Is jy seker jy wil uitteken?</string>
+    <string name="units_changed_to">Eenhede verander na %1$s</string>
+
+    <string name="toast_error_init_settings">Fout met inisialisering van instellings</string>
+    <string name="toast_error_open_edit_profile">Kon nie Profiel open nie</string>
+    <string name="toast_change_password_coming">Verander wagwoord - Kom binnekort!</string>
+    <string name="toast_push_enabled">Stootkennisgewings geaktiveer</string>
+    <string name="toast_push_disabled">Stootkennisgewings gedeaktiveer</string>
+    <string name="toast_recipe_updates_enabled">Resep-opdaterings geaktiveer</string>
+    <string name="toast_recipe_updates_disabled">Resep-opdaterings gedeaktiveer</string>
+    <string name="toast_error_loading_settings">Fout met laai van instellings</string>
+    <string name="toast_error_saving_setting">Fout met stoor van instelling</string>
+    <string name="toast_privacy_policy_coming">Privaatheidsbeleid - Kom binnekort!</string>
+    <string name="toast_no_email_app">Geen e-pos program gevind nie</string>
+    <string name="toast_help_support_coming">Hulp &amp; Ondersteuning - Kom binnekort!</string>
+    <string name="toast_thanks_rating_coming">Dankie! Gradering kom binnekort.</string>
+    <string name="toast_logged_out">Suksesvol uitgeteken</string>
+    <string name="toast_error_logout">Fout tydens uitteken: %1$s</string>
+
+    <string name="create_account">Skep rekening</string>
+    <string name="join_community">Sluit aan by die MixMate-gemeenskap</string>
+    <string name="first_name">Naam</string>
+    <string name="last_name">Van</string>
+    <string name="dob_hint">Geboortedatum (JJJJ-MM-DD)</string>
+    <string name="username_hint">Gebruikersnaam</string>
+    <string name="email_hint">E-pos</string>
+    <string name="password_hint">Wagwoord</string>
+    <string name="confirm_password_hint">Bevestig wagwoord</string>
+    <string name="already_have_account">Het jy reeds \'n rekening? </string>
+    <string name="sign_in">Meld aan</string>
+
+    <string name="select_image">Kies prent</string>
+    <string name="discard_changes_title">Gooi veranderinge weg?</string>
+    <string name="discard_changes_message">Jy het ongestoorde veranderinge. Is jy seker jy wil weggaan?</string>
+    <string name="discard">Gooi weg</string>
+
+    <string name="recipe_name_label">Resepnaam</string>
+    <string name="not_specified">Nie gespesifiseer nie</string>
+    <string name="minutes_fmt">%1$d minute</string>
+    <string name="toast_missing_recipe_details">Ontbrekende resepbewyse</string>
+    <string name="toast_recipe_not_found">Resep nie gevind nie</string>
+    <string name="toast_error_generic">Fout: %1$s</string>
+    <string name="notifications_icon_cd">Kennisgewings-ikoon</string>
+    <string name="units_icon_cd">Eenhede-ikoon</string>
+    <string name="password_icon_cd">Wagwoord-ikoon</string>
+    <string name="profile_icon_cd">Profiel-ikoon</string>
+    <string name="recipe_updates_icon_cd">Resep-opdaterings-ikoon</string>
+    <string name="about_icon_cd">Oor-ikoon</string>
+    <string name="logout_icon_cd">Uitteken-ikoon</string>
+    <string name="favourites_coming_soon">Gunstelinge kom binnekort</string>
+    <!-- Edit profile -->
+    <string name="toast_error_open_image_picker">Fout met oopmaak van beeldkieser</string>
+    <string name="toast_error_loading_selected_image">Fout met laai van geselekteerde beeld</string>
+    <string name="error_display_name_required">Vertoonnaam is vereis</string>
+    <string name="error_username_required">Gebruikersnaam is vereis</string>
+    <string name="error_email_required">E-pos is vereis</string>
+    <string name="error_email_invalid">Voer asseblief \'n geldige e-posadres in</string>
+    <string name="toast_profile_updated_success">Profiel suksesvol bygewerk</string>
+    <string name="toast_error_saving_profile_changes">Fout met stoor van profielveranderinge</string>
+
+    <!-- Submit recipe -->
+    <string name="toast_permission_required_image">Toestemming word vereis om \'n prent op te laai</string>
+    <string name="error_recipe_name_required">Resepnaam is vereis</string>
+    <string name="error_description_required">Beskrywing is vereis</string>
+    <string name="error_instructions_required">Instruksies is vereis</string>
+    <string name="toast_ingredient_required">Ten minste een bestanddeel is vereis</string>
+    <string name="toast_recipe_saved_syncing">Resep suksesvol gestoor! (Sinkroniseer met wolk...)</string>
+    <string name="toast_failed_save_recipe">Kon nie resep stoor nie: %1$s</string>
+    <string name="toast_error_saving_recipe">Fout met stoor van resep: %1$s</string>
+
+    <!-- Language settings -->
+    <string name="pref_language">Taal</string>
+    <string name="pref_language_sub">Verander program taal</string>
+    <string name="select_language">Kies Taal</string>
+    <string name="language_english">Engels</string>
+    <string name="language_afrikaans">Afrikaans</string>
+
+    <!-- Profile activity toasts -->
+    <string name="toast_opening_settings">Open tans Instellings...</string>
+    <string name="toast_error_opening_settings">Fout met oopmaak van Instellings</string>
+    <string name="toast_opening_submit_recipe">Open tans Dien Resep In...</string>
+    <string name="toast_error_opening_submit_recipe">Fout met oopmaak van Dien Resep In</string>
+    <string name="toast_removed_from_favorites">Uit gunstelinge verwyder</string>
+</resources>

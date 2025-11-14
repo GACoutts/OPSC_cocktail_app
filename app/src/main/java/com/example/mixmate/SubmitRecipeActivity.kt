@@ -16,6 +16,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
@@ -109,8 +110,12 @@ class SubmitRecipeActivity : AppCompatActivity() {
         if (isGranted) {
             showImageSourceDialog()
         } else {
-            Toast.makeText(this, "Permission required to upload image", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.toast_permission_required_image), Toast.LENGTH_SHORT).show()
         }
+    }
+
+    override fun attachBaseContext(newBase: android.content.Context) {
+        super.attachBaseContext(LocaleHelper.onAttach(newBase))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -131,6 +136,26 @@ class SubmitRecipeActivity : AppCompatActivity() {
         
         // Add first ingredient by default
         addIngredient()
+
+        // Handle system back with OnBackPressedDispatcher
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (hasUnsavedChanges()) {
+                    AlertDialog.Builder(this@SubmitRecipeActivity)
+                        .setTitle(getString(R.string.discard_changes_title))
+                        .setMessage(getString(R.string.discard_changes_message))
+                        .setPositiveButton(getString(R.string.discard)) { _, _ ->
+                            isEnabled = false
+                            onBackPressedDispatcher.onBackPressed()
+                        }
+                        .setNegativeButton(getString(R.string.dialog_cancel), null)
+                        .show()
+                } else {
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                }
+            }
+        })
     }
 
     private fun initializeViews() {
@@ -228,8 +253,8 @@ class SubmitRecipeActivity : AppCompatActivity() {
     
     private fun showImageSourceDialog() {
         AlertDialog.Builder(this)
-            .setTitle("Select Image")
-            .setItems(arrayOf("Camera", "Gallery")) { _, which ->
+            .setTitle(getString(R.string.select_image))
+            .setItems(arrayOf(getString(R.string.camera), getString(R.string.gallery))) { _, which ->
                 when (which) {
                     0 -> openCamera()
                     1 -> openGallery()
@@ -273,21 +298,21 @@ class SubmitRecipeActivity : AppCompatActivity() {
         
         // Validate required fields
         if (etRecipeName.text.isNullOrBlank()) {
-            tilRecipeName.error = "Recipe name is required"
+            tilRecipeName.error = getString(R.string.error_recipe_name_required)
             isValid = false
         } else {
             tilRecipeName.error = null
         }
         
         if (etDescription.text.isNullOrBlank()) {
-            tilDescription.error = "Description is required"
+            tilDescription.error = getString(R.string.error_description_required)
             isValid = false
         } else {
             tilDescription.error = null
         }
         
         if (etInstructions.text.isNullOrBlank()) {
-            tilInstructions.error = "Instructions are required"
+            tilInstructions.error = getString(R.string.error_instructions_required)
             isValid = false
         } else {
             tilInstructions.error = null
@@ -296,7 +321,7 @@ class SubmitRecipeActivity : AppCompatActivity() {
         // Validate ingredients
         val validIngredients = ingredientsAdapter.getValidIngredients()
         if (validIngredients.isEmpty()) {
-            Toast.makeText(this, "At least one ingredient is required", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.toast_ingredient_required), Toast.LENGTH_SHORT).show()
             isValid = false
         }
         
@@ -306,7 +331,7 @@ class SubmitRecipeActivity : AppCompatActivity() {
     }
     
     private fun setupDifficultyDropdown() {
-        val difficultyOptions = arrayOf("Easy", "Medium", "Hard", "Expert")
+        val difficultyOptions = resources.getStringArray(R.array.difficulty_options)
         val adapter = android.widget.ArrayAdapter(
             this,
             android.R.layout.simple_dropdown_item_1line,
@@ -337,14 +362,14 @@ class SubmitRecipeActivity : AppCompatActivity() {
                     if (result.isSuccess) {
                         Toast.makeText(
                             this@SubmitRecipeActivity, 
-                            "Recipe saved successfully! (Syncing to cloud...)", 
+                            getString(R.string.toast_recipe_saved_syncing),
                             Toast.LENGTH_LONG
                         ).show()
                         finish()
                     } else {
                         Toast.makeText(
                             this@SubmitRecipeActivity, 
-                            "Failed to save recipe: ${result.exceptionOrNull()?.message}", 
+                            getString(R.string.toast_failed_save_recipe, result.exceptionOrNull()?.message ?: ""),
                             Toast.LENGTH_LONG
                         ).show()
                     }
@@ -353,7 +378,7 @@ class SubmitRecipeActivity : AppCompatActivity() {
                 withContext(Dispatchers.Main) {
                     Toast.makeText(
                         this@SubmitRecipeActivity, 
-                        "Error saving recipe: ${e.message}", 
+                        getString(R.string.toast_error_saving_recipe, e.message ?: ""),
                         Toast.LENGTH_LONG
                     ).show()
                 }
@@ -397,22 +422,6 @@ class SubmitRecipeActivity : AppCompatActivity() {
         }
     }
 
-    @Deprecated("Deprecated in Java")
-    override fun onBackPressed() {
-        if (hasUnsavedChanges()) {
-            AlertDialog.Builder(this)
-                .setTitle("Discard Changes?")
-                .setMessage("You have unsaved changes. Are you sure you want to leave?")
-                .setPositiveButton("Discard") { _, _ ->
-                    super.onBackPressed()
-                }
-                .setNegativeButton("Cancel", null)
-                .show()
-        } else {
-            super.onBackPressed()
-        }
-    }
-    
     private fun hasUnsavedChanges(): Boolean {
         return !etRecipeName.text.isNullOrBlank() ||
                 !etDescription.text.isNullOrBlank() ||

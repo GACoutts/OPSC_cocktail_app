@@ -40,6 +40,10 @@ class EditProfileActivity : AppCompatActivity() {
         }
     }
 
+    override fun attachBaseContext(newBase: android.content.Context) {
+        super.attachBaseContext(LocaleHelper.onAttach(newBase))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -108,7 +112,7 @@ class EditProfileActivity : AppCompatActivity() {
             imagePickerLauncher.launch("image/*")
         } catch (e: Exception) {
             Log.e("EditProfileActivity", "Error opening image picker", e)
-            Toast.makeText(this, "Error opening image picker", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.toast_error_open_image_picker), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -122,7 +126,7 @@ class EditProfileActivity : AppCompatActivity() {
                 .into(imgProfile)
         } catch (e: Exception) {
             Log.e("EditProfileActivity", "Error loading selected image", e)
-            Toast.makeText(this, "Error loading selected image", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.toast_error_loading_selected_image), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -133,25 +137,25 @@ class EditProfileActivity : AppCompatActivity() {
 
         // Validate input
         if (displayName.isEmpty()) {
-            etDisplayName.error = "Display name is required"
+            etDisplayName.error = getString(R.string.error_display_name_required)
             etDisplayName.requestFocus()
             return
         }
 
         if (username.isEmpty()) {
-            etUsername.error = "Username is required"
+            etUsername.error = getString(R.string.error_username_required)
             etUsername.requestFocus()
             return
         }
 
         if (email.isEmpty()) {
-            etEmail.error = "Email is required"
+            etEmail.error = getString(R.string.error_email_required)
             etEmail.requestFocus()
             return
         }
 
         if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            etEmail.error = "Please enter a valid email address"
+            etEmail.error = getString(R.string.error_email_invalid)
             etEmail.requestFocus()
             return
         }
@@ -184,14 +188,14 @@ class EditProfileActivity : AppCompatActivity() {
                 )
             }
 
-            Toast.makeText(this, "Profile updated successfully", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.toast_profile_updated_success), Toast.LENGTH_SHORT).show()
             Log.d("EditProfileActivity", "Profile updated successfully")
 
             // Go back to previous screen
             finish()
         } catch (e: Exception) {
             Log.e("EditProfileActivity", "Error saving profile changes", e)
-            Toast.makeText(this, "Error saving profile changes", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.toast_error_saving_profile_changes), Toast.LENGTH_SHORT).show()
         }
     }
 

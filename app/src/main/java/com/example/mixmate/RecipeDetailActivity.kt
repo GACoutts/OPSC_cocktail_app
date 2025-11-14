@@ -84,6 +84,10 @@ class RecipeDetailActivity : AppCompatActivity() {
         }
     }
 
+    override fun attachBaseContext(newBase: android.content.Context) {
+        super.attachBaseContext(LocaleHelper.onAttach(newBase))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -263,5 +267,10 @@ class RecipeDetailActivity : AppCompatActivity() {
         } else layoutGarnish.visibility = View.GONE
 
         layoutOptionalDetails.visibility = if (hasOptional) View.VISIBLE else View.GONE
+    }
+
+    private fun somePlaceShowingToasts(e: Exception?) {
+        // Example adaptation: ensure toasts use resources
+        Toast.makeText(this, getString(R.string.toast_error_generic, e?.message ?: ""), Toast.LENGTH_SHORT).show()
     }
 }

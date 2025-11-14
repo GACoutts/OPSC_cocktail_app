@@ -23,6 +23,10 @@ class FavouritesActivity : BaseActivity() {
     private lateinit var vm: FavouritesViewModel
     private lateinit var adapter: FavoritesAdapter
 
+    override fun attachBaseContext(newBase: android.content.Context) {
+        super.attachBaseContext(LocaleHelper.onAttach(newBase))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_favourites)

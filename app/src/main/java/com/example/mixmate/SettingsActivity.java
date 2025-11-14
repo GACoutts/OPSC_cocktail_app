@@ -25,16 +25,22 @@ public class SettingsActivity extends AppCompatActivity {
     private static final String KEY_PUSH_NOTIFICATIONS = "push_notifications";
     private static final String KEY_RECIPE_UPDATES = "recipe_updates";
     private static final String KEY_MEASUREMENT_UNITS = "measurement_units";
+    private static final String KEY_LANGUAGE = "selected_language";
 
     // UI Components
     private ImageButton btnBack;
-    private MaterialCardView cardEditProfile, cardChangePassword, cardUnits, cardPrivacy,
+    private MaterialCardView cardEditProfile, cardChangePassword, cardUnits, cardLanguage, cardPrivacy,
             cardHelpSupport, cardAbout, cardLogout;
     private MaterialSwitch switchPushNotifications, switchRecipeUpdates;
-    private TextView tvCurrentUnits;
+    private TextView tvCurrentUnits, tvCurrentLanguage;
 
     // Preferences
     private SharedPreferences sharedPreferences;
+
+    @Override
+    protected void attachBaseContext(android.content.Context newBase) {
+        super.attachBaseContext(LocaleHelper.INSTANCE.onAttach(newBase));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +77,8 @@ public class SettingsActivity extends AppCompatActivity {
             // Preferences section
             cardUnits = findViewById(R.id.card_units);
             tvCurrentUnits = findViewById(R.id.tv_current_units);
+            cardLanguage = findViewById(R.id.card_language);
+            tvCurrentLanguage = findViewById(R.id.tv_current_language);
 
             // Notifications section
             switchPushNotifications = findViewById(R.id.switch_push_notifications);
@@ -87,7 +95,7 @@ public class SettingsActivity extends AppCompatActivity {
             Log.d(TAG, "All views initialized successfully");
         } catch (Exception e) {
             Log.e(TAG, "Error initializing views", e);
-            Toast.makeText(this, "Error initializing settings", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.toast_error_init_settings), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -106,13 +114,13 @@ public class SettingsActivity extends AppCompatActivity {
                 startActivity(intent);
             } catch (Exception e) {
                 Log.e(TAG, "Error starting EditProfileActivity: " + e.getMessage());
-                Toast.makeText(this, "Error opening Edit Profile", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.toast_error_open_edit_profile), Toast.LENGTH_SHORT).show();
             }
         });
 
         cardChangePassword.setOnClickListener(v -> {
             Log.d(TAG, "Change Password clicked");
-            Toast.makeText(this, "Change Password - Coming soon!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.toast_change_password_coming), Toast.LENGTH_SHORT).show();
             // TODO: Navigate to ChangePasswordActivity
         });
 
@@ -122,19 +130,24 @@ public class SettingsActivity extends AppCompatActivity {
             showUnitsDialog();
         });
 
+        cardLanguage.setOnClickListener(v -> {
+            Log.d(TAG, "Language clicked");
+            showLanguageDialog();
+        });
+
 
         // Notifications section
         switchPushNotifications.setOnCheckedChangeListener((buttonView, isChecked) -> {
             Log.d(TAG, "Push notifications switched: " + isChecked);
             saveBooleanPreference(KEY_PUSH_NOTIFICATIONS, isChecked);
-            String message = isChecked ? "Push notifications enabled" : "Push notifications disabled";
+            String message = isChecked ? getString(R.string.toast_push_enabled) : getString(R.string.toast_push_disabled);
             Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
         });
 
         switchRecipeUpdates.setOnCheckedChangeListener((buttonView, isChecked) -> {
             Log.d(TAG, "Recipe updates switched: " + isChecked);
             saveBooleanPreference(KEY_RECIPE_UPDATES, isChecked);
-            String message = isChecked ? "Recipe updates enabled" : "Recipe updates disabled";
+            String message = isChecked ? getString(R.string.toast_recipe_updates_enabled) : getString(R.string.toast_recipe_updates_disabled);
             Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
         });
 
@@ -173,13 +186,18 @@ public class SettingsActivity extends AppCompatActivity {
             switchRecipeUpdates.setChecked(recipeUpdates);
 
             // Load Measurement Units preference
-            String units = sharedPreferences.getString(KEY_MEASUREMENT_UNITS, "Metric (ml, cl)");
+            String units = sharedPreferences.getString(KEY_MEASUREMENT_UNITS, getString(R.string.units_metric));
             tvCurrentUnits.setText(units);
+
+            // Load Language preference
+            String languageCode = LocaleHelper.INSTANCE.getLanguage(this);
+            String languageName = languageCode.equals("af") ? getString(R.string.language_afrikaans) : getString(R.string.language_english);
+            tvCurrentLanguage.setText(languageName);
 
             Log.d(TAG, "Preferences loaded successfully");
         } catch (Exception e) {
             Log.e(TAG, "Error loading preferences", e);
-            Toast.makeText(this, "Error loading settings", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.toast_error_loading_settings), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -189,7 +207,7 @@ public class SettingsActivity extends AppCompatActivity {
             Log.d(TAG, "Preference saved: " + key + " = " + value);
         } catch (Exception e) {
             Log.e(TAG, "Error saving preference: " + key, e);
-            Toast.makeText(this, "Error saving setting", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.toast_error_saving_setting), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -199,14 +217,14 @@ public class SettingsActivity extends AppCompatActivity {
             Log.d(TAG, "Preference saved: " + key + " = " + value);
         } catch (Exception e) {
             Log.e(TAG, "Error saving preference: " + key, e);
-            Toast.makeText(this, "Error saving setting", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.toast_error_saving_setting), Toast.LENGTH_SHORT).show();
         }
     }
 
     private void showUnitsDialog() {
-        String[] units = {"Metric (ml, cl)", "Imperial (fl oz, cups)", "Both"};
-        String currentUnits = sharedPreferences.getString(KEY_MEASUREMENT_UNITS, "Metric (ml, cl)");
-        
+        String[] units = {getString(R.string.units_metric), getString(R.string.units_imperial), getString(R.string.units_both)};
+        String currentUnits = sharedPreferences.getString(KEY_MEASUREMENT_UNITS, getString(R.string.units_metric));
+
         int selectedIndex = 0;
         for (int i = 0; i < units.length; i++) {
             if (units[i].equals(currentUnits)) {
@@ -216,15 +234,52 @@ public class SettingsActivity extends AppCompatActivity {
         }
 
         new AlertDialog.Builder(this)
-                .setTitle("Measurement Units")
+                .setTitle(getString(R.string.units_dialog_title))
                 .setSingleChoiceItems(units, selectedIndex, (dialog, which) -> {
                     String selectedUnits = units[which];
                     saveStringPreference(KEY_MEASUREMENT_UNITS, selectedUnits);
                     tvCurrentUnits.setText(selectedUnits);
-                    Toast.makeText(this, "Units changed to " + selectedUnits, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getString(R.string.units_changed_to, selectedUnits), Toast.LENGTH_SHORT).show();
                     dialog.dismiss();
                 })
-                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                .setNegativeButton(getString(R.string.dialog_cancel), (dialog, which) -> dialog.dismiss())
+                .show();
+    }
+
+    private void showLanguageDialog() {
+        String[] languages = {getString(R.string.language_english), getString(R.string.language_afrikaans)};
+        String[] languageCodes = {"en", "af"};
+
+        String currentLanguage = LocaleHelper.INSTANCE.getLanguage(this);
+
+        int selectedIndex = 0;
+        for (int i = 0; i < languageCodes.length; i++) {
+            if (languageCodes[i].equals(currentLanguage)) {
+                selectedIndex = i;
+                break;
+            }
+        }
+
+        new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.select_language))
+                .setSingleChoiceItems(languages, selectedIndex, (dialog, which) -> {
+                    String selectedLanguageCode = languageCodes[which];
+                    String selectedLanguageName = languages[which];
+
+                    // Save language preference
+                    LocaleHelper.INSTANCE.setLanguage(this, selectedLanguageCode);
+
+                    // Update UI
+                    tvCurrentLanguage.setText(selectedLanguageName);
+
+                    Log.d(TAG, "Language changed to: " + selectedLanguageName);
+
+                    // Recreate activity to apply language change
+                    recreate();
+
+                    dialog.dismiss();
+                })
+                .setNegativeButton(getString(R.string.dialog_cancel), (dialog, which) -> dialog.dismiss())
                 .show();
     }
 
@@ -237,7 +292,7 @@ public class SettingsActivity extends AppCompatActivity {
             startActivity(intent);
         } catch (Exception e) {
             Log.e(TAG, "Error opening privacy policy", e);
-            Toast.makeText(this, "Privacy Policy - Coming soon!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.toast_privacy_policy_coming), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -252,37 +307,37 @@ public class SettingsActivity extends AppCompatActivity {
             if (emailIntent.resolveActivity(getPackageManager()) != null) {
                 startActivity(emailIntent);
             } else {
-                Toast.makeText(this, "No email app found", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.toast_no_email_app), Toast.LENGTH_SHORT).show();
             }
         } catch (Exception e) {
             Log.e(TAG, "Error opening help & support", e);
-            Toast.makeText(this, "Help & Support - Coming soon!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.toast_help_support_coming), Toast.LENGTH_SHORT).show();
         }
     }
 
     private void showAboutDialog() {
         new AlertDialog.Builder(this)
-                .setTitle("About MixMate")
+                .setTitle(getString(R.string.about_mixmate))
                 .setMessage("MixMate v1.0.0\n\n" +
                            "The ultimate cocktail companion app.\n\n" +
                            "Discover, create, and share amazing cocktail recipes.\n\n" +
                            "© 2024 MixMate Team")
-                .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
+                .setPositiveButton(getString(R.string.dialog_ok), (dialog, which) -> dialog.dismiss())
                 .setNeutralButton("Rate App", (dialog, which) -> {
                     // In a real app, this would open the Play Store
-                    Toast.makeText(this, "Thank you! Rating coming soon.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getString(R.string.toast_thanks_rating_coming), Toast.LENGTH_SHORT).show();
                 })
                 .show();
     }
 
     private void showLogoutDialog() {
         new AlertDialog.Builder(this)
-                .setTitle("Logout")
-                .setMessage("Are you sure you want to logout?")
-                .setPositiveButton("Logout", (dialog, which) -> {
+                .setTitle(getString(R.string.dialog_logout_title))
+                .setMessage(getString(R.string.dialog_logout_message))
+                .setPositiveButton(getString(R.string.logout), (dialog, which) -> {
                     performLogout();
                 })
-                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                .setNegativeButton(getString(R.string.dialog_cancel), (dialog, which) -> dialog.dismiss())
                 .show();
     }
 
@@ -300,8 +355,8 @@ public class SettingsActivity extends AppCompatActivity {
             Log.d(TAG, "User still logged in after signOut: " + stillLoggedIn);
             
             // Show logout message
-            Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show();
-            
+            Toast.makeText(this, getString(R.string.toast_logged_out), Toast.LENGTH_SHORT).show();
+
             Log.d(TAG, "Navigating to MainActivity (login screen)");
             
             // Navigate to MainActivity (login screen) and clear the back stack
@@ -320,7 +375,7 @@ public class SettingsActivity extends AppCompatActivity {
             Log.d(TAG, "Logout process completed - should now be on login screen");
         } catch (Exception e) {
             Log.e(TAG, "Error during logout process", e);
-            Toast.makeText(this, "Error during logout: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.toast_error_logout, e.getMessage()), Toast.LENGTH_LONG).show();
         }
     }
 
@@ -329,11 +384,5 @@ public class SettingsActivity extends AppCompatActivity {
         super.onResume();
         // Reload preferences in case they were changed elsewhere
         loadPreferences();
-    }
-
-    @Override
-    public void onBackPressed() {
-        Log.d(TAG, "Back pressed");
-        super.onBackPressed();
     }
 }
