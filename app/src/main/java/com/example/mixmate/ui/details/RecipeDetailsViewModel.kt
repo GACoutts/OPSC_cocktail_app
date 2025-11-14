@@ -31,6 +31,24 @@ class RecipeDetailsViewModel(
     private val _ui = MutableStateFlow(RecipeDetailsUi())
     val ui: StateFlow<RecipeDetailsUi> = _ui
 
+    private var initialName: String = ""
+    private var initialImage: String = ""
+
+    fun setInitial(name: String, image: String) {
+        initialName = name
+        initialImage = image
+        _ui.value = RecipeDetailsUi(
+            loading = false,
+            id = "",
+            name = name,
+            imageUrl = image,
+            ingredients = "Ingredients not available",
+            instructions = "Instructions not available",
+            isFavorited = false,
+            error = null
+        )
+    }
+
     /** Try Room first (offline), else fetch from API */
     fun load(cocktailId: String) {
         viewModelScope.launch {
@@ -63,11 +81,13 @@ class RecipeDetailsViewModel(
                     // Still show whatever we can - don't block the UI
                     _ui.value = _ui.value.copy(
                         loading = false,
-                        name = "Cocktail #$cocktailId",
+                        name = initialName.ifBlank { "Cocktail #$cocktailId" },
+                        imageUrl = initialImage,
                         ingredients = "Unable to load ingredients",
                         instructions = "Unable to load instructions",
                         error = null // Don't show error, just display what we have
                     )
+                }
                 } else {
                     Log.d("RecipeDetailsVM", "Successfully loaded: ${drink.strDrink}")
                     val ingredients = formatIngredients(drink)
@@ -77,8 +97,8 @@ class RecipeDetailsViewModel(
                     _ui.value = RecipeDetailsUi(
                         loading = false,
                         id = drink.idDrink.orEmpty(),
-                        name = drink.strDrink ?: "Unknown Cocktail",
-                        imageUrl = drink.strDrinkThumb.orEmpty(),
+                        name = drink.strDrink ?: initialName.ifBlank { "Unknown Cocktail" },
+                        imageUrl = (drink.strDrinkThumb ?: "").ifBlank { initialImage },
                         ingredients = if (ingredients.isNotBlank()) ingredients else "No ingredients available",
                         instructions = if (instructions.isNotBlank()) instructions else "No instructions available",
                         isFavorited = false
@@ -89,7 +109,8 @@ class RecipeDetailsViewModel(
                 // Don't completely fail - show a basic view
                 _ui.value = _ui.value.copy(
                     loading = false,
-                    name = "Cocktail #$cocktailId",
+                    name = initialName.ifBlank { "Cocktail #$cocktailId" },
+                    imageUrl = initialImage,
                     ingredients = "Unable to load details at this time",
                     instructions = "Please check your internet connection and try again",
                     error = null // Show content instead of error

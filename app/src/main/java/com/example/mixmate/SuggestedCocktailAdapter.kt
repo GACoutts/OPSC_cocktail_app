@@ -76,27 +76,25 @@ class SuggestedCocktailAdapter(
         // Click → open details (either delegate to lambda or default to RecipeDetailsActivity)
         holder.itemView.setOnClickListener {
             onItemClick?.invoke(item) ?: run {
-                // Use RecipeDetailsActivity which properly fetches API data
-                val cocktailId = item.cocktailId
-                    
-                   
-                
-                if (cocktailId.isNullOrBlank()) {
-                    // Show toast if no ID available
-                    android.widget.Toast.makeText(
-                        holder.itemView.context,
-                        "Unable to open recipe details",
-                        android.widget.Toast.LENGTH_SHORT
-                    ).show()
-                    return@run
+                // Use RecipeDetailsActivity - always pass name and image
+                val intent = android.content.Intent(holder.itemView.context, com.example.mixmate.ui.details.RecipeDetailsActivity::class.java)
+
+Always pass name and image so we can show something
+intent.putExtra("cocktail_name", item.name)
+                intent.putExtra("cocktail_image", item.imageUrl)
+
+                // Pass ID if available for fetching additional details
+                item.cocktailId?.let { id ->
+                    intent.putExtra("cocktail_id", id)
                 }
 
-                val intent = android.content.Intent(holder.itemView.context, com.example.mixmate.ui.details.RecipeDetailsActivity::class.java)
-                intent.putExtra("cocktail_id", cocktailId)
                 holder.itemView.context.startActivity(intent)
             }
         }
     }
+                    
+                   
+                
 
     override fun getItemCount(): Int = items.size
 
@@ -145,5 +143,6 @@ private fun capitalizePossessiveSegment(segment: String): String {
                 if (c.isLowerCase()) c.titlecase(Locale.getDefault()) else c.toString()
             }
         }
+
     }.joinToString("'")
 }
