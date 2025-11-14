@@ -16,8 +16,11 @@ import androidx.lifecycle.lifecycleScope
 import android.view.View
 import kotlinx.coroutines.launch
 import com.example.mixmate.data.local.FavoriteEntity
+import com.example.mixmate.data.local.FavoriteDao
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import com.example.mixmate.MixMateApp
+import io.realm.kotlin.ext.query
 
 class DiscoverPage : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -84,9 +87,9 @@ class DiscoverPage : AppCompatActivity() {
         rvSuggested.addItemDecoration(GridSpacingItemDecoration(spanCount, spacingPx, includeEdge = false))
 
         val suggestedAdapter = SuggestedCocktailAdapter(
-            items = mutableListOf(),
+            items = mutableListOf<SuggestedCocktail>(),
             onItemClick = null, // Use default behavior
-            onFavoriteClick = { cocktail, isFavorite ->
+            onFavoriteClick = { cocktail: SuggestedCocktail, isFavorite: Boolean  ->
                 // Handle favorite toggle
                 lifecycleScope.launch {
                     handleFavoriteToggle(cocktail, isFavorite)
@@ -125,26 +128,33 @@ class DiscoverPage : AppCompatActivity() {
     }
 
     private suspend fun handleFavoriteToggle(cocktail: SuggestedCocktail, isFavorite: Boolean) {
-        withContext(Dispatchers.IO) {
+        withContext<Unit>(Dispatchers.IO) {
             val userId = UserManager.getCurrentUserUid() ?: UserManager.getUsername(this@DiscoverPage)
-            val favoriteDao = MixMateApp.db.favoriteDao()
-            
+            val realm = MixMateApp.realm
+
             if (isFavorite) {
                 // Add to favorites
-                val favoriteEntity = FavoriteEntity(
-                    cocktailId = cocktail.cocktailId ?: cocktail.name.hashCode().toString(),
-                    name = cocktail.name,
-                    imageUrl = cocktail.imageUrl ?: "",
-                    ingredients = "", // Will be populated when recipe details are loaded
-                    instructions = "", // Will be populated when recipe details are loaded
-                    userId = userId
-                )
-                favoriteDao.upsert(favoriteEntity)
+                realm.write {
+                    val favoriteEntity = copyToRealm(FavoriteEntity().apply {
+                        this.cocktailId = cocktail.cocktailId ?: cocktail.name.hashCode().toString()
+                        this.name = cocktail.name
+                        this.imageUrl = cocktail.imageUrl ?: ""
+                        this.ingredients = ""
+                        this.instructions = ""
+                        this.userId = userId
+                    })
+                }
             } else {
                 // Remove from favorites
                 val cocktailId = cocktail.cocktailId ?: cocktail.name.hashCode().toString()
-                favoriteDao.deleteById(cocktailId, userId)
+                realm.write {
+                    query<FavoriteEntity>("cocktailId == $0 AND userId == $1", cocktailId, userId)
+                        .first()
+                        .find()
+                        ?.let { delete(it) }
+                }
             }
         }
     }
+
 }

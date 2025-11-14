@@ -15,6 +15,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.mixmate.data.local.CustomRecipeEntity
 import com.google.android.material.card.MaterialCardView
 import com.example.mixmate.data.remote.FirebaseRecipeRepository
 import com.example.mixmate.data.repository.RecipeRepository
@@ -221,17 +222,17 @@ class ProfileActivity : AppCompatActivity() {
 
 
     private fun initializeRepository() {
-        val customRecipeDao = MixMateApp.db.customRecipeDao()
-        favoriteDao = MixMateApp.db.favoriteDao()
+        val realm = MixMateApp.realm
         val firebaseRepository = FirebaseRecipeRepository()
-        recipeRepository = RecipeRepository(customRecipeDao, firebaseRepository, activityScope)
+        recipeRepository = RecipeRepository(MixMateApp.realm, firebaseRepository, activityScope)
+
     }
     
     private fun loadMyRecipes() {
         val userId = UserManager.getCurrentUserUid() ?: UserManager.getUsername(this)
         
         activityScope.launch {
-            recipeRepository.getAllRecipes(userId).collect { recipes ->
+            recipeRepository.getAllRecipes(userId).collect { recipes: List<CustomRecipeEntity> ->
                 myRecipesAdapter.updateRecipes(recipes)
                 
                 // Show/hide empty state
@@ -245,7 +246,9 @@ class ProfileActivity : AppCompatActivity() {
             }
         }
     }
-    
+
+    private fun List<CustomRecipeEntity>.collect(function: Any) {}
+
     private fun loadFavorites() {
         val userId = UserManager.getCurrentUserUid() ?: UserManager.getUsername(this)
         

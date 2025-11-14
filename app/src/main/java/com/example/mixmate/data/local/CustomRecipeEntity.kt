@@ -1,46 +1,30 @@
 package com.example.mixmate.data.local
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-import androidx.room.TypeConverter
-import androidx.room.TypeConverters
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import io.realm.kotlin.types.RealmList
+import io.realm.kotlin.types.RealmObject
+import io.realm.kotlin.types.annotations.PrimaryKey
+import io.realm.kotlin.ext.realmListOf
 
-@Entity(tableName = "custom_recipes")
-@TypeConverters(Converters::class)
-data class CustomRecipeEntity(
-    @PrimaryKey(autoGenerate = true)
-    val id: Long = 0,
-    val name: String,
-    val description: String,
-    val instructions: String,
-    val ingredients: List<CustomIngredient>,
-    val glassware: String? = null,
-    val garnish: String? = null,
-    val preparationTime: Int? = null, // in minutes
-    val difficulty: String? = null,
-    val imageUri: String? = null, // Local file path or URI
-    val userId: String, // Firebase user ID to associate recipe with user
-    val createdAt: Long = System.currentTimeMillis(),
-    val updatedAt: Long = System.currentTimeMillis()
-)
+class CustomRecipeEntity : RealmObject {
 
-data class CustomIngredient(
-    val name: String,
-    val amount: String,
-    val unit: String
-)
+    @PrimaryKey
+    var id: Long = 0
 
-class Converters {
-    @TypeConverter
-    fun fromIngredientsList(ingredients: List<CustomIngredient>): String {
-        return Gson().toJson(ingredients)
-    }
+    var name: String = ""
+    var description: String = ""
+    var instructions: String = ""
 
-    @TypeConverter
-    fun toIngredientsList(ingredientsString: String): List<CustomIngredient> {
-        val listType = object : TypeToken<List<CustomIngredient>>() {}.type
-        return Gson().fromJson(ingredientsString, listType)
-    }
+    // RealmList instead of Gson type converter
+    var ingredients: RealmList<CustomIngredientRealm> = realmListOf()
+
+    var glassware: String? = null
+    var garnish: String? = null
+    var preparationTime: Int? = null
+    var difficulty: String? = null
+    var imageUri: String? = null
+
+    var userId: String = ""
+
+    var createdAt: Long = System.currentTimeMillis()
+    var updatedAt: Long = System.currentTimeMillis()
 }

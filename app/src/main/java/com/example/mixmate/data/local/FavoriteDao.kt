@@ -1,34 +1,75 @@
 package com.example.mixmate.data.local
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import io.realm.kotlin.Realm
+import io.realm.kotlin.UpdatePolicy
+import io.realm.kotlin.ext.query
+import io.realm.kotlin.notifications.ResultsChange
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
-@Dao
-interface FavoriteDao {
+class FavoriteDao(private val realm: Realm) {
 
-    @Query("SELECT * FROM favorites WHERE userId = :userId ORDER BY savedAt DESC")
-    fun getAll(userId: String): Flow<List<FavoriteEntity>>
+    // GET ALL FAVORITES
+    fun getAll(userId: String): Flow<List<FavoriteEntity>> {
+        return realm.query<FavoriteEntity>(
+            "userId == $0 SORT(savedAt DESC)", userId
+        )
+            .asFlow()
+            .map { change: ResultsChange<FavoriteEntity> ->
+                change.list.toList()
+            }
+    }
 
-    @Query("SELECT * FROM favorites WHERE userId = :userId AND name LIKE '%' || :query || '%' ORDER BY savedAt DESC")
-    fun searchByName(userId: String, query: String): Flow<List<FavoriteEntity>>
+    // SEARCH BY NAME
+    fun searchByName(userId: String, query: String): Flow<List<FavoriteEntity>> {
+        return realm.query<FavoriteEntity>(
+            "userId == $0 AND name CONTAINS[c] $1 SORT(savedAt DESC)",
+            userId, query
+        )
+            .asFlow()
+            .map { it.list.toList() }
+    }
 
-    @Query("SELECT * FROM favorites WHERE cocktailId = :id AND userId = :userId LIMIT 1")
-    suspend fun getById(id: String, userId: String): FavoriteEntity?
+    // GET ONE BY ID
+    suspend fun getById(id: String, userId: String): FavoriteEntity? {
+        return realm.query<FavoriteEntity>(
+            "cocktailId == $0 AND userId == $1", id, userId
+        ).first().find()
+    }
 
-    // handy if you ever want a reactive heart toggle state
-    @Query("SELECT EXISTS(SELECT 1 FROM favorites WHERE cocktailId = :id AND userId = :userId)")
-    fun isFavoriteFlow(id: String, userId: String): Flow<Boolean>
+    // CHECK FAVORITE STATUS (REACTIVE)
+    fun isFavoriteFlow(id: String, userId: String): Flow<Boolean> {
+        return realm.query<FavoriteEntity>(
+            "cocktailId == $0 AND userId == $1", id, userId
+        )
+            .asFlow()
+            .map { it.list.isNotEmpty() }
+    }
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun upsert(entity: FavoriteEntity)
+    // UPSERT (INSERT OR UPDATE)
+    suspend fun upsert(entity: FavoriteEntity) {
+        realm.write {
+            copyToRealm(entity, updatePolicy = UpdatePolicy.ALL)
+        }
+    }
 
-    @Delete
-    suspend fun delete(entity: FavoriteEntity)
+    // DELETE ENTITY
+    suspend fun delete(entity: FavoriteEntity) {
+        realm.write {
+            val obj = query<FavoriteEntity>(
+                "cocktailId == $0 AND userId == $1", entity.cocktailId, entity.userId
+            ).first().find()
+            if (obj != null) delete(obj)
+        }
+    }
 
-    @Query("DELETE FROM favorites WHERE cocktailId = :id AND userId = :userId")
-    suspend fun deleteById(id: String, userId: String)
+    // DELETE BY ID
+    suspend fun deleteById(id: String, userId: String) {
+        realm.write {
+            val obj = query<FavoriteEntity>(
+                "cocktailId == $0 AND userId == $1", id, userId
+            ).first().find()
+            if (obj != null) delete(obj)
+        }
+    }
 }

@@ -5,10 +5,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.mixmate.data.local.CustomIngredient
+import com.example.mixmate.data.local.CustomIngredientRealm
 
 class IngredientDetailAdapter(
-    private var ingredients: List<CustomIngredient> = emptyList()
+    private var ingredients: List<CustomIngredientRealm> = emptyList()
 ) : RecyclerView.Adapter<IngredientDetailAdapter.IngredientViewHolder>() {
 
     class IngredientViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -42,7 +42,7 @@ class IngredientDetailAdapter(
 
     override fun getItemCount(): Int = ingredients.size
 
-    fun updateIngredients(newIngredients: List<CustomIngredient>) {
+    fun updateIngredients(newIngredients: List<CustomIngredientRealm>) {
         ingredients = newIngredients
         notifyDataSetChanged()
     }
