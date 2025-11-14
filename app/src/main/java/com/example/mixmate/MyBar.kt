@@ -94,15 +94,11 @@ class MyBar : AppCompatActivity() {
         
         val barAdapter = BarItemAdapter(items) { ingredient, isSelected ->
             lifecycleScope.launch {
-                if (isSelected) {
-                    loadSuggestedByIngredient(ingredient.title)
+                val selectedIngredients = items.filter { it.isSelected }.map { it.title }
+                if (selectedIngredients.isNotEmpty()) {
+                    loadSuggestedByMultipleIngredients(selectedIngredients)
                 } else {
-                    val hasSelected = items.any { it.isSelected }
-                    if (hasSelected) {
-                        loadSuggestedByIngredient(items.filter { it.isSelected }.map { it.title }.first())
-                    } else {
-                        loadDefaultSuggested()
-                    }
+                    loadDefaultSuggested()
                 }
             }
         }
@@ -180,6 +176,42 @@ class MyBar : AppCompatActivity() {
         } ?: emptyList()
 
         updateSuggestedList(cocktails)
+    }
+
+    private suspend fun loadSuggestedByMultipleIngredients(ingredients: List<String>) {
+        showLoading()
+        try {
+            val api = com.example.mixmate.data.remote.CocktailApi.create()
+            val allCocktails = mutableSetOf<SuggestedCocktail>()
+            
+            // Fetch cocktails for each selected ingredient
+            for (ingredient in ingredients) {
+                try {
+                    val apiResponse = api.filterByIngredient(ingredient)
+                    apiResponse.drinks?.forEach { drink ->
+                        if (drink.idDrink != null && drink.strDrink != null) {
+                            allCocktails.add(
+                                SuggestedCocktail(
+                                    name = drink.strDrink,
+                                    rating = 0.0,
+                                    category = ingredients.joinToString(", "),
+                                    imageUrl = drink.strDrinkThumb,
+                                    cocktailId = drink.idDrink,
+                                    isFavorite = false
+                                )
+                            )
+                        }
+                    }
+                } catch (e: Exception) {
+                    // Continue with next ingredient if one fails
+                    continue
+                }
+            }
+            
+            updateSuggestedList(allCocktails.toList())
+        } catch (e: Exception) {
+            updateSuggestedList(emptyList())
+        }
     }
 
     private suspend fun updateSuggestedList(data: List<SuggestedCocktail>) {

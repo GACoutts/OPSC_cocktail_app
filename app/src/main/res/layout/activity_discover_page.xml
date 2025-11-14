@@ -55,7 +55,7 @@
                 app:boxCornerRadiusBottomEnd="24dp"
                 app:endIconMode="dropdown_menu"
                 app:endIconTint="@color/white"
-                app:hintEnabled="false">
+                app:hintEnabled="true">
 
                 <com.google.android.material.textfield.MaterialAutoCompleteTextView
                     android:id="@+id/ac_filter_ingredient"
@@ -88,7 +88,7 @@
                 app:boxCornerRadiusBottomEnd="24dp"
                 app:endIconMode="dropdown_menu"
                 app:endIconTint="@color/white"
-                app:hintEnabled="false">
+                app:hintEnabled="true">
 
                 <com.google.android.material.textfield.MaterialAutoCompleteTextView
                     android:id="@+id/ac_filter_alcohol"
@@ -120,7 +120,7 @@
                 app:boxCornerRadiusBottomEnd="24dp"
                 app:endIconMode="dropdown_menu"
                 app:endIconTint="@color/white"
-                app:hintEnabled="false">
+                app:hintEnabled="true">
 
                 <com.google.android.material.textfield.MaterialAutoCompleteTextView
                     android:id="@+id/ac_filter_rating"
