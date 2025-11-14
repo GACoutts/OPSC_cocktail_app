@@ -77,10 +77,22 @@ class SuggestedCocktailAdapter(
         holder.itemView.setOnClickListener {
             onItemClick?.invoke(item) ?: run {
                 // Use RecipeDetailsActivity which properly fetches API data
-                val intent = android.content.Intent(holder.itemView.context, com.example.mixmate.ui.details.RecipeDetailsActivity::class.java)
-                item.cocktailId?.let { id ->
-                    intent.putExtra("cocktail_id", id)
+                val cocktailId = item.cocktailId
+                    
+                   
+                
+                if (cocktailId.isNullOrBlank()) {
+                    // Show toast if no ID available
+                    android.widget.Toast.makeText(
+                        holder.itemView.context,
+                        "Unable to open recipe details",
+                        android.widget.Toast.LENGTH_SHORT
+                    ).show()
+                    return@run
                 }
+
+                val intent = android.content.Intent(holder.itemView.context, com.example.mixmate.ui.details.RecipeDetailsActivity::class.java)
+                intent.putExtra("cocktail_id", cocktailId)
                 holder.itemView.context.startActivity(intent)
             }
         }
@@ -118,6 +130,7 @@ fun capitalizeWords(raw: String): String = raw.trim()
 private fun capitalizePossessiveSegment(segment: String): String {
     val parts = segment.split("'")
     if (parts.size == 1) {
+
         return parts[0].lowercase().replaceFirstChar { c ->
             if (c.isLowerCase()) c.titlecase(Locale.getDefault()) else c.toString()
         }
