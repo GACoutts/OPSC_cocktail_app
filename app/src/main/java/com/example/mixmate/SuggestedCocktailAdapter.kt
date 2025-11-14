@@ -73,15 +73,15 @@ class SuggestedCocktailAdapter(
             onFavoriteClick?.invoke(item, newState)
         }
 
-        // Click → open details (either delegate to lambda or default to RecipeDetailActivity)
+        // Click → open details (either delegate to lambda or default to RecipeDetailsActivity)
         holder.itemView.setOnClickListener {
             onItemClick?.invoke(item) ?: run {
-                RecipeDetailActivity.launch(
-                    context = holder.itemView.context,
-                    name = item.name,
-                    imageUrl = item.imageUrl,
-                    externalId = null
-                )
+                // Use RecipeDetailsActivity which properly fetches API data
+                val intent = android.content.Intent(holder.itemView.context, com.example.mixmate.ui.details.RecipeDetailsActivity::class.java)
+                item.cocktailId?.let { id ->
+                    intent.putExtra("cocktail_id", id)
+                }
+                holder.itemView.context.startActivity(intent)
             }
         }
     }

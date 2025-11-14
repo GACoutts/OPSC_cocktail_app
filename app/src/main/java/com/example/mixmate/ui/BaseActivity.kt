@@ -48,7 +48,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
         home?.setOnClickListener { goIfNotCurrent(HomePage::class.java) }
         discover?.setOnClickListener { goIfNotCurrent(DiscoverPage::class.java) }
-        list?.setOnClickListener { goIfNotCurrent(MainActivity::class.java) }
+        list?.setOnClickListener { goIfNotCurrent(MyBar::class.java) }
         fav?.setOnClickListener { goIfNotCurrent(FavouritesActivity::class.java) }
         profile?.setOnClickListener { goIfNotCurrent(ProfileActivity::class.java) }
 

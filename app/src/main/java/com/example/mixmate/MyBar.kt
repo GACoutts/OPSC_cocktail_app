@@ -87,7 +87,7 @@ class MyBar : AppCompatActivity() {
         rvAlcoholTypes.setHasFixedSize(true)
         rvAlcoholTypes.addItemDecoration(GridSpacingItemDecoration(spanCount, spacingPx, includeEdge = false))
 
-        val alcoholNames = resources.getStringArray(R.array.ingredient_options).toList()
+        val alcoholNames = resources.getStringArray(R.array.alcohol_type_options).toList().filter { it != "Reset" }
         alcoholItems = alcoholNames.map { alcohol ->
             BarItem(alcohol, R.drawable.ic_local_bar)
         }
@@ -118,12 +118,16 @@ class MyBar : AppCompatActivity() {
         rvIngredients.adapter = ingredientAdapter
 
         // Setup ingredient tab switching
-        val ingredientTabs = findViewById<com.google.android.material.button.MaterialButtonToggleGroup>(R.id.ingredient_tabs)
+        val ingredientTabs =
+            findViewById<com.google.android.material.button.MaterialButtonToggleGroup>(R.id.ingredient_tabs)
         val btnAlcohol = findViewById<com.google.android.material.button.MaterialButton>(R.id.btn_alcohol)
         val btnIngredients = findViewById<com.google.android.material.button.MaterialButton>(R.id.btn_ingredients)
 
-        // Set alcohol as default selected
-        btnAlcohol.isChecked = true
+        // Start with both collapsed
+        btnIngredients.isChecked = false
+        btnAlcohol.isChecked = false
+        rvAlcoholTypes.visibility = View.GONE
+        rvIngredients.visibility = View.GONE
 
         ingredientTabs.addOnButtonCheckedListener { group: com.google.android.material.button.MaterialButtonToggleGroup, checkedId: Int, isChecked: Boolean ->
             if (isChecked) {
@@ -131,10 +135,15 @@ class MyBar : AppCompatActivity() {
                     R.id.btn_alcohol -> {
                         rvAlcoholTypes.visibility = View.VISIBLE
                         rvIngredients.visibility = View.GONE
+                        // Update suggested cocktails title constraint
+                        updateSuggestedTitleConstraint(true)
+
                     }
                     R.id.btn_ingredients -> {
                         rvAlcoholTypes.visibility = View.GONE
                         rvIngredients.visibility = View.VISIBLE
+                        // Update suggested cocktails title constraint
+                        updateSuggestedTitleConstraint(false)
                     }
                 }
             }
@@ -188,10 +197,10 @@ class MyBar : AppCompatActivity() {
 
     private suspend fun updateSuggestions() {
         val selectedAlcohols = alcoholItems.filter { it.isSelected }.map { it.title }
-        val selectedIngredients = ingredientItems.filter { it.isSelected }.map { it.title }
-        
-        val allSelected = selectedAlcohols + selectedIngredients
-        
+val selectedIngredients = ingredientItems.filter { it.isSelected }.map { it.title }
+
+val allSelected = selectedAlcohols + selectedIngredients
+
         if (allSelected.isNotEmpty()) {
             loadSuggestedByMultipleIngredients(allSelected)
         } else {
@@ -200,7 +209,7 @@ class MyBar : AppCompatActivity() {
     }
 
     private suspend fun loadDefaultSuggested() {
-        val apiItems = CocktailApiRepository.fetchCocktails(limit = 10)
+        val apiItems = CocktailApiRepository.fetchCocktails(limit = 50)
         val data = if (apiItems.isNotEmpty()) CocktailImageProvider.enrichWithImages(apiItems) else emptyList()
         updateSuggestedList(data)
     }
@@ -231,8 +240,8 @@ class MyBar : AppCompatActivity() {
         showLoading()
         try {
             val api = com.example.mixmate.data.remote.CocktailApi.create()
-            val allCocktails = mutableSetOf<SuggestedCocktail>()
-            
+val allCocktails = mutableSetOf<SuggestedCocktail>()
+
             // Fetch cocktails for each selected ingredient
             for (ingredient in ingredients) {
                 try {
@@ -240,8 +249,8 @@ class MyBar : AppCompatActivity() {
                     apiResponse.drinks?.forEachIndexed { index, drink ->
                         if (drink.idDrink != null && drink.strDrink != null) {
                             // Calculate rating based on position (popularity)
-                            val rating = 5.0 - (index * 0.1).coerceAtMost(2.0)
-                            
+val rating = 5.0 - (index * 0.1).coerceAtMost(2.0)
+
                             allCocktails.add(
                                 SuggestedCocktail(
                                     name = drink.strDrink,
@@ -258,8 +267,8 @@ class MyBar : AppCompatActivity() {
                     // Continue with next ingredient if one fails
                     continue
                 }
-            }
-            
+}
+
             updateSuggestedList(allCocktails.toList())
         } catch (e: Exception) {
             updateSuggestedList(emptyList())
@@ -301,5 +310,11 @@ class MyBar : AppCompatActivity() {
         )
 
         favoritesViewModel.toggleFavorite(favoriteEntity, !isFavorite)
+    }
+
+    private fun updateSuggestedTitleConstraint(isAlcoholTab: Boolean) {
+        // This method can be used to dynamically update constraints if needed
+        // For now, the layout handles both cases with the fixed constraint to rv_alcohol_types
+        // which works because rv_bar_items has the same top constraint
     }
 }

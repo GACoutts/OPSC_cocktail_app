@@ -33,6 +33,12 @@ class DiscoverPage : AppCompatActivity() {
     private lateinit var filterViewModel: FilterViewModel
     private val favoriteStates = mutableMapOf<String, Boolean>()  // Cache for quick lookups
 
+    // UI components
+    private lateinit var suggestedAdapter: SuggestedCocktailAdapter
+    private lateinit var rvSuggested: RecyclerView
+    private lateinit var loadingContainer: View
+    private lateinit var emptyContainer: View
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, true)
@@ -48,6 +54,27 @@ class DiscoverPage : AppCompatActivity() {
 
         // Initialize filter ViewModel
         filterViewModel = ViewModelProvider(this).get(FilterViewModel::class.java)
+
+        // Setup search functionality
+        val searchIcon = findViewById<ImageView>(R.id.header_search)
+        searchIcon?.setOnClickListener {
+            // Create a simple search dialog
+            val builder = androidx.appcompat.app.AlertDialog.Builder(this)
+            val input = android.widget.EditText(this)
+            input.hint = "Search cocktails by name..."
+            input.inputType = android.text.InputType.TYPE_CLASS_TEXT
+
+            builder.setTitle("Search Cocktails")
+                .setView(input)
+                .setPositiveButton("Search") { _, _ ->
+                    val searchQuery = input.text.toString().trim()
+                    if (searchQuery.isNotEmpty()) {
+                        performSearch(searchQuery)
+                    }
+                }
+                .setNegativeButton("Cancel", null)
+                .show()
+        }
 
         // Footer navigation wiring
         val navHome = findViewById<ImageView>(R.id.nav_home)
@@ -91,27 +118,47 @@ class DiscoverPage : AppCompatActivity() {
         // Setup filter listeners
         ingredientView?.setOnItemClickListener { _, _, position, _ ->
             val selected = resources.getStringArray(R.array.ingredient_options)[position]
-            filterViewModel.filterByIngredient(selected)
+            if (selected == "Reset") {
+                filterViewModel.clearIngredientFilter()
+                ingredientView.setText("", false)
+            } else {
+                ingredientView.setText(selected, false)
+                filterViewModel.filterByIngredient(selected)
+            }
+            ingredientView.dismissDropDown()
         }
 
         alcoholView?.setOnItemClickListener { _, _, position, _ ->
             val selected = resources.getStringArray(R.array.alcohol_type_options)[position]
-            filterViewModel.filterByCategory(selected)
+            if (selected == "Reset") {
+                filterViewModel.clearCategoryFilter()
+                alcoholView.setText("", false)
+            } else {
+                alcoholView.setText(selected, false)
+                filterViewModel.filterByCategory(selected)
+            }
+            alcoholView.dismissDropDown()
         }
 
         ratingView?.setOnItemClickListener { _, _, position, _ ->
             val ratings = resources.getStringArray(R.array.rating_options)
             val selected = ratings[position]
-            
-            val minRating = when (selected) {
-                "4.5+" -> 4.5
-                "4.0+" -> 4.0
-                "3.5+" -> 3.5
-                "3.0+" -> 3.0
-                else -> 0.0
+
+            if (selected == "Reset") {
+                filterViewModel.clearRatingFilter()
+                ratingView.setText("", false)
+            } else {
+                ratingView.setText(selected, false)
+                val minRating = when (selected) {
+                    "4.5+" -> 4.5
+                    "4.0+" -> 4.0
+                    "3.5+" -> 3.5
+                    "3.0+" -> 3.0
+                    else -> 0.0
+                }
+                filterViewModel.filterByRating(minRating)
             }
-            
-            filterViewModel.filterByRating(minRating)
+            ratingView.dismissDropDown()
         }
 
         // Do not set default text; keep empty. Ensure tapping opens the menu.
@@ -135,16 +182,16 @@ class DiscoverPage : AppCompatActivity() {
         }
 
         // Suggested Cocktails grid (API backed with loading / empty states)
-        val rvSuggested: RecyclerView = findViewById(R.id.rv_suggested)
-        val loadingContainer: View = findViewById(R.id.loading_container_discover)
-        val emptyContainer: View = findViewById(R.id.empty_container_discover)
+        rvSuggested = findViewById(R.id.rv_suggested)
+        loadingContainer = findViewById(R.id.loading_container_discover)
+        emptyContainer = findViewById(R.id.empty_container_discover)
         val spanCount = 2
         rvSuggested.layoutManager = GridLayoutManager(this, spanCount)
         rvSuggested.setHasFixedSize(true)
         val spacingPx = resources.getDimensionPixelSize(R.dimen.grid_spacing)
         rvSuggested.addItemDecoration(GridSpacingItemDecoration(spanCount, spacingPx, includeEdge = false))
 
-        val suggestedAdapter = SuggestedCocktailAdapter(
+        suggestedAdapter = SuggestedCocktailAdapter(
             items = mutableListOf(),
             onItemClick = null, // Use default behavior
             onFavoriteClick = { cocktail, isFavorite ->
@@ -160,25 +207,11 @@ class DiscoverPage : AppCompatActivity() {
         )
         rvSuggested.adapter = suggestedAdapter
 
-        fun showLoading() {
-            loadingContainer.visibility = View.VISIBLE
-            rvSuggested.visibility = View.GONE
-            emptyContainer.visibility = View.GONE
-        }
-        fun showContent() {
-            loadingContainer.visibility = View.GONE
-            rvSuggested.visibility = View.VISIBLE
-            emptyContainer.visibility = View.GONE
-        }
-        fun showEmpty() {
-            loadingContainer.visibility = View.GONE
-            rvSuggested.visibility = View.GONE
-            emptyContainer.visibility = View.VISIBLE
-        }
+
 
         showLoading()
         lifecycleScope.launch {
-            val apiItems = CocktailApiRepository.fetchCocktails(limit = 10)
+            val apiItems = CocktailApiRepository.fetchCocktails(limit = 50)
             val data = if (apiItems.isNotEmpty()) CocktailImageProvider.enrichWithImages(apiItems) else emptyList()
 
             // Load favorite states for all cocktails
@@ -189,10 +222,10 @@ class DiscoverPage : AppCompatActivity() {
                     cocktail.isFavorite = isFav
                 }
             }
-            
+
             // Initialize filter ViewModel with default cocktails
             filterViewModel.setInitialCocktails(data)
-            
+
             if (data.isNotEmpty()) {
                 suggestedAdapter.replaceAll(data)
                 showContent()
@@ -232,11 +265,29 @@ class DiscoverPage : AppCompatActivity() {
         }
     }
 
+    private fun showLoading() {
+        loadingContainer.visibility = View.VISIBLE
+        rvSuggested.visibility = View.GONE
+        emptyContainer.visibility = View.GONE
+    }
+
+    private fun showContent() {
+        loadingContainer.visibility = View.GONE
+        rvSuggested.visibility = View.VISIBLE
+        emptyContainer.visibility = View.GONE
+    }
+
+    private fun showEmpty() {
+        loadingContainer.visibility = View.GONE
+        rvSuggested.visibility = View.GONE
+        emptyContainer.visibility = View.VISIBLE
+    }
+
     private suspend fun handleFavoriteToggle(cocktail: SuggestedCocktail, isFavorite: Boolean) {
         withContext(Dispatchers.IO) {
             val userId = UserManager.getCurrentUserUid() ?: UserManager.getUsername(this@DiscoverPage)
             val cocktailId = cocktail.cocktailId ?: cocktail.name.hashCode().toString()
-            
+
             // Update cache immediately
             favoriteStates[cocktailId] = isFavorite
 
@@ -245,12 +296,60 @@ class DiscoverPage : AppCompatActivity() {
                 cocktailId = cocktailId,
                 name = cocktail.name,
                 imageUrl = cocktail.imageUrl ?: "",
-                ingredients = "", // Will be populated when recipe details are loaded
-                instructions = "", // Will be populated when recipe details are loaded
+                ingredients = "",
+                instructions = "",
                 userId = userId
             )
 
             favoritesViewModel.toggleFavorite(favoriteEntity, !isFavorite)
+        }
+    }
+
+    private fun performSearch(query: String) {
+        lifecycleScope.launch {
+            try {
+                showLoading()
+                val api = com.example.mixmate.data.remote.CocktailApi.create()
+                val response = withContext(Dispatchers.IO) {
+                    api.searchByName(query)
+                }
+
+                val cocktails = response.drinks?.mapNotNull { drink ->
+                    if (drink.idDrink == null || drink.strDrink == null) {
+                        return@mapNotNull null
+                    }
+
+                    val rating = 4.0 + (Math.random() * 1.0) // Random rating between 4.0-5.0
+
+                    SuggestedCocktail(
+                        name = drink.strDrink,
+                        rating = rating,
+                        category = "Search Result",
+                        imageUrl = drink.strDrinkThumb,
+                        cocktailId = drink.idDrink,
+                        isFavorite = false
+                    )
+                } ?: emptyList()
+
+                // Load favorite states for search results
+                cocktails.forEach { cocktail ->
+                    cocktail.cocktailId?.let { id ->
+                        val isFav = favoritesViewModel.isFavorite(id).firstOrNull() ?: false
+                        favoriteStates[id] = isFav
+                        cocktail.isFavorite = isFav
+                    }
+                }
+
+                if (cocktails.isNotEmpty()) {
+                    suggestedAdapter.replaceAll(cocktails)
+                    showContent()
+                } else {
+                    showEmpty()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(this@DiscoverPage, "Search failed: ${e.message}", Toast.LENGTH_SHORT).show()
+                showEmpty()
+            }
         }
     }
 }
