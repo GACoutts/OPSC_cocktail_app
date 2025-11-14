@@ -60,44 +60,39 @@ class RecipeDetailsViewModel(
 
                 if (drink == null) {
                     Log.e("RecipeDetailsVM", "API returned null for ID: $cocktailId")
+                    // Still show whatever we can - don't block the UI
                     _ui.value = _ui.value.copy(
                         loading = false,
-                        error = "Recipe not found. Please try another cocktail."
+                        name = "Cocktail #$cocktailId",
+                        ingredients = "Unable to load ingredients",
+                        instructions = "Unable to load instructions",
+                        error = null // Don't show error, just display what we have
                     )
                 } else {
                     Log.d("RecipeDetailsVM", "Successfully loaded: ${drink.strDrink}")
                     val ingredients = formatIngredients(drink)
                     val instructions = drink.strInstructions.orEmpty()
 
-                    if (ingredients.isBlank() && instructions.isBlank()) {
-                        Log.w("RecipeDetailsVM", "Recipe has no details")
-                        _ui.value = RecipeDetailsUi(
-                            loading = false,
-                            id = drink.idDrink.orEmpty(),
-                            name = drink.strDrink.orEmpty(),
-                            imageUrl = drink.strDrinkThumb.orEmpty(),
-                            ingredients = "No ingredients available",
-                            instructions = "No instructions available",
-                            isFavorited = false,
-                            error = "Limited information available for this recipe"
-                        )
-                    } else {
-                        _ui.value = RecipeDetailsUi(
-                            loading = false,
-                            id = drink.idDrink.orEmpty(),
-                            name = drink.strDrink.orEmpty(),
-                            imageUrl = drink.strDrinkThumb.orEmpty(),
-                            ingredients = ingredients,
-                            instructions = instructions,
-                            isFavorited = false
-                        )
-                    }
+                    // Always show the drink, even if some details are missing
+                    _ui.value = RecipeDetailsUi(
+                        loading = false,
+                        id = drink.idDrink.orEmpty(),
+                        name = drink.strDrink ?: "Unknown Cocktail",
+                        imageUrl = drink.strDrinkThumb.orEmpty(),
+                        ingredients = if (ingredients.isNotBlank()) ingredients else "No ingredients available",
+                        instructions = if (instructions.isNotBlank()) instructions else "No instructions available",
+                        isFavorited = false
+                    )
                 }
             } catch (e: Exception) {
                 Log.e("RecipeDetailsVM", "Error loading recipe: ${e.message}", e)
+                // Don't completely fail - show a basic view
                 _ui.value = _ui.value.copy(
                     loading = false,
-                    error = "Failed to load recipe: ${e.message ?: "Unknown error"}"
+                    name = "Cocktail #$cocktailId",
+                    ingredients = "Unable to load details at this time",
+                    instructions = "Please check your internet connection and try again",
+                    error = null // Show content instead of error
                 )
             }
         }
