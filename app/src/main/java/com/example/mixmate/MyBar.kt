@@ -89,7 +89,7 @@ class MyBar : AppCompatActivity() {
 
         val alcoholNames = resources.getStringArray(R.array.ingredient_options).toList()
         alcoholItems = alcoholNames.map { alcohol ->
-            BarItem(alcohol, R.drawable.ic_ingredient)
+            BarItem(alcohol, R.drawable.ic_local_bar)
         }
 
         val alcoholAdapter = BarItemAdapter(alcoholItems) { _, _ ->
@@ -107,7 +107,7 @@ class MyBar : AppCompatActivity() {
 
         val ingredientNames = resources.getStringArray(R.array.mybar_ingredients).toList()
         ingredientItems = ingredientNames.map { ingredient ->
-            BarItem(ingredient, R.drawable.ic_ingredient)
+            BarItem(ingredient, R.drawable.ic_local_bar)
         }
 
         val ingredientAdapter = BarItemAdapter(ingredientItems) { _, _ ->
@@ -116,6 +116,29 @@ class MyBar : AppCompatActivity() {
             }
         }
         rvIngredients.adapter = ingredientAdapter
+
+        // Setup ingredient tab switching
+        val ingredientTabs = findViewById<com.google.android.material.button.MaterialButtonToggleGroup>(R.id.ingredient_tabs)
+        val btnAlcohol = findViewById<com.google.android.material.button.MaterialButton>(R.id.btn_alcohol)
+        val btnIngredients = findViewById<com.google.android.material.button.MaterialButton>(R.id.btn_ingredients)
+
+        // Set alcohol as default selected
+        btnAlcohol.isChecked = true
+
+        ingredientTabs.addOnButtonCheckedListener { group: com.google.android.material.button.MaterialButtonToggleGroup, checkedId: Int, isChecked: Boolean ->
+            if (isChecked) {
+                when (checkedId) {
+                    R.id.btn_alcohol -> {
+                        rvAlcoholTypes.visibility = View.VISIBLE
+                        rvIngredients.visibility = View.GONE
+                    }
+                    R.id.btn_ingredients -> {
+                        rvAlcoholTypes.visibility = View.GONE
+                        rvIngredients.visibility = View.VISIBLE
+                    }
+                }
+            }
+        }
 
         // Suggested Cocktails section with API-backed data and state handling
         rvSuggested = findViewById(R.id.rv_suggested)
