@@ -18,11 +18,17 @@ import kotlinx.coroutines.launch
 import com.example.mixmate.data.local.FavoriteEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import com.example.mixmate.ui.favorites.SharedFavoritesViewModel
+import kotlinx.coroutines.flow.firstOrNull
 
 class DiscoverPage : AppCompatActivity() {
     override fun attachBaseContext(newBase: android.content.Context) {
         super.attachBaseContext(LocaleHelper.onAttach(newBase))
     }
+
+
+    private lateinit var favoritesViewModel: SharedFavoritesViewModel
+    private val favoriteStates = mutableMapOf<String, Boolean>()  // Cache for quick lookups
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,6 +38,10 @@ class DiscoverPage : AppCompatActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             window.isNavigationBarContrastEnforced = false
         }
+
+        // Initialize favorites ViewModel
+        val userId = UserManager.getCurrentUserUid() ?: UserManager.getUsername(this)
+        favoritesViewModel = SharedFavoritesViewModel(userId)
 
         // Footer navigation wiring
         val navHome = findViewById<ImageView>(R.id.nav_home)
@@ -91,10 +101,14 @@ class DiscoverPage : AppCompatActivity() {
             items = mutableListOf(),
             onItemClick = null, // Use default behavior
             onFavoriteClick = { cocktail, isFavorite ->
-                // Handle favorite toggle
+                // Handle favorite toggle using shared ViewModel
                 lifecycleScope.launch {
                     handleFavoriteToggle(cocktail, isFavorite)
                 }
+            },
+            getFavoriteState = { cocktailId ->
+                // Return cached favorite state for immediate UI update
+                favoriteStates[cocktailId] ?: false
             }
         )
         rvSuggested.adapter = suggestedAdapter
@@ -119,6 +133,16 @@ class DiscoverPage : AppCompatActivity() {
         lifecycleScope.launch {
             val apiItems = CocktailApiRepository.fetchCocktails(limit = 10)
             val data = if (apiItems.isNotEmpty()) CocktailImageProvider.enrichWithImages(apiItems) else emptyList()
+
+            // Load favorite states for all cocktails
+            data.forEach { cocktail ->
+                cocktail.cocktailId?.let { id ->
+                    val isFav = favoritesViewModel.isFavorite(id).firstOrNull() ?: false
+                    favoriteStates[id] = isFav
+                    cocktail.isFavorite = isFav
+                }
+            }
+
             if (data.isNotEmpty()) {
                 suggestedAdapter.replaceAll(data)
                 showContent()
@@ -131,24 +155,22 @@ class DiscoverPage : AppCompatActivity() {
     private suspend fun handleFavoriteToggle(cocktail: SuggestedCocktail, isFavorite: Boolean) {
         withContext(Dispatchers.IO) {
             val userId = UserManager.getCurrentUserUid() ?: UserManager.getUsername(this@DiscoverPage)
-            val favoriteDao = MixMateApp.db.favoriteDao()
+            val cocktailId = cocktail.cocktailId ?: cocktail.name.hashCode().toString()
             
-            if (isFavorite) {
-                // Add to favorites
-                val favoriteEntity = FavoriteEntity(
-                    cocktailId = cocktail.cocktailId ?: cocktail.name.hashCode().toString(),
-                    name = cocktail.name,
-                    imageUrl = cocktail.imageUrl ?: "",
-                    ingredients = "", // Will be populated when recipe details are loaded
-                    instructions = "", // Will be populated when recipe details are loaded
-                    userId = userId
-                )
-                favoriteDao.upsert(favoriteEntity)
-            } else {
-                // Remove from favorites
-                val cocktailId = cocktail.cocktailId ?: cocktail.name.hashCode().toString()
-                favoriteDao.deleteById(cocktailId, userId)
-            }
+            // Update cache immediately
+            favoriteStates[cocktailId] = isFavorite
+
+            // Use shared ViewModel for consistency
+            val favoriteEntity = FavoriteEntity(
+                cocktailId = cocktailId,
+                name = cocktail.name,
+                imageUrl = cocktail.imageUrl ?: "",
+                ingredients = "", // Will be populated when recipe details are loaded
+                instructions = "", // Will be populated when recipe details are loaded
+                userId = userId
+            )
+
+            favoritesViewModel.toggleFavorite(favoriteEntity, !isFavorite)
         }
     }
 }

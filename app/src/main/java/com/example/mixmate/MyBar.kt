@@ -13,17 +13,27 @@ import android.os.Build
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import android.view.View
+import com.example.mixmate.data.local.FavoriteEntity
+import com.example.mixmate.ui.favorites.SharedFavoritesViewModel
+import kotlinx.coroutines.flow.firstOrNull
 
 class MyBar : AppCompatActivity() {
     override fun attachBaseContext(newBase: android.content.Context) {
         super.attachBaseContext(LocaleHelper.onAttach(newBase))
     }
 
+    private lateinit var favoritesViewModel: SharedFavoritesViewModel
+    private val favoriteStates = mutableMapOf<String, Boolean>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // Ensure content is laid out below the system status bar
         WindowCompat.setDecorFitsSystemWindows(window, true)
         setContentView(R.layout.activity_my_bar)
+
+        // Initialize favorites ViewModel
+        val userId = UserManager.getCurrentUserUid() ?: UserManager.getUsername(this)
+        favoritesViewModel = SharedFavoritesViewModel(userId)
 
         // Make the system nav bar match the footer color and keep icons light
         WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightNavigationBars = false
@@ -53,6 +63,9 @@ class MyBar : AppCompatActivity() {
         }
         // Already on My Bar
         navList?.setOnClickListener { /* no-op */ }
+        navFav?.setOnClickListener {
+            startActivity(Intent(this, FavouritesActivity::class.java))
+        }
         navFav?.setOnClickListener { Toast.makeText(this, getString(R.string.favourites_coming_soon), Toast.LENGTH_SHORT).show() }
         navProfile?.setOnClickListener {
             startActivity(Intent(this, ProfileActivity::class.java))
@@ -84,7 +97,18 @@ class MyBar : AppCompatActivity() {
         rvSuggested.setHasFixedSize(true)
         rvSuggested.addItemDecoration(GridSpacingItemDecoration(spanCount, spacingPx, includeEdge = false))
 
-        val suggestedAdapter = SuggestedCocktailAdapter(mutableListOf())
+        val suggestedAdapter = SuggestedCocktailAdapter(
+            items = mutableListOf(),
+            onItemClick = null,
+            onFavoriteClick = { cocktail, isFavorite ->
+                lifecycleScope.launch {
+                    handleFavoriteToggle(cocktail, isFavorite)
+                }
+            },
+            getFavoriteState = { cocktailId ->
+                favoriteStates[cocktailId] ?: false
+            }
+        )
         rvSuggested.adapter = suggestedAdapter
 
         fun showLoading() {
@@ -107,6 +131,16 @@ class MyBar : AppCompatActivity() {
         lifecycleScope.launch {
             val apiItems = CocktailApiRepository.fetchCocktails(limit = 10)
             val data = if (apiItems.isNotEmpty()) CocktailImageProvider.enrichWithImages(apiItems) else emptyList()
+
+            // Load favorite states for all cocktails
+            data.forEach { cocktail ->
+                cocktail.cocktailId?.let { id ->
+                    val isFav = favoritesViewModel.isFavorite(id).firstOrNull() ?: false
+                    favoriteStates[id] = isFav
+                    cocktail.isFavorite = isFav
+                }
+            }
+
             if (data.isNotEmpty()) {
                 suggestedAdapter.replaceAll(data)
                 showContent()
@@ -114,5 +148,25 @@ class MyBar : AppCompatActivity() {
                 showEmpty()
             }
         }
+    }
+
+    private suspend fun handleFavoriteToggle(cocktail: SuggestedCocktail, isFavorite: Boolean) {
+        val userId = UserManager.getCurrentUserUid() ?: UserManager.getUsername(this@MyBar)
+        val cocktailId = cocktail.cocktailId ?: cocktail.name.hashCode().toString()
+
+        // Update cache immediately
+        favoriteStates[cocktailId] = isFavorite
+
+        // Use shared ViewModel for consistency
+        val favoriteEntity = FavoriteEntity(
+            cocktailId = cocktailId,
+            name = cocktail.name,
+            imageUrl = cocktail.imageUrl ?: "",
+            ingredients = "",
+            instructions = "",
+            userId = userId
+        )
+
+        favoritesViewModel.toggleFavorite(favoriteEntity, !isFavorite)
     }
 }

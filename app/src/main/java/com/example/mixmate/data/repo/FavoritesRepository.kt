@@ -14,6 +14,8 @@ class FavoritesRepository {
 
     suspend fun getById(id: String, userId: String): FavoriteEntity? = dao.getById(id, userId)
 
+    fun isFavoriteFlow(id: String, userId: String): Flow<Boolean> = dao.isFavoriteFlow(id, userId)
+
     suspend fun upsert(entity: FavoriteEntity) = dao.upsert(entity)
 
     suspend fun deleteById(id: String, userId: String) = dao.deleteById(id, userId)
