@@ -29,8 +29,8 @@
 
                 <ImageButton
                     android:id="@+id/btn_back"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/back"
                     android:src="@drawable/ic_go_back"
@@ -144,10 +144,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:hint="Recipe Name"
+                android:textColorHint="@color/white"
                 app:boxBackgroundColor="@color/brown"
                 app:boxStrokeColor="@color/light_brown"
                 app:boxStrokeWidth="2dp"
-                app:hintTextColor="@color/white"
+
                 app:hintEnabled="true"
                 app:errorTextColor="@color/white">
 
@@ -170,10 +171,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
                 android:hint="Description"
+                android:textColorHint="@color/white"
                 app:boxBackgroundColor="@color/brown"
                 app:boxStrokeColor="@color/light_brown"
                 app:boxStrokeWidth="2dp"
-                app:hintTextColor="@color/white"
                 app:hintEnabled="true"
                 app:errorTextColor="@color/white">
 
