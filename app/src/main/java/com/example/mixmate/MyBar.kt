@@ -83,16 +83,13 @@ class MyBar : AppCompatActivity() {
         val spacingPx = resources.getDimensionPixelSize(R.dimen.grid_spacing)
         recycler.addItemDecoration(GridSpacingItemDecoration(spanCount, spacingPx, includeEdge = false))
 
-        val items = listOf(
-            BarItem("Vodka", R.drawable.vodka),
-            BarItem("Rum", R.drawable.rum),
-            BarItem("Tequila", R.drawable.tequila),
-            BarItem("Whiskey", R.drawable.whiskey),
-            BarItem("Gin", R.drawable.gin),
-            BarItem("Juice", R.drawable.juice),
-        )
+        // Load ingredients from array resources
+        val ingredientNames = resources.getStringArray(R.array.mybar_ingredients).toList()
+        val items = ingredientNames.map { ingredient ->
+            BarItem(ingredient, R.drawable.ic_ingredient) // Using generic ingredient icon
+        }
         
-        val barAdapter = BarItemAdapter(items) { ingredient, isSelected ->
+        val barAdapter = BarItemAdapter(items) { _, _ ->
             lifecycleScope.launch {
                 val selectedIngredients = items.filter { it.isSelected }.map { it.title }
                 if (selectedIngredients.isNotEmpty()) {
@@ -188,12 +185,15 @@ class MyBar : AppCompatActivity() {
             for (ingredient in ingredients) {
                 try {
                     val apiResponse = api.filterByIngredient(ingredient)
-                    apiResponse.drinks?.forEach { drink ->
+                    apiResponse.drinks?.forEachIndexed { index, drink ->
                         if (drink.idDrink != null && drink.strDrink != null) {
+                            // Calculate rating based on position (popularity)
+                            val rating = 5.0 - (index * 0.1).coerceAtMost(2.0)
+                            
                             allCocktails.add(
                                 SuggestedCocktail(
                                     name = drink.strDrink,
-                                    rating = 0.0,
+                                    rating = rating,
                                     category = ingredients.joinToString(", "),
                                     imageUrl = drink.strDrinkThumb,
                                     cocktailId = drink.idDrink,
