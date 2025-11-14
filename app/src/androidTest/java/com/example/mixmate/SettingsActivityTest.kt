@@ -119,7 +119,7 @@ class SettingsActivityTest {
     fun testAllSettingsPersistTogether() {
         // Given - multiple settings
         val theme = SettingsActivity.THEME_LIGHT
-        val language = SettingsActivity.LANG_AFRIKAANS
+        val language = SettingsActivity.LANG_ZULU
         val units = SettingsActivity.UNITS_METRIC
         val pushNotifs = false
         val recipeUpdates = true

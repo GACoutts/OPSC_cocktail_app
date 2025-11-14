@@ -71,6 +71,7 @@ class SettingsActivity : AppCompatActivity() {
         // Languages (POE requirement: 2+ South African languages)
         const val LANG_ENGLISH = "en"
         const val LANG_AFRIKAANS = "af"
+        const val LANG_ZULU = "zu"
         
         // Units
         const val UNITS_METRIC = "metric"
@@ -142,6 +143,7 @@ class SettingsActivity : AppCompatActivity() {
         tvCurrentLanguage.text = when (currentLanguage) {
             LANG_ENGLISH -> "English"
             LANG_AFRIKAANS -> "Afrikaans"
+            LANG_ZULU -> "isiZulu"
             else -> "English"
         }
         
@@ -264,14 +266,15 @@ class SettingsActivity : AppCompatActivity() {
 
     // Language Dialog (POE Part 3 requirement)
     private fun showLanguageDialog() {
-        val languages = arrayOf("English", "Afrikaans")
+        val languages = arrayOf("English", "Afrikaans", "isiZulu")
         val currentLanguage = prefs.getString(KEY_LANGUAGE, LANG_ENGLISH) ?: LANG_ENGLISH
         val currentIndex = when (currentLanguage) {
             LANG_ENGLISH -> 0
             LANG_AFRIKAANS -> 1
+            LANG_ZULU -> 2
             else -> 0
         }
-        
+
         MaterialAlertDialogBuilder(this)
             .setTitle("Select Language")
             .setIcon(android.R.drawable.ic_dialog_info)
@@ -279,18 +282,19 @@ class SettingsActivity : AppCompatActivity() {
                 val selectedLanguage = when (which) {
                     0 -> LANG_ENGLISH
                     1 -> LANG_AFRIKAANS
+                    2 -> LANG_ZULU
                     else -> LANG_ENGLISH
                 }
-                
+
                 prefs.edit().putString(KEY_LANGUAGE, selectedLanguage).apply()
                 tvCurrentLanguage.text = languages[which]
-                
+
                 Toast.makeText(
                     this,
                     "Language will update on app restart",
                     Toast.LENGTH_LONG
                 ).show()
-                
+
                 dialog.dismiss()
             }
             .setNegativeButton("Cancel", null)
