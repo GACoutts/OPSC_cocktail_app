@@ -213,4 +213,15 @@
     <string name="dont_have_account_prefix">Don\'t have an account?</string>
     <string name="sign_in_with_google_prompt">Sign in with Google?</string>
     <string name="search_favourites_hint">Search favourites</string>
+
+    <!-- Profile page -->
+    <string name="profile_title">Profile</string>
+    <string name="profile_username_placeholder">MixMate</string>
+    <string name="profile_handle_placeholder">\@mixmate</string>
+    <string name="profile_joined_placeholder">Joined 2025</string>
+    <string name="my_recipes_title">My Recipes</string>
+    <string name="my_recipes_empty">No recipes yet\nTap + to create your first recipe</string>
+    <string name="favourites_title">Favorites</string>
+    <string name="favourites_empty">No favorites yet\nGo discover and favorite cocktails you love</string>
+    <string name="create_recipe">Create Recipe</string>
 </resources>

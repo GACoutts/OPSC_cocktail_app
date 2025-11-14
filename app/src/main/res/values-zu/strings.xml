@@ -225,4 +225,15 @@
     <string name="about_mixmate">Mayelana neMixMate</string>
     <string name="version_fmt">Inguqulo %1$s</string>
     <string name="logout">Phuma</string>
+
+    <!-- Profile page -->
+    <string name="profile_title">Iphrofayela</string>
+    <string name="profile_username_placeholder">MixMate</string>
+    <string name="profile_handle_placeholder">\@mixmate</string>
+    <string name="profile_joined_placeholder">Ujoyine ngo-2025</string>
+    <string name="my_recipes_title">Izinhlobonhlobo zami</string>
+    <string name="my_recipes_empty">Azikabikho izindlela zokupheka okwamanje\nThepha + ukuze udale eyokuqala</string>
+    <string name="favourites_title">Okuthandwayo</string>
+    <string name="favourites_empty">Awekho okuthandwayo okwamanje\nYiya kuthole bese uthanda iziphuzo ozithandayo</string>
+    <string name="create_recipe">Dala Iresiphi</string>
 </resources>
