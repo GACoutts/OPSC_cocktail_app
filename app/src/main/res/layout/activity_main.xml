@@ -20,7 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:text="Welcome Back!"
+        android:text="@string/welcome_back_title"
         android:textColor="@color/text_color"
         android:textSize="28sp"
         android:textStyle="bold" />
@@ -29,7 +29,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
-        android:text="Sign in to your MixMate account"
+        android:text="@string/sign_in_subtitle"
         android:textColor="@color/text_secondary"
         android:textSize="16sp" />
 
@@ -49,7 +49,7 @@
             android:id="@+id/etEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Email"
+            android:hint="@string/email_hint"
             android:inputType="textEmailAddress"
             android:textColor="@color/text_color" />
 
@@ -73,7 +73,7 @@
             android:id="@+id/etPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Password"
+            android:hint="@string/password_hint"
             android:inputType="textPassword"
             android:textColor="@color/text_color" />
 
@@ -96,7 +96,7 @@
         android:layout_height="56dp"
         android:layout_marginBottom="24dp"
         android:backgroundTint="@color/primary_color"
-        android:text="Sign In"
+        android:text="@string/sign_in"
         android:textColor="@android:color/white"
         android:textSize="16sp"
         android:textStyle="bold"
@@ -111,7 +111,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Don't have an account? "
+            android:text="@string/dont_have_account_prefix"
             android:textColor="@color/text_secondary"
             android:textSize="14sp" />
 
@@ -119,7 +119,7 @@
             android:id="@+id/tvSignUp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Sign Up"
+            android:text="@string/sign_up"
             android:textColor="@color/primary_color"
             android:textSize="14sp"
             android:textStyle="bold"
@@ -138,7 +138,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Sign in with google?"
+            android:text="@string/sign_in_with_google_prompt"
             android:textColor="@color/text_secondary"
             android:textSize="14sp" />
 
@@ -146,7 +146,7 @@
             android:id="@+id/tvSSOSignUp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Sign In"
+            android:text="@string/sign_in"
             android:textColor="@color/primary_color"
             android:textSize="14sp"
             android:textStyle="bold"

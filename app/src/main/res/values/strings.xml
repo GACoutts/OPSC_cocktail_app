@@ -1,4 +1,5 @@
 <resources>
+    <!-- Core app identity -->
     <string name="app_name">MixMate</string>
     <string name="main_page">Main Page</string>
     <string name="date_of_birth">Date of Birth</string>
@@ -7,48 +8,51 @@
     <string name="surname">Surname</string>
     <string name="name">Name</string>
     <string name="sign_up_page">Sign Up Page</string>
-    <string name="back">back</string>
+    <string name="back">Back</string>
     <string name="sign_up">Sign Up</string>
     <string name="main_trending_drink">Main Trending Drink</string>
-    <string name="action_search" />
-    <string name="nav_home" />
-    <string name="nav_explore" />
-    <string name="nav_list" />
-    <string name="nav_favorites" />
-    <string name="nav_profile" />
-    <string name="action_logout">action_logout</string>
+    <!-- Previously empty navigation & action labels now populated -->
+    <string name="action_search">Search</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_explore">Explore</string>
+    <string name="nav_list">List</string>
+    <string name="nav_favorites">Favorites</string>
+    <string name="nav_profile">Profile</string>
+    <string name="action_logout">Logout</string>
     <string name="title_my_bar">My Bar</string>
     <string name="title_suggested">Suggested Cocktails</string>
-    <string name="save" />
-    <string name="submit_recipe" />
-    <string name="recipe_image" />
-    <string name="tap_to_add_photo" />
-    <string name="remove_image" />
-    <string name="recipe_name" />
-    <string name="description" />
-    <string name="ingredients" />
-    <string name="add_ingredient" />
-    <string name="instructions" />
-    <string name="optional_details" />
-    <string name="glassware" />
-    <string name="garnish" />
-    <string name="prep_time_minutes" />
-    <string name="difficulty" />
+    <!-- Consolidated 'save' definition (removed duplicate later) -->
+    <string name="save">Save</string>
+    <string name="submit_recipe">Submit Recipe</string>
+    <string name="recipe_image">Recipe Image</string>
+    <string name="tap_to_add_photo">Tap to add photo</string>
+    <string name="remove_image">Remove Image</string>
+    <string name="recipe_name">Recipe Name</string>
+    <string name="description">Description</string>
+    <string name="ingredients">Ingredients</string>
+    <string name="add_ingredient">Add Ingredient</string>
+    <string name="instructions">Instructions</string>
+    <string name="optional_details">Optional Details</string>
+    <string name="glassware">Glassware</string>
+    <string name="garnish">Garnish</string>
+    <string name="prep_time_minutes">Prep time (minutes)</string>
+    <string name="difficulty">Difficulty</string>
+    <!-- Content descriptions / navigation (filled) -->
     <string name="cd_discover">Discover</string>
     <string name="cd_list">My Bar</string>
     <string name="cd_favourites">Favourites</string>
     <string name="cd_profile">Profile</string>
     <string name="cd_home">Home</string>
-    <string name="cd_logo" />
+    <string name="cd_logo">App logo</string>
     <string name="header_title_mix_mate">MixMate</string>
-    <string name="cd_search" />
-    <string name="ingredient_name" />
-    <string name="amount" />
-    <string name="unit" />
-    <string name="remove_ingredient" />
-    <string name="email_address">email address</string>
-    <string name="date_of_birth_yyyy_mm_dd">date of birth (YYYY-MM-DD)</string>
-    <string name="email">email</string>
+    <string name="cd_search">Search</string>
+    <string name="ingredient_name">Ingredient Name</string>
+    <string name="amount">Amount</string>
+    <string name="unit">Unit</string>
+    <string name="remove_ingredient">Remove Ingredient</string>
+    <string name="email_address">Email address</string>
+    <string name="date_of_birth_yyyy_mm_dd">Date of birth (YYYY-MM-DD)</string>
+    <string name="email">Email</string>
     <string name="sign_in_label">Sign In</string>
     <string name="empty_discover">Nothing to show yet</string>
     <string name="loading">Loading…</string>
@@ -57,6 +61,8 @@
     <string name="minutes_fmt">%1$d mins</string>
     <string name="favorite">Add to favorites</string>
     <string name="default_web_client_id">1056261417081-oaj3ocr6ki59jnqj6oq9d9j7038pfila.apps.googleusercontent.com</string>
+
+    <!-- Settings -->
     <string name="settings_title">Settings</string>
     <string name="section_account">Account</string>
     <string name="edit_profile">Edit Profile</string>
@@ -81,7 +87,7 @@
     <string name="version_fmt">Version %1$s</string>
     <string name="logout">Logout</string>
 
-    <!-- Settings strings (runtime) -->
+    <!-- Settings runtime dialogs -->
     <string name="units_dialog_title">Measurement Units</string>
     <string name="dialog_ok">OK</string>
     <string name="dialog_cancel">Cancel</string>
@@ -114,7 +120,7 @@
     <string name="email_hint">Email</string>
     <string name="password_hint">Password</string>
     <string name="confirm_password_hint">Confirm Password</string>
-    <string name="already_have_account">Already have an account? </string>
+    <string name="already_have_account">Already have an account?</string>
 
     <!-- Submit recipe / dialogs -->
     <string name="select_image">Select Image</string>
@@ -122,7 +128,7 @@
     <string name="discard_changes_message">You have unsaved changes. Are you sure you want to leave?</string>
     <string name="discard">Discard</string>
 
-    <!-- General labels -->
+    <!-- General labels & icons -->
     <string name="recipe_name_label">Recipe Name</string>
     <string name="about_version_short">Version 1.0.0</string>
     <string name="notifications_icon_cd">Notifications icon</string>
@@ -133,7 +139,7 @@
     <string name="about_icon_cd">About icon</string>
     <string name="logout_icon_cd">Logout icon</string>
 
-    <!-- Toasters / errors used elsewhere -->
+    <!-- Errors / toasts -->
     <string name="toast_missing_recipe_details">Missing recipe details</string>
     <string name="toast_recipe_not_found">Recipe not found</string>
     <string name="toast_error_generic">Error: %1$s</string>
@@ -175,19 +181,36 @@
     <string name="toast_error_opening_submit_recipe">Error opening Submit Recipe</string>
     <string name="toast_removed_from_favorites">Removed from favorites</string>
 
-    <!-- Add missing literals for UI -->
+    <!-- UI literals -->
     <string name="camera">Camera</string>
     <string name="gallery">Gallery</string>
-    <string name="at_prefix"><![CDATA[@]]></string>
+    <string name="at_prefix">\@</string>
     <string name="sign_in">Sign In</string>
-    <!-- Notification permission dialog strings -->
     <string name="notification_permission_rationale_title">Enable Notifications</string>
     <string name="notification_permission_rationale_message">MixMate would like to send you daily cocktail facts at 8 AM and 8 PM. Enable notifications to receive these fun facts!</string>
     <string name="notification_permission_enable">Allow</string>
     <string name="notification_permission_not_now">Not Now</string>
     <string name="notification_permission_required">Notification permission required</string>
-
-    <!-- MyBar sections -->
+    <string name="theme_icon_cd">Theme icon</string>
+    <string name="language_icon_cd">Language icon</string>
     <string name="alcohol_types">Alcohol Types</string>
     <string name="other_ingredients">Other Ingredients</string>
+    <string name="app_theme">App Theme</string>
+    <string name="theme_dark">Dark</string>
+    <string name="language">Language</string>
+    <string name="filter_ingredient_hint">Ingredient</string>
+    <string name="filter_alcohol_hint">Alcohol Type</string>
+    <string name="filter_rating_hint">Rating</string>
+    <string name="sort_by_title">Sort By</string>
+    <string name="sort_popular">Popular</string>
+    <string name="sort_newest">Newest</string>
+    <string name="sort_top_rated">Top Rated</string>
+    <string name="change_profile_photo">Change Profile Photo</string>
+    <string name="display_name_label">Display Name</string>
+    <string name="hint_display_name">Enter your display name</string>
+    <string name="welcome_back_title">Welcome Back!</string>
+    <string name="sign_in_subtitle">Sign in to your MixMate account</string>
+    <string name="dont_have_account_prefix">Don\'t have an account?</string>
+    <string name="sign_in_with_google_prompt">Sign in with Google?</string>
+    <string name="search_favourites_hint">Search favourites</string>
 </resources>

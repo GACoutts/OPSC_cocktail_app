@@ -222,7 +222,7 @@
                         android:src="@drawable/ic_profile"
                         app:tint="@color/light_brown"
                         android:layout_marginEnd="16dp"
-                        android:contentDescription="Theme icon" />
+                        android:contentDescription="@string/theme_icon_cd" />
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -233,7 +233,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="App Theme"
+                            android:text="@string/app_theme"
                             android:textColor="@color/white"
                             android:textSize="16sp" />
 
@@ -241,7 +241,7 @@
                             android:id="@+id/tv_current_theme"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Dark"
+                            android:text="@string/theme_dark"
                             android:textColor="@color/light_brown"
                             android:textSize="14sp" />
 
@@ -283,7 +283,7 @@
                         android:src="@drawable/ic_discover"
                         app:tint="@color/light_brown"
                         android:layout_marginEnd="16dp"
-                        android:contentDescription="Language icon" />
+                        android:contentDescription="@string/language_icon_cd" />
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -294,7 +294,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Language"
+                            android:text="@string/language"
                             android:textColor="@color/white"
                             android:textSize="16sp" />
 
@@ -302,7 +302,7 @@
                             android:id="@+id/tv_current_language"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="English"
+                            android:text="@string/language_english"
                             android:textColor="@color/light_brown"
                             android:textSize="14sp" />
 

@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Zulu translations -->
+    <string name="app_name">MixMate</string>
+    <!-- Common UI strings -->
+    <string name="welcome_back_title">Siyakwamukela Emuva!</string>
+    <string name="sign_in">Ngena</string>
+    <string name="sign_up">Bhalisa</string>
+    <string name="dont_have_account_prefix">Awunayo i-akhawunti?</string>
+
+    <string name="save">Londoloza</string>
+    <string name="submit_recipe">Faka iresiphi</string>
+    <string name="recipe_image">Isithombe seresiphi</string>
+    <string name="tap_to_add_photo">Thepha ukwengeza isithombe</string>
+    <string name="remove_image">Susa isithombe</string>
+
+    <!-- Discover / lists -->
+    <string name="cd_discover">Thola</string>
+    <string name="cd_list">Uhlu lwami</string>
+    <string name="cd_favourites">Okuthandwayo</string>
+    <string name="cd_profile">Iphrofayela</string>
+    <string name="cd_home">Ekhaya</string>
+    <string name="cd_logo">Ilogo ye-app</string>
+    <string name="header_title_mix_mate">MixMate</string>
+    <string name="cd_search">Sesha</string>
+
+    <!-- Generic labels -->
+    <string name="recipe_name">Igama seresiphi</string>
+    <string name="description">Incazelo</string>
+    <string name="ingredients">Izithako</string>
+    <string name="add_ingredient">Engeza isithako</string>
+    <string name="instructions">Imiyalelo</string>
+    <string name="optional_details">Imininingwane ongayifaka</string>
+    <string name="glassware">Ingilazi</string>
+    <string name="garnish">Okuhlobisa</string>
+    <string name="prep_time_minutes">Isikhathi sokulungisa (imizuzu)</string>
+    <string name="difficulty">Ubunzima</string>
+    <string name="ingredient_name">Igama lesithako</string>
+    <string name="amount">Inani</string>
+    <string name="unit">Iyunithi</string>
+    <string name="remove_ingredient">Susa isithako</string>
+
+    <!-- Settings and preferences -->
+    <string name="settings_title">Izilungiselelo</string>
+    <string name="section_account">I-akhawunti</string>
+    <string name="edit_profile">Hlela Iphrofayela</string>
+    <string name="edit_profile_sub">Buyekeza imininingwane yephrofayela yakho</string>
+    <string name="change_password">Shintsha iphasiwedi</string>
+    <string name="change_password_sub">Buyekeza ukuphepha kwe-akhawunti yakho</string>
+    <string name="section_preferences">Okuthandwayo</string>
+    <string name="measurement_units">Amayunithi wokulinganisa</string>
+    <string name="units_metric">IMetric (ml, cl)</string>
+    <string name="units_imperial">I-Imperial (fl oz, izinkomishi)</string>
+    <string name="units_both">Zombili</string>
+
+    <!-- Notifications -->
+    <string name="section_notifications">Izaziso</string>
+    <string name="push_notifications">Izaziso zokuphusha</string>
+    <string name="push_notifications_sub">Thola izaziso zohlelo</string>
+    <string name="recipe_updates">Izibuyekezo zeresiphi</string>
+    <string name="recipe_updates_sub">Yaziswa ngeziresiphi ezintsha</string>
+    <string name="daily_cocktail_facts">Amaqiniso e-cocktail nsuku zonke</string>
+    <string name="daily_cocktail_facts_sub">Thola amaqiniso amahle ngo-8 ekuseni nango-8 kusihlwa</string>
+
+    <!-- Icons (content descriptions) -->
+    <string name="daily_facts_icon_cd">I-icon yamaqiniso nsuku zonke</string>
+    <string name="notifications_icon_cd">I-icon yezaziso</string>
+    <string name="units_icon_cd">I-icon yamayunithi</string>
+    <string name="password_icon_cd">I-icon yephasiwedi</string>
+    <string name="profile_icon_cd">I-icon yephrofayela</string>
+    <string name="recipe_updates_icon_cd">I-icon yezibuyekezo zeresiphi</string>
+    <string name="about_icon_cd">I-icon yemayelana</string>
+    <string name="logout_icon_cd">I-icon yokuphuma</string>
+    <string name="theme_icon_cd">I-icon yetimu</string>
+    <string name="language_icon_cd">I-icon yolimi</string>
+
+    <!-- Toasters / errors -->
+    <string name="toast_missing_recipe_details">Imininingwane yeresiphi ilahlekile</string>
+    <string name="toast_recipe_not_found">Iresiphi ayitholakalanga</string>
+    <string name="toast_error_generic">Iphutha: %1$s</string>
+    <string name="favourites_coming_soon">Okuthandwayo kuza maduze</string>
+    <string name="toast_error_open_image_picker">Iphutha ekuvuleni ukukhetha isithombe</string>
+    <string name="toast_error_loading_selected_image">Iphutha ekulayisheni isithombe esikhethiwe</string>
+
+    <!-- Language settings -->
+    <string name="pref_language">Ulimi</string>
+    <string name="pref_language_sub">Shintsha ulimi lohlelo</string>
+    <string name="select_language">Khetha ulimi</string>
+    <string name="language_english">IsiNgisi</string>
+    <string name="language_afrikaans">IsiBhunu</string>
+
+    <!-- Auth / sign up -->
+    <string name="create_account">Dala i-akhawunti</string>
+    <string name="join_community">Joyina umphakathi weMixMate</string>
+    <string name="first_name">Igama lokuqala</string>
+    <string name="last_name">Isibongo</string>
+    <string name="dob_hint">Usuku Lokuzalwa (YYYY-MM-DD)</string>
+    <string name="username_hint">Igama lomsebenzisi</string>
+    <string name="email_hint">I-imeyili</string>
+    <string name="password_hint">Iphasiwedi</string>
+    <string name="confirm_password_hint">Qinisekisa iphasiwedi</string>
+    <string name="already_have_account">Usunayo i-akhawunti?</string>
+    <string name="email_address">Ikheli le-imeyili</string>
+    <string name="date_of_birth_yyyy_mm_dd">Usuku lokuzalwa (YYYY-MM-DD)</string>
+    <string name="email">I-imeyili</string>
+    <string name="sign_in_label">Ngena</string>
+
+    <!-- Submit recipe / profile -->
+    <string name="select_image">Khetha isithombe</string>
+    <string name="discard_changes_title">Lahla izinguquko?</string>
+    <string name="discard_changes_message">Unenezinguquko ongazigcinanga. Uqinisekile ufuna ukuhamba?</string>
+    <string name="discard">Lahla</string>
+
+    <!-- Sign-in / UI prompts -->
+    <string name="sign_in_subtitle">Ngena ku-akhawunti yakho yeMixMate</string>
+    <string name="sign_in_with_google_prompt">Ngena nge-Google?</string>
+    <string name="search_favourites_hint">Sesha okuthandwayo</string>
+
+    <!-- Notification permission strings -->
+    <string name="notification_permission_rationale_title">Vula izaziso</string>
+    <string name="notification_permission_rationale_message">MixMate ifuna ukuthumela amaqiniso e-cocktail nsuku zonke ngo-8 ekuseni nango-8 kusihlwa. Vula izaziso ukuze uwamukele!</string>
+    <string name="notification_permission_enable">Vumela</string>
+    <string name="notification_permission_not_now">Hhayi manje</string>
+    <string name="notification_permission_required">Imvume yezaziso iyadingeka</string>
+
+    <!-- MyBar sections -->
+    <string name="alcohol_types">Izinhlobo ze-alkholi</string>
+    <string name="other_ingredients">Ezinye izithako</string>
+
+    <!-- Small helper -->
+    <string name="at_prefix">\@</string>
+
+    <!-- Discover strings -->
+    <string name="filter_ingredient_hint">Isithako</string>
+    <string name="filter_alcohol_hint">Uhlobo lwe-alkholi</string>
+    <string name="filter_rating_hint">Ukukala</string>
+    <string name="sort_by_title">Hlela ngokuthi</string>
+    <string name="sort_popular">Okudumile</string>
+    <string name="sort_newest">Okusha</string>
+    <string name="sort_top_rated">Okukalwe phezulu</string>
+
+    <!-- Theme / language keys -->
+    <string name="app_theme">Itimu yohlelo</string>
+    <string name="theme_dark">Mnyama</string>
+    <string name="language">Ulimi</string>
+
+    <!-- Additional keys from default neutral file -->
+    <string name="main_page">Ikhasi elikhulu</string>
+    <string name="date_of_birth">Usuku lokuzalwa</string>
+    <string name="password">Iphasiwedi</string>
+    <string name="username">Igama lomsebenzisi</string>
+    <string name="surname">Isibongo</string>
+    <string name="name">Igama</string>
+    <string name="sign_up_page">Ikhasi lokubhalisa</string>
+    <string name="back">emva</string>
+    <string name="main_trending_drink">Isiphuzo esidumile</string>
+    <string name="action_search">Sesha</string>
+    <string name="nav_home">Ekhaya</string>
+    <string name="nav_explore">Hlola</string>
+    <string name="nav_list">Uhlu</string>
+    <string name="nav_favorites">Okuthandwayo</string>
+    <string name="nav_profile">Iphrofayela</string>
+    <string name="action_logout">Phuma</string>
+    <string name="title_my_bar">Ibhawa yami</string>
+    <string name="title_suggested">Iziphuzo ezihlongozwayo</string>
+    <string name="recipe_name_label">Igama seresiphi</string>
+    <string name="about_version_short">Uhlelo 1.0.0</string>
+    <string name="empty_discover">Alikho okwamanje</string>
+    <string name="loading">Iyalayisha…</string>
+    <string name="no_cocktails_found">Azikho iziphuzo ezitholakele</string>
+    <string name="not_specified">Akucacisiwe</string>
+    <string name="minutes_fmt">%1$d imiz</string>
+    <string name="favorite">Engeza kokuthandwayo</string>
+    <string name="default_web_client_id">1056261417081-oaj3ocr6ki59jnqj6oq9d9j7038pfila.apps.googleusercontent.com</string>
+    <string name="units_dialog_title">Amayunithi wokulinganisa</string>
+    <string name="dialog_ok">Kulungele</string>
+    <string name="dialog_cancel">Khansela</string>
+    <string name="dialog_logout_title">Phuma</string>
+    <string name="dialog_logout_message">Uqinisekile ufuna ukuphuma?</string>
+    <string name="units_changed_to">Amayunithi ashintshwe aba %1$s</string>
+    <string name="toast_error_init_settings">Iphutha ekulungeniseni izilungiselelo</string>
+    <string name="toast_error_open_edit_profile">Iphutha ekuvuleni Hlela Iphrofayela</string>
+    <string name="toast_change_password_coming">Shintsha iphasiwedi - iyeza maduze!</string>
+    <string name="toast_push_enabled">Izaziso zokuphusha zivuliwe</string>
+    <string name="toast_push_disabled">Izaziso zokuphusha zivaliwe</string>
+    <string name="toast_recipe_updates_enabled">Izibuyekezo zeresiphi zivuliwe</string>
+    <string name="toast_recipe_updates_disabled">Izibuyekezo zeresiphi zivaliwe</string>
+    <string name="toast_error_loading_settings">Iphutha ekulayisheni izilungiselelo</string>
+    <string name="toast_error_saving_setting">Iphutha ekugcineni isilungiselelo</string>
+    <string name="toast_privacy_policy_coming">Inqubomgomo yobumfihlo - iyeza maduze!</string>
+    <string name="toast_no_email_app">Alikho uhlelo lwe-imeyili</string>
+    <string name="toast_help_support_coming">Usizo Ukusekela - kuyeza maduze!</string>
+    <string name="toast_thanks_rating_coming">Siyabonga! Ukukala kuyeza maduze.</string>
+    <string name="toast_logged_out">Uphumile ngempumelelo</string>
+    <string name="toast_error_logout">Iphutha ngesikhathi uphuma: %1$s</string>
+    <string name="error_display_name_required">Igama lokubonisa liyadingeka</string>
+    <string name="error_username_required">Igama lomsebenzisi liyadingeka</string>
+    <string name="error_email_required">I-imeyili iyadingeka</string>
+    <string name="error_email_invalid">Sicela ufake ikheli le-imeyili elisebenzayo</string>
+    <string name="toast_profile_updated_success">Iphrofayela ibuyekezwe ngempumelelo</string>
+    <string name="toast_error_saving_profile_changes">Iphutha ekugcineni izinguquko zephrofayela</string>
+    <string name="toast_permission_required_image">Imvume iyadingeka ukulayisha isithombe</string>
+    <string name="error_recipe_name_required">Igama seresiphi liyadingeka</string>
+    <string name="error_description_required">Incazelo iyadingeka</string>
+    <string name="error_instructions_required">Imiyalelo iyadingeka</string>
+    <string name="toast_ingredient_required">Okungenani isithako esisodwa siyadingeka</string>
+    <string name="toast_recipe_saved_syncing">Iresiphi igcinwe ngempumelelo! (Iyahambisana namafu…)</string>
+    <string name="toast_failed_save_recipe">Yehlulekile ukugcina iresiphi: %1$s</string>
+    <string name="toast_error_saving_recipe">Iphutha ekugcineni iresiphi: %1$s</string>
+    <string name="toast_opening_settings">Kuvulwa Izilungiselelo…</string>
+    <string name="toast_error_opening_settings">Iphutha ekuvuleni Izilungiselelo</string>
+    <string name="toast_opening_submit_recipe">Kuvulwa Faka Iresiphi…</string>
+    <string name="toast_error_opening_submit_recipe">Iphutha ekuvuleni Faka Iresiphi</string>
+    <string name="toast_removed_from_favorites">Kususiwe kokuthandwayo</string>
+    <string name="camera">Ikhamera</string>
+    <string name="gallery">Igalari</string>
+    <string name="display_name_label">Igama lokubonisa</string>
+    <string name="hint_display_name">Faka igama lokubonisa</string>
+    <string name="change_profile_photo">Shintsha isithombe sephrofayela</string>
+
+    <!-- About / Info strings -->
+    <string name="section_privacy_support">Ubumfihlo &amp; Ukusekela</string>
+    <string name="privacy_policy">Inqubomgomo yobumfihlo</string>
+    <string name="help_support">Usizo &amp; Ukusekela</string>
+    <string name="about_mixmate">Mayelana neMixMate</string>
+    <string name="version_fmt">Inguqulo %1$s</string>
+    <string name="logout">Phuma</string>
+</resources>
