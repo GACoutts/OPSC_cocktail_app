@@ -61,6 +61,10 @@ class ProfileActivity : AppCompatActivity() {
     private lateinit var navFavourites: ImageView
     private lateinit var navProfile: ImageView
 
+    override fun attachBaseContext(newBase: android.content.Context) {
+        super.attachBaseContext(LocaleHelper.onAttach(newBase))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()

@@ -20,6 +20,10 @@ class RecipeDetailsActivity : ComponentActivity() {
 
     private lateinit var vm: RecipeDetailsViewModel
 
+    override fun attachBaseContext(newBase: android.content.Context) {
+        super.attachBaseContext(com.example.mixmate.LocaleHelper.onAttach(newBase))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_recipe_details)
@@ -35,7 +39,7 @@ class RecipeDetailsActivity : ComponentActivity() {
 
         val id = intent.getStringExtra("cocktail_id")
         if (id.isNullOrBlank()) {
-            Toast.makeText(this, "Missing cocktail id", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.toast_missing_recipe_details), Toast.LENGTH_SHORT).show()
 
             finish()
             return

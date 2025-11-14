@@ -24,6 +24,7 @@
             android:layout_weight="1"
             android:scaleType="centerCrop"
             android:background="@color/brown"
+            android:contentDescription="@string/recipe_image"
             tools:src="@drawable/ic_favourites" />
 
         <!-- Recipe Name -->
@@ -32,7 +33,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="12dp"
-            android:text="Recipe Name"
+            android:text="@string/recipe_name_label"
             android:textColor="@color/white"
             android:textSize="14sp"
             android:textStyle="bold"

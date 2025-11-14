@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="Settings"
+            android:text="@string/settings_title"
             android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold"
@@ -61,7 +61,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
-                android:text="Account"
+                android:text="@string/section_account"
                 android:textColor="@color/white"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -92,7 +92,7 @@
                         android:src="@drawable/ic_profile"
                         app:tint="@color/light_brown"
                         android:layout_marginEnd="16dp"
-                        android:contentDescription="Profile icon" />
+                        android:contentDescription="@string/profile_icon_cd" />
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -103,14 +103,14 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Edit Profile"
+                            android:text="@string/edit_profile"
                             android:textColor="@color/white"
                             android:textSize="16sp" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Update your profile information"
+                            android:text="@string/edit_profile_sub"
                             android:textColor="@color/light_brown"
                             android:textSize="14sp" />
 
@@ -152,7 +152,7 @@
                         android:src="@drawable/ic_password"
                         app:tint="@color/light_brown"
                         android:layout_marginEnd="16dp"
-                        android:contentDescription="Password icon" />
+                        android:contentDescription="@string/password_icon_cd" />
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -163,14 +163,14 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Change Password"
+                            android:text="@string/change_password"
                             android:textColor="@color/white"
                             android:textSize="16sp" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Update your account security"
+                            android:text="@string/change_password_sub"
                             android:textColor="@color/light_brown"
                             android:textSize="14sp" />
 
@@ -191,7 +191,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
-                android:text="Preferences"
+                android:text="@string/section_preferences"
                 android:textColor="@color/white"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -344,7 +344,7 @@
                         android:src="@drawable/ic_bar_chart"
                         app:tint="@color/light_brown"
                         android:layout_marginEnd="16dp"
-                        android:contentDescription="Units icon" />
+                        android:contentDescription="@string/units_icon_cd" />
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -355,7 +355,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Measurement Units"
+                            android:text="@string/measurement_units"
                             android:textColor="@color/white"
                             android:textSize="16sp" />
 
@@ -363,7 +363,68 @@
                             android:id="@+id/tv_current_units"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Metric (ml, cl)"
+                            android:text="@string/units_metric"
+                            android:textColor="@color/light_brown"
+                            android:textSize="14sp" />
+
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_go_forward"
+                        app:tint="@color/light_brown" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Language -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_language"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:clickable="true"
+                android:focusable="true"
+                app:cardBackgroundColor="@color/dark_brown_navbar"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                app:rippleColor="@color/light_brown">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="16dp"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_language"
+                        app:tint="@color/light_brown"
+                        android:layout_marginEnd="16dp"
+                        android:contentDescription="@string/pref_language" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/pref_language"
+                            android:textColor="@color/white"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/tv_current_language"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/language_english"
                             android:textColor="@color/light_brown"
                             android:textSize="14sp" />
 
@@ -385,7 +446,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
-                android:text="Notifications"
+                android:text="@string/section_notifications"
                 android:textColor="@color/white"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -412,7 +473,7 @@
                         android:src="@drawable/ic_favourites"
                         app:tint="@color/light_brown"
                         android:layout_marginEnd="16dp"
-                        android:contentDescription="Notifications icon" />
+                        android:contentDescription="@string/notifications_icon_cd" />
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -423,14 +484,14 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Push Notifications"
+                            android:text="@string/push_notifications"
                             android:textColor="@color/white"
                             android:textSize="16sp" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Receive app notifications"
+                            android:text="@string/push_notifications_sub"
                             android:textColor="@color/light_brown"
                             android:textSize="14sp" />
 
@@ -470,7 +531,7 @@
                         android:src="@drawable/ic_cocktail"
                         app:tint="@color/light_brown"
                         android:layout_marginEnd="16dp"
-                        android:contentDescription="Recipe updates icon" />
+                        android:contentDescription="@string/recipe_updates_icon_cd" />
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -481,14 +542,14 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Recipe Updates"
+                            android:text="@string/recipe_updates"
                             android:textColor="@color/white"
                             android:textSize="16sp" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Get notified about new recipes"
+                            android:text="@string/recipe_updates_sub"
                             android:textColor="@color/light_brown"
                             android:textSize="14sp" />
 
@@ -511,7 +572,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
-                android:text="Privacy &amp; Support"
+                android:text="@string/section_privacy_support"
                 android:textColor="@color/white"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -542,13 +603,13 @@
                         android:src="@drawable/ic_profile_full_name"
                         app:tint="@color/light_brown"
                         android:layout_marginEnd="16dp"
-                        android:contentDescription="Privacy icon" />
+                        android:contentDescription="@string/profile_icon_cd" />
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Privacy Policy"
+                        android:text="@string/privacy_policy"
                         android:textColor="@color/white"
                         android:textSize="16sp" />
 
@@ -588,13 +649,13 @@
                         android:src="@drawable/ic_email"
                         app:tint="@color/light_brown"
                         android:layout_marginEnd="16dp"
-                        android:contentDescription="Help icon" />
+                        android:contentDescription="@string/help_support" />
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Help &amp; Support"
+                        android:text="@string/help_support"
                         android:textColor="@color/white"
                         android:textSize="16sp" />
 
@@ -634,7 +695,7 @@
                         android:src="@drawable/ic_discover"
                         app:tint="@color/light_brown"
                         android:layout_marginEnd="16dp"
-                        android:contentDescription="About icon" />
+                        android:contentDescription="@string/about_icon_cd" />
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -645,14 +706,14 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="About MixMate"
+                            android:text="@string/about_mixmate"
                             android:textColor="@color/white"
                             android:textSize="16sp" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Version 1.0.0"
+                            android:text="@string/about_version_short"
                             android:textColor="@color/light_brown"
                             android:textSize="14sp" />
 
@@ -673,7 +734,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
-                android:text="Account"
+                android:text="@string/section_account"
                 android:textColor="@color/white"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -704,13 +765,13 @@
                         android:src="@drawable/ic_go_back"
                         app:tint="@color/white"
                         android:layout_marginEnd="16dp"
-                        android:contentDescription="Logout icon" />
+                        android:contentDescription="@string/logout_icon_cd" />
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Logout"
+                        android:text="@string/logout"
                         android:textColor="@color/white"
                         android:textSize="16sp"
                         android:textStyle="bold" />

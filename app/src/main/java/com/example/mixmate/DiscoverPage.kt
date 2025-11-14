@@ -24,11 +24,15 @@ import kotlinx.coroutines.flow.firstOrNull
 import androidx.lifecycle.ViewModelProvider
 
 class DiscoverPage : AppCompatActivity() {
-    
+    override fun attachBaseContext(newBase: android.content.Context) {
+        super.attachBaseContext(LocaleHelper.onAttach(newBase))
+    }
+
+
     private lateinit var favoritesViewModel: SharedFavoritesViewModel
     private lateinit var filterViewModel: FilterViewModel
     private val favoriteStates = mutableMapOf<String, Boolean>()  // Cache for quick lookups
-    
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, true)
@@ -176,7 +180,7 @@ class DiscoverPage : AppCompatActivity() {
         lifecycleScope.launch {
             val apiItems = CocktailApiRepository.fetchCocktails(limit = 10)
             val data = if (apiItems.isNotEmpty()) CocktailImageProvider.enrichWithImages(apiItems) else emptyList()
-            
+
             // Load favorite states for all cocktails
             data.forEach { cocktail ->
                 cocktail.cocktailId?.let { id ->
@@ -235,7 +239,7 @@ class DiscoverPage : AppCompatActivity() {
             
             // Update cache immediately
             favoriteStates[cocktailId] = isFavorite
-            
+
             // Use shared ViewModel for consistency
             val favoriteEntity = FavoriteEntity(
                 cocktailId = cocktailId,
@@ -245,7 +249,7 @@ class DiscoverPage : AppCompatActivity() {
                 instructions = "", // Will be populated when recipe details are loaded
                 userId = userId
             )
-            
+
             favoritesViewModel.toggleFavorite(favoriteEntity, !isFavorite)
         }
     }
