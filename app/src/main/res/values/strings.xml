@@ -56,6 +56,7 @@
     <string name="not_specified">Not specified</string>
     <string name="minutes_fmt">%1$d mins</string>
     <string name="favorite">Add to favorites</string>
+    <string name="default_web_client_id">1056261417081-oaj3ocr6ki59jnqj6oq9d9j7038pfila.apps.googleusercontent.com</string>
     <string name="settings_title">Settings</string>
     <string name="section_account">Account</string>
     <string name="edit_profile">Edit Profile</string>
