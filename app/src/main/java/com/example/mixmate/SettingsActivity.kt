@@ -37,19 +37,19 @@ class SettingsActivity : AppCompatActivity() {
 
     private lateinit var prefs: SharedPreferences
     private lateinit var btnBack: ImageButton
-    
+
     // Account Section
     private lateinit var cardEditProfile: MaterialCardView
     private lateinit var cardChangePassword: MaterialCardView
-    
+
     // Preferences Section
-    private lateinit var cardTheme: MaterialCardView
-    private lateinit var tvCurrentTheme: TextView
+    // private lateinit var cardTheme: MaterialCardView
+    // private lateinit var tvCurrentTheme: TextView
     private lateinit var cardLanguage: MaterialCardView
     private lateinit var tvCurrentLanguage: TextView
-    private lateinit var cardUnits: MaterialCardView
-    private lateinit var tvCurrentUnits: TextView
-    
+    // private lateinit var cardUnits: MaterialCardView
+    // private lateinit var tvCurrentUnits: TextView
+
     // Notifications Section
     private lateinit var switchPushNotifications: MaterialSwitch
     private lateinit var switchRecipeUpdates: MaterialSwitch
@@ -59,34 +59,34 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var cardPrivacy: MaterialCardView
     private lateinit var cardHelpSupport: MaterialCardView
     private lateinit var cardAbout: MaterialCardView
-    
+
     // Account Actions
     private lateinit var cardLogout: MaterialCardView
 
     companion object {
         private const val PREFS_NAME = "MixMateSettings"
-        const val KEY_THEME = "theme_mode"
+        // const val KEY_THEME = "theme_mode"
         const val KEY_LANGUAGE = "app_language"
-        const val KEY_UNITS = "measurement_units"
+        // const val KEY_UNITS = "measurement_units"
         const val KEY_PUSH_NOTIFICATIONS = "push_notifications"
         const val KEY_RECIPE_UPDATES = "recipe_updates"
         const val KEY_DAILY_FACTS = "daily_cocktail_facts"
 
         private const val NOTIFICATION_PERMISSION_REQUEST_CODE = 1001
 
-        // Theme modes
-        const val THEME_DARK = "dark"
-        const val THEME_LIGHT = "light"
-        const val THEME_SYSTEM = "system"
-        
+        // Theme modes (commented out - not implemented)
+        // const val THEME_DARK = "dark"
+        // const val THEME_LIGHT = "light"
+        // const val THEME_SYSTEM = "system"
+
         // Languages (POE requirement: 2+ South African languages)
         const val LANG_ENGLISH = "en"
         const val LANG_AFRIKAANS = "af"
         const val LANG_ZULU = "zu"
-        
-        // Units
-        const val UNITS_METRIC = "metric"
-        const val UNITS_IMPERIAL = "imperial"
+
+        // Units (commented out - not implemented)
+        // const val UNITS_METRIC = "metric"
+        // const val UNITS_IMPERIAL = "imperial"
     }
 
     // Permission launcher for notifications (Android 13+)
@@ -143,16 +143,16 @@ class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
-        
+
         // Apply window insets
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        
+
         prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        
+
         initializeViews()
         loadCurrentSettings()
         setupClickListeners()
@@ -160,19 +160,19 @@ class SettingsActivity : AppCompatActivity() {
 
     private fun initializeViews() {
         btnBack = findViewById(R.id.btn_back)
-        
+
         // Account
         cardEditProfile = findViewById(R.id.card_edit_profile)
         cardChangePassword = findViewById(R.id.card_change_password)
-        
+
         // Preferences
-        cardTheme = findViewById(R.id.card_theme)
-        tvCurrentTheme = findViewById(R.id.tv_current_theme)
+        // cardTheme = findViewById(R.id.card_theme)
+        // tvCurrentTheme = findViewById(R.id.tv_current_theme)
         cardLanguage = findViewById(R.id.card_language)
         tvCurrentLanguage = findViewById(R.id.tv_current_language)
-        cardUnits = findViewById(R.id.card_units)
-        tvCurrentUnits = findViewById(R.id.tv_current_units)
-        
+        // cardUnits = findViewById(R.id.card_units)
+        // tvCurrentUnits = findViewById(R.id.tv_current_units)
+
         // Notifications
         switchPushNotifications = findViewById(R.id.switch_push_notifications)
         switchRecipeUpdates = findViewById(R.id.switch_recipe_updates)
@@ -182,21 +182,21 @@ class SettingsActivity : AppCompatActivity() {
         cardPrivacy = findViewById(R.id.card_privacy)
         cardHelpSupport = findViewById(R.id.card_help_support)
         cardAbout = findViewById(R.id.card_about)
-        
+
         // Account Actions
         cardLogout = findViewById(R.id.card_logout)
     }
 
     private fun loadCurrentSettings() {
-        // Load theme
-        val currentTheme = prefs.getString(KEY_THEME, THEME_DARK) ?: THEME_DARK
-        tvCurrentTheme.text = when (currentTheme) {
-            THEME_LIGHT -> "Light"
-            THEME_DARK -> "Dark"
-            THEME_SYSTEM -> "Follow System"
-            else -> "Dark"
-        }
-        
+        // Load theme (commented out - not implemented)
+        // val currentTheme = prefs.getString(KEY_THEME, THEME_DARK) ?: THEME_DARK
+        // tvCurrentTheme.text = when (currentTheme) {
+        //     THEME_LIGHT -> "Light"
+        //     THEME_DARK -> "Dark"
+        //     THEME_SYSTEM -> "Follow System"
+        //     else -> "Dark"
+        // }
+
         // Load language
         // Use LocaleHelper as the source of truth for language preference so the app-wide
         // locale and Settings view remain in sync even if other parts of the app write
@@ -211,15 +211,15 @@ class SettingsActivity : AppCompatActivity() {
             LANG_ZULU -> "isiZulu"
             else -> "English"
         }
-        
-        // Load units
-        val currentUnits = prefs.getString(KEY_UNITS, UNITS_METRIC) ?: UNITS_METRIC
-        tvCurrentUnits.text = when (currentUnits) {
-            UNITS_METRIC -> "Metric (ml, cl)"
-            UNITS_IMPERIAL -> "Imperial (oz, fl oz)"
-            else -> "Metric (ml, cl)"
-        }
-        
+
+        // Load units (commented out - not implemented)
+        // val currentUnits = prefs.getString(KEY_UNITS, UNITS_METRIC) ?: UNITS_METRIC
+        // tvCurrentUnits.text = when (currentUnits) {
+        //     UNITS_METRIC -> "Metric (ml, cl)"
+        //     UNITS_IMPERIAL -> "Imperial (oz, fl oz)"
+        //     else -> "Metric (ml, cl)"
+        // }
+
         // Load notification preferences
         switchPushNotifications.isChecked = prefs.getBoolean(KEY_PUSH_NOTIFICATIONS, true)
         switchRecipeUpdates.isChecked = prefs.getBoolean(KEY_RECIPE_UPDATES, false)
@@ -231,34 +231,38 @@ class SettingsActivity : AppCompatActivity() {
         btnBack.setOnClickListener {
             finish()
         }
-        
+
         // Account Section
         cardEditProfile.setOnClickListener {
             startActivity(Intent(this, EditProfileActivity::class.java))
         }
-        
+
         cardChangePassword.setOnClickListener {
             showChangePasswordDialog()
         }
-        
+
         // Preferences Section
-        cardTheme.setOnClickListener {
-            showThemeDialog()
-        }
-        
+        // cardTheme.setOnClickListener {
+        //     showThemeDialog()
+        // }
+
         cardLanguage.setOnClickListener {
             showLanguageDialog()
         }
-        
-        cardUnits.setOnClickListener {
-            showUnitsDialog()
-        }
-        
+
+        // cardUnits.setOnClickListener {
+        //     showUnitsDialog()
+        // }
+
         // Notifications
         switchPushNotifications.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-                    ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                    ContextCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.POST_NOTIFICATIONS
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
                     pendingEnablePush = true
                     requestGenericNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                 } else {
@@ -275,7 +279,11 @@ class SettingsActivity : AppCompatActivity() {
         switchRecipeUpdates.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-                    ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                    ContextCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.POST_NOTIFICATIONS
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
                     pendingEnableRecipe = true
                     requestGenericNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                 } else {
@@ -301,6 +309,7 @@ class SettingsActivity : AppCompatActivity() {
                             NotificationHelper.createNotificationChannel(this)
                             enableDailyFacts()
                         }
+
                         shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS) -> {
                             // Show explanation and request permission
                             MaterialAlertDialogBuilder(this)
@@ -314,6 +323,7 @@ class SettingsActivity : AppCompatActivity() {
                                 }
                                 .show()
                         }
+
                         else -> {
                             requestNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                         }
@@ -331,58 +341,58 @@ class SettingsActivity : AppCompatActivity() {
         cardPrivacy.setOnClickListener {
             showPrivacyPolicyDialog()
         }
-        
+
         cardHelpSupport.setOnClickListener {
             showHelpSupportDialog()
         }
-        
+
         cardAbout.setOnClickListener {
             showAboutDialog()
         }
-        
+
         // Account Actions
         cardLogout.setOnClickListener {
             showLogoutConfirmation()
         }
     }
 
-    // Theme Dialog
-    private fun showThemeDialog() {
-        val themes = arrayOf("Dark", "Light", "Follow System")
-        val currentTheme = prefs.getString(KEY_THEME, THEME_DARK) ?: THEME_DARK
-        val currentIndex = when (currentTheme) {
-            THEME_DARK -> 0
-            THEME_LIGHT -> 1
-            THEME_SYSTEM -> 2
-            else -> 0
-        }
-        
-        MaterialAlertDialogBuilder(this)
-            .setTitle("App Theme")
-            .setSingleChoiceItems(themes, currentIndex) { dialog, which ->
-                val selectedTheme = when (which) {
-                    0 -> THEME_DARK
-                    1 -> THEME_LIGHT
-                    2 -> THEME_SYSTEM
-                    else -> THEME_DARK
-                }
-                
-                prefs.edit().putString(KEY_THEME, selectedTheme).apply()
-                applyTheme(selectedTheme)
-                tvCurrentTheme.text = themes[which]
-                dialog.dismiss()
-            }
-            .setNegativeButton("Cancel", null)
-            .show()
-    }
+    // Theme Dialog (commented out - not implemented)
+    // private fun showThemeDialog() {
+    //     val themes = arrayOf("Dark", "Light", "Follow System")
+    //     val currentTheme = prefs.getString(KEY_THEME, THEME_DARK) ?: THEME_DARK
+    //     val currentIndex = when (currentTheme) {
+    //         THEME_DARK -> 0
+    //         THEME_LIGHT -> 1
+    //         THEME_SYSTEM -> 2
+    //         else -> 0
+    //     }
 
-    private fun applyTheme(theme: String) {
-        when (theme) {
-            THEME_DARK -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            THEME_LIGHT -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            THEME_SYSTEM -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-        }
-    }
+    //     MaterialAlertDialogBuilder(this)
+    //         .setTitle("App Theme")
+    //         .setSingleChoiceItems(themes, currentIndex) { dialog, which ->
+    //             val selectedTheme = when (which) {
+    //                 0 -> THEME_DARK
+    //                 1 -> THEME_LIGHT
+    //                 2 -> THEME_SYSTEM
+    //                 else -> THEME_DARK
+    //             }
+
+    //             prefs.edit().putString(KEY_THEME, selectedTheme).apply()
+    //             applyTheme(selectedTheme)
+    //             tvCurrentTheme.text = themes[which]
+    //             dialog.dismiss()
+    //         }
+    //         .setNegativeButton("Cancel", null)
+    //         .show()
+    // }
+
+    // private fun applyTheme(theme: String) {
+    //     when (theme) {
+    //         THEME_DARK -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+    //         THEME_LIGHT -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+    //         THEME_SYSTEM -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+    //     }
+    // }
 
     // Language Dialog (POE Part 3 requirement)
     private fun showLanguageDialog() {
@@ -421,24 +431,24 @@ class SettingsActivity : AppCompatActivity() {
             .show()
     }
 
-    // Units Dialog
-    private fun showUnitsDialog() {
-        val units = arrayOf("Metric (ml, cl)", "Imperial (oz, fl oz)")
-        val currentUnits = prefs.getString(KEY_UNITS, UNITS_METRIC) ?: UNITS_METRIC
-        val currentIndex = if (currentUnits == UNITS_METRIC) 0 else 1
-        
-        MaterialAlertDialogBuilder(this)
-            .setTitle("Measurement Units")
-            .setSingleChoiceItems(units, currentIndex) { dialog, which ->
-                val selectedUnits = if (which == 0) UNITS_METRIC else UNITS_IMPERIAL
-                prefs.edit().putString(KEY_UNITS, selectedUnits).apply()
-                tvCurrentUnits.text = units[which]
-                Toast.makeText(this, "Units updated", Toast.LENGTH_SHORT).show()
-                dialog.dismiss()
-            }
-            .setNegativeButton("Cancel", null)
-            .show()
-    }
+    // Units Dialog (commented out - not implemented)
+    // private fun showUnitsDialog() {
+    //     val units = arrayOf("Metric (ml, cl)", "Imperial (oz, fl oz)")
+    //     val currentUnits = prefs.getString(KEY_UNITS, UNITS_METRIC) ?: UNITS_METRIC
+    //     val currentIndex = if (currentUnits == UNITS_METRIC) 0 else 1
+
+    //     MaterialAlertDialogBuilder(this)
+    //         .setTitle("Measurement Units")
+    //         .setSingleChoiceItems(units, currentIndex) { dialog, which ->
+    //             val selectedUnits = if (which == 0) UNITS_METRIC else UNITS_IMPERIAL
+    //             prefs.edit().putString(KEY_UNITS, selectedUnits).apply()
+    //             tvCurrentUnits.text = units[which]
+    //             Toast.makeText(this, "Units updated", Toast.LENGTH_SHORT).show()
+    //             dialog.dismiss()
+    //         }
+    //         .setNegativeButton("Cancel", null)
+    //         .show()
+    // }
 
     // Change Password Dialog
     private fun showChangePasswordDialog() {
@@ -455,12 +465,12 @@ class SettingsActivity : AppCompatActivity() {
     private fun sendPasswordResetEmail() {
         val currentUser = FirebaseAuth.getInstance().currentUser
         val email = currentUser?.email ?: UserManager.getCurrentUserEmail(this)
-        
+
         if (email.isNullOrEmpty()) {
             Toast.makeText(this, "No email found for this account", Toast.LENGTH_SHORT).show()
             return
         }
-        
+
         FirebaseAuth.getInstance().sendPasswordResetEmail(email)
             .addOnSuccessListener {
                 Toast.makeText(
@@ -485,12 +495,12 @@ class SettingsActivity : AppCompatActivity() {
             .setTitle("Privacy Policy")
             .setMessage(
                 "MixMate Privacy Policy\n\n" +
-                "We respect your privacy. This app collects:\n\n" +
-                "• Account information (email, username)\n" +
-                "• Custom recipes you create\n" +
-                "• Your favorite cocktails\n\n" +
-                "Your data is stored securely in Firebase and is not shared with third parties.\n\n" +
-                "For more information, visit our website."
+                        "We respect your privacy. This app collects:\n\n" +
+                        "• Account information (email, username)\n" +
+                        "• Custom recipes you create\n" +
+                        "• Your favorite cocktails\n\n" +
+                        "Your data is stored securely in Firebase and is not shared with third parties.\n\n" +
+                        "For more information, visit our website."
             )
             .setPositiveButton("OK", null)
             .show()
@@ -502,9 +512,9 @@ class SettingsActivity : AppCompatActivity() {
             .setTitle("Help & Support")
             .setMessage(
                 "Need help with MixMate?\n\n" +
-                "Email: support@mixmate.app\n" +
-                "GitHub: github.com/mixmate/support\n\n" +
-                "We typically respond within 24 hours."
+                        "Email: support@mixmate.app\n" +
+                        "GitHub: github.com/mixmate/support\n\n" +
+                        "We typically respond within 24 hours."
             )
             .setPositiveButton("OK", null)
             .show()
@@ -516,13 +526,13 @@ class SettingsActivity : AppCompatActivity() {
             .setTitle("About MixMate")
             .setMessage(
                 "MixMate v1.0.0\n\n" +
-                "Your ultimate cocktail companion.\n\n" +
-                "Developed by:\n" +
-                "Teejay Kamwaro – ST10274142\n" +
-                "Grant Coutts - ST10258297\n" +
-                "Tristan Vries - ST10380906\n" +
-                "Kelvin Gravett - ST10108660\n\n" +
-                "© 2025 MixMate. All rights reserved."
+                        "Your ultimate cocktail companion.\n\n" +
+                        "Developed by:\n" +
+                        "Teejay Kamwaro – ST10274142\n" +
+                        "Grant Coutts - ST10258297\n" +
+                        "Tristan Vries - ST10380906\n" +
+                        "Kelvin Gravett - ST10108660\n\n" +
+                        "© 2025 MixMate. All rights reserved."
             )
             .setPositiveButton("OK", null)
             .show()
@@ -564,18 +574,18 @@ class SettingsActivity : AppCompatActivity() {
         try {
             // Sign out from Firebase
             FirebaseAuth.getInstance().signOut()
-            
+
             // Clear user data from UserManager
             UserManager.clearUserData(this)
-            
+
             // Clear app-specific preferences if needed
             prefs.edit()
                 .putBoolean(KEY_PUSH_NOTIFICATIONS, false)
                 .putBoolean(KEY_RECIPE_UPDATES, false)
                 .apply()
-            
+
             Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show()
-            
+
             // Navigate back to login
             val intent = Intent(this, MainActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -583,7 +593,7 @@ class SettingsActivity : AppCompatActivity() {
             }
             startActivity(intent)
             finish()
-            
+
         } catch (e: Exception) {
             Log.e("SettingsActivity", "Error during logout", e)
             Toast.makeText(this, "Error logging out: ${e.message}", Toast.LENGTH_SHORT).show()

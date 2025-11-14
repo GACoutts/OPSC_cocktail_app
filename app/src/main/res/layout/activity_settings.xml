@@ -196,7 +196,8 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <!-- Theme -->
+            <!-- Theme - Commented out (not implemented yet) -->
+            <!--
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/card_theme"
                 android:layout_width="match_parent"
@@ -256,6 +257,7 @@
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
+            -->
 
             <!-- Language -->
             <com.google.android.material.card.MaterialCardView
@@ -318,7 +320,8 @@
 
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Measurement Units -->
+            <!-- Measurement Units - Commented out (not implemented yet) -->
+            <!--
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/card_units"
                 android:layout_width="match_parent"
@@ -378,6 +381,7 @@
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
+            -->
 
             <!-- Notifications Section -->
             <TextView
