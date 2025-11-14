@@ -18,9 +18,13 @@ import com.example.mixmate.ui.favorites.SharedFavoritesViewModel
 import kotlinx.coroutines.flow.firstOrNull
 
 class MyBar : AppCompatActivity() {
+    override fun attachBaseContext(newBase: android.content.Context) {
+        super.attachBaseContext(LocaleHelper.onAttach(newBase))
+    }
+
     private lateinit var favoritesViewModel: SharedFavoritesViewModel
     private val favoriteStates = mutableMapOf<String, Boolean>()
-    
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // Ensure content is laid out below the system status bar
@@ -62,6 +66,7 @@ class MyBar : AppCompatActivity() {
         navFav?.setOnClickListener {
             startActivity(Intent(this, FavouritesActivity::class.java))
         }
+        navFav?.setOnClickListener { Toast.makeText(this, getString(R.string.favourites_coming_soon), Toast.LENGTH_SHORT).show() }
         navProfile?.setOnClickListener {
             startActivity(Intent(this, ProfileActivity::class.java))
         }
@@ -126,7 +131,7 @@ class MyBar : AppCompatActivity() {
         lifecycleScope.launch {
             val apiItems = CocktailApiRepository.fetchCocktails(limit = 10)
             val data = if (apiItems.isNotEmpty()) CocktailImageProvider.enrichWithImages(apiItems) else emptyList()
-            
+
             // Load favorite states for all cocktails
             data.forEach { cocktail ->
                 cocktail.cocktailId?.let { id ->
@@ -135,7 +140,7 @@ class MyBar : AppCompatActivity() {
                     cocktail.isFavorite = isFav
                 }
             }
-            
+
             if (data.isNotEmpty()) {
                 suggestedAdapter.replaceAll(data)
                 showContent()
@@ -144,14 +149,14 @@ class MyBar : AppCompatActivity() {
             }
         }
     }
-    
+
     private suspend fun handleFavoriteToggle(cocktail: SuggestedCocktail, isFavorite: Boolean) {
         val userId = UserManager.getCurrentUserUid() ?: UserManager.getUsername(this@MyBar)
         val cocktailId = cocktail.cocktailId ?: cocktail.name.hashCode().toString()
-        
+
         // Update cache immediately
         favoriteStates[cocktailId] = isFavorite
-        
+
         // Use shared ViewModel for consistency
         val favoriteEntity = FavoriteEntity(
             cocktailId = cocktailId,
@@ -161,7 +166,7 @@ class MyBar : AppCompatActivity() {
             instructions = "",
             userId = userId
         )
-        
+
         favoritesViewModel.toggleFavorite(favoriteEntity, !isFavorite)
     }
 }

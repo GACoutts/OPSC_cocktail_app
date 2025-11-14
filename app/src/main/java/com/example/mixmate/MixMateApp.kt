@@ -14,6 +14,10 @@ class MixMateApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+
+        // Apply saved language preference
+        LocaleHelper.updateLocale(this, LocaleHelper.getLanguage(this))
+
         db = Room.databaseBuilder(
             applicationContext,
             AppDatabase::class.java,

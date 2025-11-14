@@ -20,13 +20,14 @@
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
             android:src="@drawable/mix_mate_transparent_logo"
-            android:scaleType="fitCenter" />
+            android:scaleType="fitCenter"
+            android:contentDescription="@string/cd_logo" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:text="Create Account"
+            android:text="@string/create_account"
             android:textColor="@color/text_color"
             android:textSize="28sp"
             android:textStyle="bold" />
@@ -35,7 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="32dp"
-            android:text="Join the MixMate community"
+            android:text="@string/join_community"
             android:textColor="@color/text_secondary"
             android:textSize="16sp" />
 
@@ -55,7 +56,7 @@
                 android:id="@+id/etName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="First Name"
+                android:hint="@string/first_name"
                 android:inputType="textPersonName|textCapWords"
                 android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz -'"
                 android:textColor="@color/text_color" />
@@ -78,7 +79,7 @@
                 android:id="@+id/etSurname"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Last Name"
+                android:hint="@string/last_name"
                 android:inputType="textPersonName|textCapWords"
                 android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz -'"
                 android:textColor="@color/text_color" />
@@ -101,7 +102,7 @@
                 android:id="@+id/etDateOfBirth"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Date of Birth (YYYY-MM-DD)"
+                android:hint="@string/dob_hint"
                 android:inputType="date"
                 android:digits="0123456789-"
                 android:maxLength="10"
@@ -119,14 +120,14 @@
             app:hintTextColor="@color/primary_color"
             app:startIconDrawable="@drawable/ic_alternate_email"
             app:startIconTint="@color/primary_color"
-            app:prefixText="@"
+            app:prefixText="@string/at_prefix"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etUsername"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Username"
+                android:hint="@string/username_hint"
                 android:inputType="text|textNoSuggestions"
                 android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_"
                 android:maxLength="20"
@@ -150,7 +151,7 @@
                 android:id="@+id/etEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Email"
+                android:hint="@string/email_hint"
                 android:inputType="textEmailAddress"
                 android:textColor="@color/text_color" />
 
@@ -174,7 +175,7 @@
                 android:id="@+id/etPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Password"
+                android:hint="@string/password_hint"
                 android:inputType="textPassword"
                 android:textColor="@color/text_color" />
 
@@ -198,7 +199,7 @@
                 android:id="@+id/etConfirmPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Confirm Password"
+                android:hint="@string/confirm_password_hint"
                 android:inputType="textPassword"
                 android:textColor="@color/text_color" />
 
@@ -220,7 +221,7 @@
             android:layout_height="56dp"
             android:layout_marginBottom="24dp"
             android:backgroundTint="@color/primary_color"
-            android:text="Create Account"
+            android:text="@string/create_account"
             android:textColor="@android:color/white"
             android:textSize="16sp"
             android:textStyle="bold"
@@ -236,7 +237,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Already have an account? "
+                android:text="@string/already_have_account"
                 android:textColor="@color/text_secondary"
                 android:textSize="14sp" />
 
@@ -244,7 +245,7 @@
                 android:id="@+id/tvLogin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Sign In"
+                android:text="@string/sign_in_label"
                 android:textColor="@color/primary_color"
                 android:textSize="14sp"
                 android:textStyle="bold"
