@@ -1,16 +1,23 @@
 package com.example.mixmate
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.widget.ImageButton
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.mixmate.notifications.NotificationHelper
+import com.example.mixmate.notifications.NotificationScheduler
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.materialswitch.MaterialSwitch
@@ -46,7 +53,8 @@ class SettingsActivity : AppCompatActivity() {
     // Notifications Section
     private lateinit var switchPushNotifications: MaterialSwitch
     private lateinit var switchRecipeUpdates: MaterialSwitch
-    
+    private lateinit var switchDailyFacts: MaterialSwitch
+
     // Privacy & Support Section
     private lateinit var cardPrivacy: MaterialCardView
     private lateinit var cardHelpSupport: MaterialCardView
@@ -62,7 +70,10 @@ class SettingsActivity : AppCompatActivity() {
         const val KEY_UNITS = "measurement_units"
         const val KEY_PUSH_NOTIFICATIONS = "push_notifications"
         const val KEY_RECIPE_UPDATES = "recipe_updates"
-        
+        const val KEY_DAILY_FACTS = "daily_cocktail_facts"
+
+        private const val NOTIFICATION_PERMISSION_REQUEST_CODE = 1001
+
         // Theme modes
         const val THEME_DARK = "dark"
         const val THEME_LIGHT = "light"
@@ -77,6 +88,53 @@ class SettingsActivity : AppCompatActivity() {
         const val UNITS_METRIC = "metric"
         const val UNITS_IMPERIAL = "imperial"
     }
+
+    // Permission launcher for notifications (Android 13+)
+    private val requestNotificationPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            // Permission granted, create channel then enable daily facts
+            NotificationHelper.createNotificationChannel(this)
+            enableDailyFacts()
+        } else {
+            // Permission denied, disable switch
+            switchDailyFacts.isChecked = false
+            Toast.makeText(
+                this,
+                "Notification permission is required for daily cocktail facts",
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    }
+
+    private val requestGenericNotificationPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (pendingEnablePush && !isGranted) {
+            switchPushNotifications.isChecked = false
+            Toast.makeText(this, "Notification permission required", Toast.LENGTH_SHORT).show()
+        } else if (pendingEnableRecipe && !isGranted) {
+            switchRecipeUpdates.isChecked = false
+            Toast.makeText(this, "Notification permission required", Toast.LENGTH_SHORT).show()
+        } else if (isGranted) {
+            // Create channel once permission granted
+            NotificationHelper.createNotificationChannel(this)
+            if (pendingEnablePush) {
+                prefs.edit().putBoolean(KEY_PUSH_NOTIFICATIONS, true).apply()
+                Toast.makeText(this, "Push notifications enabled", Toast.LENGTH_SHORT).show()
+            }
+            if (pendingEnableRecipe) {
+                prefs.edit().putBoolean(KEY_RECIPE_UPDATES, true).apply()
+                Toast.makeText(this, "Recipe updates enabled", Toast.LENGTH_SHORT).show()
+            }
+        }
+        pendingEnablePush = false
+        pendingEnableRecipe = false
+    }
+
+    private var pendingEnablePush = false
+    private var pendingEnableRecipe = false
 
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(LocaleHelper.onAttach(newBase))
@@ -118,7 +176,8 @@ class SettingsActivity : AppCompatActivity() {
         // Notifications
         switchPushNotifications = findViewById(R.id.switch_push_notifications)
         switchRecipeUpdates = findViewById(R.id.switch_recipe_updates)
-        
+        switchDailyFacts = findViewById(R.id.switch_daily_facts)
+
         // Privacy & Support
         cardPrivacy = findViewById(R.id.card_privacy)
         cardHelpSupport = findViewById(R.id.card_help_support)
@@ -139,7 +198,13 @@ class SettingsActivity : AppCompatActivity() {
         }
         
         // Load language
-        val currentLanguage = prefs.getString(KEY_LANGUAGE, LANG_ENGLISH) ?: LANG_ENGLISH
+        // Use LocaleHelper as the source of truth for language preference so the app-wide
+        // locale and Settings view remain in sync even if other parts of the app write
+        // to language preferences.
+        val currentLanguage = LocaleHelper.getLanguage(this)
+        // Keep a mirrored copy in this activity prefs for any other legacy code that
+        // reads from `MixMateSettings`.
+        prefs.edit().putString(KEY_LANGUAGE, currentLanguage).apply()
         tvCurrentLanguage.text = when (currentLanguage) {
             LANG_ENGLISH -> "English"
             LANG_AFRIKAANS -> "Afrikaans"
@@ -158,6 +223,7 @@ class SettingsActivity : AppCompatActivity() {
         // Load notification preferences
         switchPushNotifications.isChecked = prefs.getBoolean(KEY_PUSH_NOTIFICATIONS, true)
         switchRecipeUpdates.isChecked = prefs.getBoolean(KEY_RECIPE_UPDATES, false)
+        switchDailyFacts.isChecked = prefs.getBoolean(KEY_DAILY_FACTS, false)
     }
 
     private fun setupClickListeners() {
@@ -190,23 +256,77 @@ class SettingsActivity : AppCompatActivity() {
         
         // Notifications
         switchPushNotifications.setOnCheckedChangeListener { _, isChecked ->
-            prefs.edit().putBoolean(KEY_PUSH_NOTIFICATIONS, isChecked).apply()
-            Toast.makeText(
-                this,
-                if (isChecked) "Push notifications enabled" else "Push notifications disabled",
-                Toast.LENGTH_SHORT
-            ).show()
+            if (isChecked) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                    pendingEnablePush = true
+                    requestGenericNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                } else {
+                    NotificationHelper.createNotificationChannel(this)
+                    prefs.edit().putBoolean(KEY_PUSH_NOTIFICATIONS, true).apply()
+                    Toast.makeText(this, "Push notifications enabled", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                prefs.edit().putBoolean(KEY_PUSH_NOTIFICATIONS, false).apply()
+                Toast.makeText(this, "Push notifications disabled", Toast.LENGTH_SHORT).show()
+            }
         }
-        
+
         switchRecipeUpdates.setOnCheckedChangeListener { _, isChecked ->
-            prefs.edit().putBoolean(KEY_RECIPE_UPDATES, isChecked).apply()
-            Toast.makeText(
-                this,
-                if (isChecked) "Recipe updates enabled" else "Recipe updates disabled",
-                Toast.LENGTH_SHORT
-            ).show()
+            if (isChecked) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                    pendingEnableRecipe = true
+                    requestGenericNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                } else {
+                    NotificationHelper.createNotificationChannel(this)
+                    prefs.edit().putBoolean(KEY_RECIPE_UPDATES, true).apply()
+                    Toast.makeText(this, "Recipe updates enabled", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                prefs.edit().putBoolean(KEY_RECIPE_UPDATES, false).apply()
+                Toast.makeText(this, "Recipe updates disabled", Toast.LENGTH_SHORT).show()
+            }
         }
-        
+
+        // Daily Cocktail Facts - Schedule notifications at 8 AM and 8 PM
+        switchDailyFacts.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    when {
+                        ContextCompat.checkSelfPermission(
+                            this,
+                            Manifest.permission.POST_NOTIFICATIONS
+                        ) == PackageManager.PERMISSION_GRANTED -> {
+                            NotificationHelper.createNotificationChannel(this)
+                            enableDailyFacts()
+                        }
+                        shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS) -> {
+                            // Show explanation and request permission
+                            MaterialAlertDialogBuilder(this)
+                                .setTitle(getString(R.string.notification_permission_rationale_title))
+                                .setMessage(getString(R.string.notification_permission_rationale_message))
+                                .setPositiveButton(getString(R.string.notification_permission_enable)) { _, _ ->
+                                    requestNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                                }
+                                .setNegativeButton(getString(R.string.notification_permission_not_now)) { _, _ ->
+                                    switchDailyFacts.isChecked = false
+                                }
+                                .show()
+                        }
+                        else -> {
+                            requestNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                        }
+                    }
+                } else {
+                    // Android 12 and below don't need runtime permission
+                    enableDailyFacts()
+                }
+            } else {
+                disableDailyFacts()
+            }
+        }
+
         // Privacy & Support
         cardPrivacy.setOnClickListener {
             showPrivacyPolicyDialog()
@@ -286,16 +406,16 @@ class SettingsActivity : AppCompatActivity() {
                     else -> LANG_ENGLISH
                 }
 
+                // Save to this activity prefs (legacy) and to the LocaleHelper prefs which
+                // are used by attachBaseContext to apply the locale app-wide.
                 prefs.edit().putString(KEY_LANGUAGE, selectedLanguage).apply()
+                LocaleHelper.setLanguage(this, selectedLanguage)
+                // Update UI immediately and recreate activity to apply new locale
                 tvCurrentLanguage.text = languages[which]
-
-                Toast.makeText(
-                    this,
-                    "Language will update on app restart",
-                    Toast.LENGTH_LONG
-                ).show()
-
+                Toast.makeText(this, "Language updated", Toast.LENGTH_SHORT).show()
                 dialog.dismiss()
+                // Recreate activity so resources are reloaded with the new locale
+                recreate()
             }
             .setNegativeButton("Cancel", null)
             .show()
@@ -418,6 +538,26 @@ class SettingsActivity : AppCompatActivity() {
             }
             .setNegativeButton("Cancel", null)
             .show()
+    }
+
+    private fun enableDailyFacts() {
+        prefs.edit().putBoolean(KEY_DAILY_FACTS, true).apply()
+        NotificationScheduler.scheduleDailyNotifications(this)
+        Toast.makeText(
+            this,
+            "Daily cocktail facts enabled! You'll receive notifications at 8 AM and 8 PM 🍹",
+            Toast.LENGTH_LONG
+        ).show()
+    }
+
+    private fun disableDailyFacts() {
+        prefs.edit().putBoolean(KEY_DAILY_FACTS, false).apply()
+        NotificationScheduler.cancelDailyNotifications(this)
+        Toast.makeText(
+            this,
+            "Daily cocktail facts disabled",
+            Toast.LENGTH_SHORT
+        ).show()
     }
 
     private fun performLogout() {

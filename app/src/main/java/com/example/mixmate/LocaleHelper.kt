@@ -15,7 +15,10 @@ object LocaleHelper {
     fun setLanguage(context: Context, languageCode: String) {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         prefs.edit().putString(SELECTED_LANGUAGE, languageCode).apply()
-        updateLocale(context, languageCode)
+        // Update both the provided context and the application context to ensure the
+        // language change takes effect immediately across activities and resources.
+        updateResources(context, languageCode)
+        updateResources(context.applicationContext, languageCode)
     }
 
     /**
@@ -30,22 +33,8 @@ object LocaleHelper {
      * Update the app's locale configuration
      */
     fun updateLocale(context: Context, languageCode: String) {
-        val locale = Locale(languageCode)
-        Locale.setDefault(locale)
-
-        val resources = context.resources
-        val configuration = Configuration(resources.configuration)
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            configuration.setLocale(locale)
-            context.createConfigurationContext(configuration)
-        } else {
-            @Suppress("DEPRECATION")
-            configuration.locale = locale
-        }
-
-        @Suppress("DEPRECATION")
-        resources.updateConfiguration(configuration, resources.displayMetrics)
+        // Backwards-compatible alias used in MixMateApp
+        updateResources(context, languageCode)
     }
 
     /**
@@ -61,15 +50,16 @@ object LocaleHelper {
         Locale.setDefault(locale)
 
         val configuration = Configuration(context.resources.configuration)
-        configuration.setLocale(locale)
 
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            context.createConfigurationContext(configuration)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            configuration.setLocale(locale)
+            return context.createConfigurationContext(configuration)
         } else {
             @Suppress("DEPRECATION")
+            configuration.locale = locale
+            @Suppress("DEPRECATION")
             context.resources.updateConfiguration(configuration, context.resources.displayMetrics)
-            context
+            return context
         }
     }
 }
-
