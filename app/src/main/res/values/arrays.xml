@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="ingredient_options">
-        <item>Ingredient</item>
         <item>Vodka</item>
         <item>Rum</item>
         <item>Tequila</item>
@@ -11,18 +10,16 @@
     </string-array>
 
     <string-array name="alcohol_type_options">
-        <item>Type</item>
-        <item>Vodka</item>
-        <item>Rum</item>
-        <item>Tequila</item>
-        <item>Whiskey</item>
-        <item>Gin</item>
-        <item>Liqueur</item>
-        <item>Non-Alcoholic</item>
+        <item>Cocktail</item>
+        <item>Shot</item>
+        <item>Punch</item>
+        <item>Ordinary Drink</item>
+        <item>Homemade Liqueur</item>
+        <item>Beer</item>
+        <item>Coffee / Tea</item>
     </string-array>
 
     <string-array name="rating_options">
-        <item>Rating</item>
         <item>4.5+</item>
         <item>4.0+</item>
         <item>3.5+</item>
@@ -34,5 +31,24 @@
         <item>Medium</item>
         <item>Hard</item>
         <item>Expert</item>
+    </string-array>
+
+    <!-- MyBar ingredient/mixer options for inventory -->
+    <string-array name="mybar_ingredients">
+        <item>Lime</item>
+        <item>Lemon</item>
+        <item>Mint</item>
+        <item>Sugar</item>
+        <item>Salt</item>
+        <item>Egg White</item>
+        <item>Bitters</item>
+        <item>Vermouth</item>
+        <item>Cola</item>
+        <item>Tonic Water</item>
+        <item>Ginger Beer</item>
+        <item>Soda Water</item>
+        <item>Orange Juice</item>
+        <item>Cranberry Juice</item>
+        <item>Pineapple Juice</item>
     </string-array>
 </resources>

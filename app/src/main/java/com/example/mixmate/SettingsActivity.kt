@@ -274,9 +274,10 @@ class SettingsActivity : AppCompatActivity() {
             LANG_ZULU -> 2
             else -> 0
         }
-        
+
         MaterialAlertDialogBuilder(this)
-            .setTitle("App Language")
+            .setTitle("Select Language")
+            .setIcon(android.R.drawable.ic_dialog_info)
             .setSingleChoiceItems(languages, currentIndex) { dialog, which ->
                 val selectedLanguage = when (which) {
                     0 -> LANG_ENGLISH
@@ -284,16 +285,16 @@ class SettingsActivity : AppCompatActivity() {
                     2 -> LANG_ZULU
                     else -> LANG_ENGLISH
                 }
-                
+
                 prefs.edit().putString(KEY_LANGUAGE, selectedLanguage).apply()
                 tvCurrentLanguage.text = languages[which]
-                
+
                 Toast.makeText(
                     this,
                     "Language will update on app restart",
                     Toast.LENGTH_LONG
                 ).show()
-                
+
                 dialog.dismiss()
             }
             .setNegativeButton("Cancel", null)

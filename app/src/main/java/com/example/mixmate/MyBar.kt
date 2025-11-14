@@ -24,6 +24,14 @@ class MyBar : AppCompatActivity() {
 
     private lateinit var favoritesViewModel: SharedFavoritesViewModel
     private val favoriteStates = mutableMapOf<String, Boolean>()
+    private lateinit var suggestedAdapter: SuggestedCocktailAdapter
+    private lateinit var rvSuggested: RecyclerView
+    private lateinit var loadingContainer: View
+    private lateinit var emptyContainer: View
+
+    // Alcohol types and ingredients lists
+    private lateinit var alcoholItems: List<BarItem>
+    private lateinit var ingredientItems: List<BarItem>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,38 +74,81 @@ class MyBar : AppCompatActivity() {
         navFav?.setOnClickListener {
             startActivity(Intent(this, FavouritesActivity::class.java))
         }
-        navFav?.setOnClickListener { Toast.makeText(this, getString(R.string.favourites_coming_soon), Toast.LENGTH_SHORT).show() }
         navProfile?.setOnClickListener {
             startActivity(Intent(this, ProfileActivity::class.java))
         }
 
-        val recycler: RecyclerView = findViewById(R.id.rv_bar_items)
         val spanCount = 2
-        recycler.layoutManager = GridLayoutManager(this, spanCount)
-        recycler.setHasFixedSize(true)
-
         val spacingPx = resources.getDimensionPixelSize(R.dimen.grid_spacing)
-        recycler.addItemDecoration(GridSpacingItemDecoration(spanCount, spacingPx, includeEdge = false))
 
-        val items = listOf(
-            BarItem("Vodka", R.drawable.vodka),
-            BarItem("Rum", R.drawable.rum),
-            BarItem("Tequila", R.drawable.tequila),
-            BarItem("Whiskey", R.drawable.whiskey),
-            BarItem("Gin", R.drawable.gin),
-            BarItem("Juice", R.drawable.juice),
-        )
-        recycler.adapter = BarItemAdapter(items)
+        // Setup Alcohol Types RecyclerView
+        val rvAlcoholTypes: RecyclerView = findViewById(R.id.rv_alcohol_types)
+        rvAlcoholTypes.layoutManager = GridLayoutManager(this, spanCount)
+        rvAlcoholTypes.setHasFixedSize(true)
+        rvAlcoholTypes.addItemDecoration(GridSpacingItemDecoration(spanCount, spacingPx, includeEdge = false))
+
+        val alcoholNames = resources.getStringArray(R.array.ingredient_options).toList()
+        alcoholItems = alcoholNames.map { alcohol ->
+            BarItem(alcohol, R.drawable.ic_local_bar)
+        }
+
+        val alcoholAdapter = BarItemAdapter(alcoholItems) { _, _ ->
+            lifecycleScope.launch {
+                updateSuggestions()
+            }
+        }
+        rvAlcoholTypes.adapter = alcoholAdapter
+
+        // Setup Ingredients RecyclerView
+        val rvIngredients: RecyclerView = findViewById(R.id.rv_bar_items)
+        rvIngredients.layoutManager = GridLayoutManager(this, spanCount)
+        rvIngredients.setHasFixedSize(true)
+        rvIngredients.addItemDecoration(GridSpacingItemDecoration(spanCount, spacingPx, includeEdge = false))
+
+        val ingredientNames = resources.getStringArray(R.array.mybar_ingredients).toList()
+        ingredientItems = ingredientNames.map { ingredient ->
+            BarItem(ingredient, R.drawable.ic_local_bar)
+        }
+
+        val ingredientAdapter = BarItemAdapter(ingredientItems) { _, _ ->
+            lifecycleScope.launch {
+                updateSuggestions()
+            }
+        }
+        rvIngredients.adapter = ingredientAdapter
+
+        // Setup ingredient tab switching
+        val ingredientTabs = findViewById<com.google.android.material.button.MaterialButtonToggleGroup>(R.id.ingredient_tabs)
+        val btnAlcohol = findViewById<com.google.android.material.button.MaterialButton>(R.id.btn_alcohol)
+        val btnIngredients = findViewById<com.google.android.material.button.MaterialButton>(R.id.btn_ingredients)
+
+        // Set alcohol as default selected
+        btnAlcohol.isChecked = true
+
+        ingredientTabs.addOnButtonCheckedListener { group: com.google.android.material.button.MaterialButtonToggleGroup, checkedId: Int, isChecked: Boolean ->
+            if (isChecked) {
+                when (checkedId) {
+                    R.id.btn_alcohol -> {
+                        rvAlcoholTypes.visibility = View.VISIBLE
+                        rvIngredients.visibility = View.GONE
+                    }
+                    R.id.btn_ingredients -> {
+                        rvAlcoholTypes.visibility = View.GONE
+                        rvIngredients.visibility = View.VISIBLE
+                    }
+                }
+            }
+        }
 
         // Suggested Cocktails section with API-backed data and state handling
-        val rvSuggested: RecyclerView = findViewById(R.id.rv_suggested)
-        val loadingContainer: View = findViewById(R.id.loading_container_bar)
-        val emptyContainer: View = findViewById(R.id.empty_container_bar)
+        rvSuggested = findViewById(R.id.rv_suggested)
+        loadingContainer = findViewById(R.id.loading_container_bar)
+        emptyContainer = findViewById(R.id.empty_container_bar)
         rvSuggested.layoutManager = GridLayoutManager(this, spanCount)
         rvSuggested.setHasFixedSize(true)
         rvSuggested.addItemDecoration(GridSpacingItemDecoration(spanCount, spacingPx, includeEdge = false))
 
-        val suggestedAdapter = SuggestedCocktailAdapter(
+        suggestedAdapter = SuggestedCocktailAdapter(
             items = mutableListOf(),
             onItemClick = null,
             onFavoriteClick = { cocktail, isFavorite ->
@@ -111,42 +162,124 @@ class MyBar : AppCompatActivity() {
         )
         rvSuggested.adapter = suggestedAdapter
 
-        fun showLoading() {
-            loadingContainer.visibility = View.VISIBLE
-            rvSuggested.visibility = View.GONE
-            emptyContainer.visibility = View.GONE
-        }
-        fun showContent() {
-            loadingContainer.visibility = View.GONE
-            rvSuggested.visibility = View.VISIBLE
-            emptyContainer.visibility = View.GONE
-        }
-        fun showEmpty() {
-            loadingContainer.visibility = View.GONE
-            rvSuggested.visibility = View.GONE
-            emptyContainer.visibility = View.VISIBLE
-        }
-
         showLoading()
         lifecycleScope.launch {
-            val apiItems = CocktailApiRepository.fetchCocktails(limit = 10)
-            val data = if (apiItems.isNotEmpty()) CocktailImageProvider.enrichWithImages(apiItems) else emptyList()
+            loadDefaultSuggested()
+        }
+    }
 
-            // Load favorite states for all cocktails
-            data.forEach { cocktail ->
-                cocktail.cocktailId?.let { id ->
-                    val isFav = favoritesViewModel.isFavorite(id).firstOrNull() ?: false
-                    favoriteStates[id] = isFav
-                    cocktail.isFavorite = isFav
+    private fun showLoading() {
+        loadingContainer.visibility = View.VISIBLE
+        rvSuggested.visibility = View.GONE
+        emptyContainer.visibility = View.GONE
+    }
+
+    private fun showContent() {
+        loadingContainer.visibility = View.GONE
+        rvSuggested.visibility = View.VISIBLE
+        emptyContainer.visibility = View.GONE
+    }
+
+    private fun showEmpty() {
+        loadingContainer.visibility = View.GONE
+        rvSuggested.visibility = View.GONE
+        emptyContainer.visibility = View.VISIBLE
+    }
+
+    private suspend fun updateSuggestions() {
+        val selectedAlcohols = alcoholItems.filter { it.isSelected }.map { it.title }
+        val selectedIngredients = ingredientItems.filter { it.isSelected }.map { it.title }
+        
+        val allSelected = selectedAlcohols + selectedIngredients
+        
+        if (allSelected.isNotEmpty()) {
+            loadSuggestedByMultipleIngredients(allSelected)
+        } else {
+            loadDefaultSuggested()
+        }
+    }
+
+    private suspend fun loadDefaultSuggested() {
+        val apiItems = CocktailApiRepository.fetchCocktails(limit = 10)
+        val data = if (apiItems.isNotEmpty()) CocktailImageProvider.enrichWithImages(apiItems) else emptyList()
+        updateSuggestedList(data)
+    }
+
+    private suspend fun loadSuggestedByIngredient(ingredient: String) {
+        val apiResponse = try {
+            val api = com.example.mixmate.data.remote.CocktailApi.create()
+            api.filterByIngredient(ingredient)
+        } catch (e: Exception) {
+            null
+        }
+
+        val cocktails = apiResponse?.drinks?.map { drink ->
+            SuggestedCocktail(
+                name = drink.strDrink ?: "Unknown",
+                rating = 0.0,
+                category = ingredient,
+                imageUrl = drink.strDrinkThumb,
+                cocktailId = drink.idDrink,
+                isFavorite = false
+            )
+        } ?: emptyList()
+
+        updateSuggestedList(cocktails)
+    }
+
+    private suspend fun loadSuggestedByMultipleIngredients(ingredients: List<String>) {
+        showLoading()
+        try {
+            val api = com.example.mixmate.data.remote.CocktailApi.create()
+            val allCocktails = mutableSetOf<SuggestedCocktail>()
+            
+            // Fetch cocktails for each selected ingredient
+            for (ingredient in ingredients) {
+                try {
+                    val apiResponse = api.filterByIngredient(ingredient)
+                    apiResponse.drinks?.forEachIndexed { index, drink ->
+                        if (drink.idDrink != null && drink.strDrink != null) {
+                            // Calculate rating based on position (popularity)
+                            val rating = 5.0 - (index * 0.1).coerceAtMost(2.0)
+                            
+                            allCocktails.add(
+                                SuggestedCocktail(
+                                    name = drink.strDrink,
+                                    rating = rating,
+                                    category = ingredients.joinToString(", "),
+                                    imageUrl = drink.strDrinkThumb,
+                                    cocktailId = drink.idDrink,
+                                    isFavorite = false
+                                )
+                            )
+                        }
+                    }
+                } catch (e: Exception) {
+                    // Continue with next ingredient if one fails
+                    continue
                 }
             }
+            
+            updateSuggestedList(allCocktails.toList())
+        } catch (e: Exception) {
+            updateSuggestedList(emptyList())
+        }
+    }
 
-            if (data.isNotEmpty()) {
-                suggestedAdapter.replaceAll(data)
-                showContent()
-            } else {
-                showEmpty()
+    private suspend fun updateSuggestedList(data: List<SuggestedCocktail>) {
+        data.forEach { cocktail ->
+            cocktail.cocktailId?.let { id ->
+                val isFav = favoritesViewModel.isFavorite(id).firstOrNull() ?: false
+                favoriteStates[id] = isFav
+                cocktail.isFavorite = isFav
             }
+        }
+
+        if (data.isNotEmpty()) {
+            suggestedAdapter.replaceAll(data)
+            showContent()
+        } else {
+            showEmpty()
         }
     }
 

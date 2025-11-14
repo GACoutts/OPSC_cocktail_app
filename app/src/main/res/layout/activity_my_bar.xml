@@ -33,17 +33,62 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/app_header" />
 
-    <!-- My Bar grid -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_bar_items"
+    <!-- Toggle Group for ingredient tabs -->
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/ingredient_tabs"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="9dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="@dimen/margin_side"
+        android:layout_marginEnd="@dimen/margin_side"
+        app:layout_constraintTop_toBottomOf="@id/tv_my_bar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:singleSelection="true">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_alcohol"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/alcohol_types"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_ingredients"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/other_ingredients"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+    </com.google.android.material.button.MaterialButtonToggleGroup>
+
+    <!-- Alcohol Types grid -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_alcohol_types"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
         android:layout_marginStart="@dimen/margin_side"
         android:layout_marginEnd="@dimen/margin_side"
         android:padding="@dimen/grid_spacing"
         android:clipToPadding="false"
-        app:layout_constraintTop_toBottomOf="@id/tv_my_bar"
+        app:layout_constraintTop_toBottomOf="@id/ingredient_tabs"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Ingredients grid (hidden by default) -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_bar_items"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginStart="@dimen/margin_side"
+        android:layout_marginEnd="@dimen/margin_side"
+        android:padding="@dimen/grid_spacing"
+        android:clipToPadding="false"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/ingredient_tabs"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

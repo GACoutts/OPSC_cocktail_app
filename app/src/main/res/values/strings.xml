@@ -176,4 +176,8 @@
     <string name="camera">Camera</string>
     <string name="gallery">Gallery</string>
     <string name="at_prefix">@</string>
+
+    <!-- MyBar sections -->
+    <string name="alcohol_types">Alcohol Types</string>
+    <string name="other_ingredients">Other Ingredients</string>
 </resources>

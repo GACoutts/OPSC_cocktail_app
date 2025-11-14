@@ -19,7 +19,9 @@ import com.example.mixmate.data.local.FavoriteEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import com.example.mixmate.ui.favorites.SharedFavoritesViewModel
+import com.example.mixmate.ui.discover.FilterViewModel
 import kotlinx.coroutines.flow.firstOrNull
+import androidx.lifecycle.ViewModelProvider
 
 class DiscoverPage : AppCompatActivity() {
     override fun attachBaseContext(newBase: android.content.Context) {
@@ -28,6 +30,7 @@ class DiscoverPage : AppCompatActivity() {
 
 
     private lateinit var favoritesViewModel: SharedFavoritesViewModel
+    private lateinit var filterViewModel: FilterViewModel
     private val favoriteStates = mutableMapOf<String, Boolean>()  // Cache for quick lookups
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,6 +45,9 @@ class DiscoverPage : AppCompatActivity() {
         // Initialize favorites ViewModel
         val userId = UserManager.getCurrentUserUid() ?: UserManager.getUsername(this)
         favoritesViewModel = SharedFavoritesViewModel(userId)
+
+        // Initialize filter ViewModel
+        filterViewModel = ViewModelProvider(this).get(FilterViewModel::class.java)
 
         // Footer navigation wiring
         val navHome = findViewById<ImageView>(R.id.nav_home)
@@ -67,7 +73,7 @@ class DiscoverPage : AppCompatActivity() {
             startActivity(Intent(this, ProfileActivity::class.java))
         }
 
-        // Setup dropdown adapters (textless pills)
+        // Setup dropdown adapters and listeners
         val ingredientView = findViewById<MaterialAutoCompleteTextView>(R.id.ac_filter_ingredient)
         val alcoholView = findViewById<MaterialAutoCompleteTextView>(R.id.ac_filter_alcohol)
         val ratingView = findViewById<MaterialAutoCompleteTextView>(R.id.ac_filter_rating)
@@ -82,10 +88,51 @@ class DiscoverPage : AppCompatActivity() {
         alcoholView?.setAdapter(adapterFromArray(R.array.alcohol_type_options))
         ratingView?.setAdapter(adapterFromArray(R.array.rating_options))
 
+        // Setup filter listeners
+        ingredientView?.setOnItemClickListener { _, _, position, _ ->
+            val selected = resources.getStringArray(R.array.ingredient_options)[position]
+            filterViewModel.filterByIngredient(selected)
+        }
+
+        alcoholView?.setOnItemClickListener { _, _, position, _ ->
+            val selected = resources.getStringArray(R.array.alcohol_type_options)[position]
+            filterViewModel.filterByCategory(selected)
+        }
+
+        ratingView?.setOnItemClickListener { _, _, position, _ ->
+            val ratings = resources.getStringArray(R.array.rating_options)
+            val selected = ratings[position]
+            
+            val minRating = when (selected) {
+                "4.5+" -> 4.5
+                "4.0+" -> 4.0
+                "3.5+" -> 3.5
+                "3.0+" -> 3.0
+                else -> 0.0
+            }
+            
+            filterViewModel.filterByRating(minRating)
+        }
+
         // Do not set default text; keep empty. Ensure tapping opens the menu.
         ingredientView?.setOnClickListener { ingredientView.showDropDown() }
         alcoholView?.setOnClickListener { alcoholView.showDropDown() }
         ratingView?.setOnClickListener { ratingView.showDropDown() }
+
+        // Setup sort button listeners
+        val btnSortPopular = findViewById<com.google.android.material.button.MaterialButton>(R.id.btn_sort_popular)
+        val btnSortNewest = findViewById<com.google.android.material.button.MaterialButton>(R.id.btn_sort_newest)
+        val btnSortTopRated = findViewById<com.google.android.material.button.MaterialButton>(R.id.btn_sort_top_rated)
+
+        btnSortPopular?.setOnClickListener {
+            filterViewModel.setSortOrder(FilterViewModel.SortOrder.POPULAR)
+        }
+        btnSortNewest?.setOnClickListener {
+            filterViewModel.setSortOrder(FilterViewModel.SortOrder.NEWEST)
+        }
+        btnSortTopRated?.setOnClickListener {
+            filterViewModel.setSortOrder(FilterViewModel.SortOrder.TOP_RATED)
+        }
 
         // Suggested Cocktails grid (API backed with loading / empty states)
         val rvSuggested: RecyclerView = findViewById(R.id.rv_suggested)
@@ -142,12 +189,45 @@ class DiscoverPage : AppCompatActivity() {
                     cocktail.isFavorite = isFav
                 }
             }
-
+            
+            // Initialize filter ViewModel with default cocktails
+            filterViewModel.setInitialCocktails(data)
+            
             if (data.isNotEmpty()) {
                 suggestedAdapter.replaceAll(data)
                 showContent()
             } else {
                 showEmpty()
+            }
+
+            // Observe loading state
+            lifecycleScope.launch {
+                filterViewModel.isLoading.collect { isLoading ->
+                    if (isLoading) {
+                        showLoading()
+                    }
+                }
+            }
+
+            // Observe filtered cocktails
+            lifecycleScope.launch {
+                filterViewModel.filteredCocktails.collect { filtered ->
+                    suggestedAdapter.replaceAll(filtered)
+                    if (filtered.isEmpty() && data.isNotEmpty()) {
+                        showEmpty()
+                    } else if (filtered.isNotEmpty()) {
+                        showContent()
+                    }
+                }
+            }
+
+            // Observe errors
+            lifecycleScope.launch {
+                filterViewModel.error.collect { error ->
+                    if (!error.isNullOrBlank()) {
+                        Toast.makeText(this@DiscoverPage, error, Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         }
     }

@@ -137,49 +137,47 @@
             </com.google.android.material.card.MaterialCardView>
 
             <!-- Recipe Name -->
-<com.google.android.material.textfield.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/til_recipe_name"
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:hint="@string/recipe_name"
-                app:boxBackgroundColor="@color/brown"
+                app:boxBackgroundColor="@color/dark_brown_navbar"
                 app:boxStrokeColor="@color/light_brown"
-                app:boxStrokeWidth="1dp"
+                app:boxStrokeWidth="2dp"
                 app:startIconTint="@color/white"
-                app:hintTextColor="@color/white"
-                app:errorTextColor="@color/grayish_green">
+                app:hintTextColor="@color/light_brown"
                 app:errorTextColor="@color/white">
 
-<com.google.android.material.textfield.TextInputEditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_recipe_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textCapWords"
                     android:maxLines="1"
-                android:textColor="@color/white"
-                android:textColorHint="@color/grayish_green" />
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/grayish_green" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Description -->
-<com.google.android.material.textfield.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/til_description"
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
                 android:hint="@string/description"
-                app:boxBackgroundColor="@color/brown"
+                app:boxBackgroundColor="@color/dark_brown_navbar"
                 app:boxStrokeColor="@color/light_brown"
-                app:boxStrokeWidth="1dp"
+                app:boxStrokeWidth="2dp"
                 app:startIconTint="@color/white"
-                app:hintTextColor="@color/white"
-                app:errorTextColor="@color/grayish_green">
+                app:hintTextColor="@color/light_brown"
                 app:errorTextColor="@color/white">
 
-<com.google.android.material.textfield.TextInputEditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_description"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

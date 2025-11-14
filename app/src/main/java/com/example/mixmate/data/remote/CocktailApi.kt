@@ -11,6 +11,10 @@ interface CocktailApi {
     @GET("lookup.php")
     suspend fun lookupById(@Query("i") id: String): CocktailResponse
 
+    // https://www.thecocktaildb.com/api/json/v1/1/filter.php?i=Vodka
+    @GET("filter.php")
+    suspend fun filterByIngredient(@Query("i") ingredient: String): CocktailResponse
+
     companion object {
         private const val BASE_URL = "https://www.thecocktaildb.com/api/json/v1/1/"
 
