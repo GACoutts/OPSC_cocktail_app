@@ -10,6 +10,7 @@ import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import android.widget.ImageView
 import android.widget.Toast
 import android.content.Intent
+import android.util.Log
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.lifecycle.lifecycleScope
@@ -118,24 +119,34 @@ class DiscoverPage : AppCompatActivity() {
         // Setup filter listeners
         ingredientView?.setOnItemClickListener { _, _, position, _ ->
             val selected = resources.getStringArray(R.array.ingredient_options)[position]
+            Log.d("DiscoverPage", "Ingredient selected: $selected at position $position")
             if (selected == "Reset") {
                 filterViewModel.clearIngredientFilter()
                 ingredientView.setText("", false)
+                ingredientView.hint = "Ingredient"
+                Log.d("DiscoverPage", "Ingredient filter cleared, text set to empty")
             } else {
                 ingredientView.setText(selected, false)
+                ingredientView.hint = ""
                 filterViewModel.filterByIngredient(selected)
+                Log.d("DiscoverPage", "Ingredient text set to: $selected, current text: ${ingredientView.text}")
             }
             ingredientView.dismissDropDown()
         }
 
         alcoholView?.setOnItemClickListener { _, _, position, _ ->
             val selected = resources.getStringArray(R.array.alcohol_type_options)[position]
+            Log.d("DiscoverPage", "Alcohol selected: $selected at position $position")
             if (selected == "Reset") {
                 filterViewModel.clearCategoryFilter()
                 alcoholView.setText("", false)
+                alcoholView.hint = "Alcohol Type"
+                Log.d("DiscoverPage", "Alcohol filter cleared")
             } else {
                 alcoholView.setText(selected, false)
+                alcoholView.hint = ""
                 filterViewModel.filterByCategory(selected)
+                Log.d("DiscoverPage", "Alcohol text set to: $selected, current text: ${alcoholView.text}")
             }
             alcoholView.dismissDropDown()
         }
@@ -143,12 +154,16 @@ class DiscoverPage : AppCompatActivity() {
         ratingView?.setOnItemClickListener { _, _, position, _ ->
             val ratings = resources.getStringArray(R.array.rating_options)
             val selected = ratings[position]
+            Log.d("DiscoverPage", "Rating selected: $selected at position $position")
 
             if (selected == "Reset") {
                 filterViewModel.clearRatingFilter()
                 ratingView.setText("", false)
+                ratingView.hint = "Rating"
+                Log.d("DiscoverPage", "Rating filter cleared")
             } else {
                 ratingView.setText(selected, false)
+                ratingView.hint = ""
                 val minRating = when (selected) {
                     "4.5+" -> 4.5
                     "4.0+" -> 4.0
@@ -157,6 +172,7 @@ class DiscoverPage : AppCompatActivity() {
                     else -> 0.0
                 }
                 filterViewModel.filterByRating(minRating)
+                Log.d("DiscoverPage", "Rating text set to: $selected, current text: ${ratingView.text}")
             }
             ratingView.dismissDropDown()
         }
