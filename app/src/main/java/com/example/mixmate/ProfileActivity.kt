@@ -41,19 +41,19 @@ class ProfileActivity : AppCompatActivity() {
     private lateinit var tvUsername: TextView
     private lateinit var tvHandle: TextView
     private lateinit var tvJoinDate: TextView
-    
+
     // Recipe section views
     private lateinit var rvMyRecipes: RecyclerView
     private lateinit var tvMyRecipesEmpty: TextView
-    
-    // Favorites section views  
+
+    // Favorites section views
     private lateinit var rvFavorites: RecyclerView
     private lateinit var tvFavoritesEmpty: TextView
-    
-    
+
+
     // FAB for creating recipes
     private lateinit var fabCreateRecipe: FloatingActionButton
-    
+
     // Footer navigation views
     private lateinit var navHome: ImageView
     private lateinit var navDiscover: ImageView
@@ -73,13 +73,13 @@ class ProfileActivity : AppCompatActivity() {
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             // Apply top, left, right padding to root but not bottom
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0)
-            
+
             // Apply bottom padding directly to the footer with small top padding for consistent spacing
             val footer = findViewById<View>(R.id.footer_navigation)
             // Use smaller bottom padding to match other pages that use WindowCompat
             val bottomPadding = systemBars.bottom / 2
             footer?.setPadding(0, resources.getDimensionPixelSize(R.dimen.card_padding), 0, bottomPadding)
-            
+
             insets
         }
 
@@ -101,19 +101,19 @@ class ProfileActivity : AppCompatActivity() {
         tvUsername = findViewById(R.id.tv_username)
         tvHandle = findViewById(R.id.tv_handle)
         tvJoinDate = findViewById(R.id.tv_join_date)
-        
+
         // Recipe section views
         rvMyRecipes = findViewById(R.id.rv_my_recipes)
         tvMyRecipesEmpty = findViewById(R.id.tv_my_recipes_empty)
-        
+
         // Favorites section views
         rvFavorites = findViewById(R.id.rv_favorites)
         tvFavoritesEmpty = findViewById(R.id.tv_favorites_empty)
-        
-        
+
+
         // FAB
         fabCreateRecipe = findViewById(R.id.fab_create_recipe)
-        
+
         // Footer navigation views
         navHome = findViewById(R.id.nav_home)
         navDiscover = findViewById(R.id.nav_discover)
@@ -125,21 +125,32 @@ class ProfileActivity : AppCompatActivity() {
     private fun setupRecyclerViews() {
         // Setup My Recipes RecyclerView
         myRecipesAdapter = MyRecipesAdapter { recipe ->
-            // Navigate to RecipeDetailActivity
-            val intent = Intent(this, RecipeDetailActivity::class.java)
-            intent.putExtra(RecipeDetailActivity.EXTRA_RECIPE_ID, recipe.id)
-            startActivity(intent)
+            try {
+                android.util.Log.d("ProfileActivity", "Custom recipe clicked: ${recipe.name}, ID: ${recipe.id}")
+                android.util.Log.d("ProfileActivity", "Recipe has ${recipe.ingredients.size} ingredients")
+                android.util.Log.d("ProfileActivity", "Recipe instructions: ${recipe.instructions}")
+                android.util.Log.d("ProfileActivity", "Recipe image URI: ${recipe.imageUri}")
+
+                val intent = Intent(this, RecipeDetailActivity::class.java)
+                intent.putExtra(RecipeDetailActivity.EXTRA_RECIPE_ID, recipe.id)
+                android.util.Log.d("ProfileActivity", "Starting RecipeDetailActivity with ID: ${recipe.id}")
+                startActivity(intent)
+            } catch (e: Exception) {
+                android.util.Log.e("ProfileActivity", "Error opening custom recipe", e)
+                Toast.makeText(this, "Error opening recipe: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
         }
         rvMyRecipes.adapter = myRecipesAdapter
         rvMyRecipes.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        
+
         // Setup Favorites RecyclerView
         favoritesAdapter = FavoritesAdapter(
             onClick = { favorite ->
-                // Navigate to cocktail detail activity
-                // TODO: Implement navigation to cocktail detail for favorites
-                // For now, we can show a toast or navigate to discover
-                val intent = Intent(this, DiscoverPage::class.java)
+                // Navigate to RecipeDetailsActivity with favorite's data
+                val intent = Intent(this, com.example.mixmate.ui.details.RecipeDetailsActivity::class.java)
+                intent.putExtra("cocktail_id", favorite.cocktailId)
+                intent.putExtra("cocktail_name", favorite.name)
+                intent.putExtra("cocktail_image", favorite.imageUrl)
                 startActivity(intent)
             },
             onDelete = { favorite ->
@@ -161,7 +172,7 @@ class ProfileActivity : AppCompatActivity() {
         btnBack.setOnClickListener {
             onBackPressed()
         }
-        
+
         btnSettings.setOnClickListener {
             Log.d("ProfileActivity", "Settings button clicked")
             Toast.makeText(this, "Opening Settings...", Toast.LENGTH_SHORT).show()
@@ -173,8 +184,8 @@ class ProfileActivity : AppCompatActivity() {
                 Toast.makeText(this, "Error opening Settings", Toast.LENGTH_SHORT).show()
             }
         }
-        
-        
+
+
         // FAB click listener
         fabCreateRecipe.setOnClickListener {
             Log.d("ProfileActivity", "FAB clicked - navigating to SubmitRecipeActivity")
@@ -187,28 +198,28 @@ class ProfileActivity : AppCompatActivity() {
                 Toast.makeText(this, "Error opening Submit Recipe", Toast.LENGTH_SHORT).show()
             }
         }
-        
+
         // Footer navigation listeners
         navHome.setOnClickListener {
             val intent = Intent(this, DiscoverPage::class.java)
             startActivity(intent)
         }
-        
+
         navDiscover.setOnClickListener {
             val intent = Intent(this, DiscoverPage::class.java)
             startActivity(intent)
         }
-        
+
         navList.setOnClickListener {
             val intent = Intent(this, MyBar::class.java)
             startActivity(intent)
         }
-        
+
         navFavourites.setOnClickListener {
             val intent = Intent(this, FavouritesActivity::class.java)
             startActivity(intent)
         }
-        
+
         navProfile.setOnClickListener {
             // Already on profile page - do nothing or scroll to top
         }
@@ -217,7 +228,7 @@ class ProfileActivity : AppCompatActivity() {
     private fun updateNavigationState() {
         // Set profile as selected (current page)
         navProfile.isSelected = true
-        
+
         // Ensure other navigation items are not selected
         navHome.isSelected = false
         navDiscover.isSelected = false
@@ -232,14 +243,14 @@ class ProfileActivity : AppCompatActivity() {
         val firebaseRepository = FirebaseRecipeRepository()
         recipeRepository = RecipeRepository(customRecipeDao, firebaseRepository, activityScope)
     }
-    
+
     private fun loadMyRecipes() {
         val userId = UserManager.getCurrentUserUid() ?: UserManager.getUsername(this)
-        
+
         activityScope.launch {
             recipeRepository.getAllRecipes(userId).collect { recipes ->
                 myRecipesAdapter.updateRecipes(recipes)
-                
+
                 // Show/hide empty state
                 if (recipes.isEmpty()) {
                     tvMyRecipesEmpty.visibility = View.VISIBLE
@@ -251,14 +262,14 @@ class ProfileActivity : AppCompatActivity() {
             }
         }
     }
-    
+
     private fun loadFavorites() {
         val userId = UserManager.getCurrentUserUid() ?: UserManager.getUsername(this)
-        
+
         activityScope.launch {
             favoriteDao.getAll(userId).collect { favorites ->
                 favoritesAdapter.submitList(favorites)
-                
+
                 // Show/hide empty state
                 if (favorites.isEmpty()) {
                     tvFavoritesEmpty.visibility = View.VISIBLE
@@ -276,7 +287,7 @@ class ProfileActivity : AppCompatActivity() {
         tvUsername.text = UserManager.getDisplayName(this)
         tvHandle.text = UserManager.getUsername(this)
         tvJoinDate.text = UserManager.getJoinDate(this)
-        
+
         // TODO: Load profile picture from UserManager.getProfilePictureUri()
         // TODO: Load user's favorites from Room database
     }
