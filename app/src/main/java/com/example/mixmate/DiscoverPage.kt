@@ -227,7 +227,7 @@ class DiscoverPage : AppCompatActivity() {
 
         showLoading()
         lifecycleScope.launch {
-            val apiItems = CocktailApiRepository.fetchCocktails(limit = 50)
+            val apiItems = CocktailApiRepository.fetchCocktails(limit = 150)
             val data = if (apiItems.isNotEmpty()) CocktailImageProvider.enrichWithImages(apiItems) else emptyList()
 
             // Load favorite states for all cocktails

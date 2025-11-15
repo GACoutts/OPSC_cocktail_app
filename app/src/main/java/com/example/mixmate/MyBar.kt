@@ -149,6 +149,10 @@ class MyBar : AppCompatActivity() {
                         updateSuggestedTitleConstraint(false)
                     }
                 }
+            } else {
+                // If unchecked, collapse both sections
+                rvAlcoholTypes.visibility = View.GONE
+                rvIngredients.visibility = View.GONE
             }
         }
 
@@ -181,21 +185,30 @@ class MyBar : AppCompatActivity() {
     }
 
     private fun showLoading() {
-        loadingContainer.visibility = View.VISIBLE
-        rvSuggested.visibility = View.GONE
-        emptyContainer.visibility = View.GONE
+        runOnUiThread {
+            android.util.Log.d("MyBar", "showLoading: setting loading visible")
+            loadingContainer.visibility = View.VISIBLE
+            rvSuggested.visibility = View.GONE
+            emptyContainer.visibility = View.GONE
+        }
     }
 
     private fun showContent() {
-        loadingContainer.visibility = View.GONE
-        rvSuggested.visibility = View.VISIBLE
-        emptyContainer.visibility = View.GONE
+        runOnUiThread {
+            android.util.Log.d("MyBar", "showContent: setting RecyclerView visible, itemCount=${suggestedAdapter.itemCount}")
+            loadingContainer.visibility = View.GONE
+            rvSuggested.visibility = View.VISIBLE
+            emptyContainer.visibility = View.GONE
+        }
     }
 
     private fun showEmpty() {
-        loadingContainer.visibility = View.GONE
-        rvSuggested.visibility = View.GONE
-        emptyContainer.visibility = View.VISIBLE
+        runOnUiThread {
+            android.util.Log.d("MyBar", "showEmpty: setting empty container visible")
+            loadingContainer.visibility = View.GONE
+            rvSuggested.visibility = View.GONE
+            emptyContainer.visibility = View.VISIBLE
+        }
     }
 
     private suspend fun updateSuggestions() {
@@ -223,7 +236,7 @@ class MyBar : AppCompatActivity() {
         } catch (e: Exception) {
             android.util.Log.e("MyBar", "Error loading rotating suggestions, fallback to generic", e)
             // Fallback to generic cocktails
-            val apiItems = CocktailApiRepository.fetchCocktails(limit = 50)
+            val apiItems = CocktailApiRepository.fetchCocktails(limit = 150)
             val data = if (apiItems.isNotEmpty()) CocktailImageProvider.enrichWithImages(apiItems) else emptyList()
 
             // Load favorite states
@@ -243,7 +256,7 @@ class MyBar : AppCompatActivity() {
         showLoading()
         try {
             // Load ALL cocktails from API Ninjas
-            val apiItems = CocktailApiRepository.fetchCocktails(limit = 100)
+            val apiItems = CocktailApiRepository.fetchCocktails(limit = 150)
             val enrichedCocktails = CocktailImageProvider.enrichWithImages(apiItems)
 
             // Filter CLIENT-SIDE for cocktails containing the ingredient
@@ -260,6 +273,7 @@ class MyBar : AppCompatActivity() {
             }
 
             android.util.Log.d("MyBar", "Loaded ${matchingCocktails.size} cocktails for $ingredient")
+            android.util.Log.d("MyBar", "About to update suggested list with ${matchingCocktails.size} items")
 
             // Load favorite states
             matchingCocktails.forEach { cocktail ->
@@ -283,7 +297,7 @@ class MyBar : AppCompatActivity() {
             android.util.Log.d("MyBar", "Loading cocktails for ${ingredients.size} ingredients: $ingredients")
 
             // Load ALL cocktails from API Ninjas
-            val allApiCocktails = CocktailApiRepository.fetchCocktails(limit = 100)
+            val allApiCocktails = CocktailApiRepository.fetchCocktails(limit = 150)
             val enrichedCocktails = CocktailImageProvider.enrichWithImages(allApiCocktails)
 
             // Filter CLIENT-SIDE for cocktails matching ALL selected ingredients
@@ -322,6 +336,8 @@ class MyBar : AppCompatActivity() {
     }
 
     private suspend fun updateSuggestedList(data: List<SuggestedCocktail>) {
+        android.util.Log.d("MyBar", "updateSuggestedList called with ${data.size} items")
+
         data.forEach { cocktail ->
             cocktail.cocktailId?.let { id ->
                 val isFav = favoritesViewModel.isFavorite(id).firstOrNull() ?: false
@@ -330,12 +346,22 @@ class MyBar : AppCompatActivity() {
             }
         }
 
-        if (data.isNotEmpty()) {
-            suggestedAdapter.replaceAll(data)
-            showContent()
-        } else {
-            showEmpty()
+        android.util.Log.d("MyBar", "Switching to Main thread to update UI")
+        withContext(Dispatchers.Main) {
+            android.util.Log.d("MyBar", "On Main thread, data.size = ${data.size}")
+            if (data.isNotEmpty()) {
+                android.util.Log.d("MyBar", "Calling suggestedAdapter.replaceAll with ${data.size} items")
+                suggestedAdapter.replaceAll(data)
+                android.util.Log.d("MyBar", "Adapter updated, adapter.itemCount = ${suggestedAdapter.itemCount}")
+                android.util.Log.d("MyBar", "Calling showContent()")
+                showContent()
+                android.util.Log.d("MyBar", "UI should now be visible")
+            } else {
+                android.util.Log.d("MyBar", "Data is empty, showing empty state")
+                showEmpty()
+            }
         }
+        android.util.Log.d("MyBar", "updateSuggestedList completed")
     }
 
     private suspend fun handleFavoriteToggle(cocktail: SuggestedCocktail, isFavorite: Boolean) {

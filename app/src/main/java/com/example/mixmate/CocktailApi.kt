@@ -78,7 +78,7 @@ object CocktailApiRepository {
         allowBlankApiKeyForTests = true
     }
 
-    // Public suspend function to get up to [limit] cocktails. Uses a broad letter query to widen results.
+    // Public suspend function to get up to [limit] cocktails. Queries multiple letters to get variety.
     suspend fun fetchCocktails(limit: Int = 10): List<SuggestedCocktail> = withContext(Dispatchers.IO) {
         if (!allowBlankApiKeyForTests && API_KEY.isBlank()) {
             SafeLog.w("CocktailApi", "API_KEY is blank; skipping network call")
@@ -86,21 +86,37 @@ object CocktailApiRepository {
         }
         return@withContext try {
             NetworkIdlingResource.increment()
-            val apiItems = service.searchCocktails("a")
-            apiItems.asSequence()
-                .filter { !it.name.isNullOrBlank() }
-                .take(limit)
-                .map { api ->
-                    val baseSpirit = extractBaseSpirit(api.ingredients)
-                    SuggestedCocktail(
-                        name = api.name!!.trim(),
-                        rating = randomRating(),
-                        category = baseSpirit,
-                        imageRes = R.drawable.cosmopolitan, // Placeholder image
-                        ingredients = api.ingredients // Pass ingredients for filtering
-                    )
+
+            // Query multiple letters to get more variety
+            val letters = listOf("a", "b", "c", "m", "t", "w", "s", "g", "p", "r")
+            val allCocktails = mutableSetOf<SuggestedCocktail>() // Use Set to avoid duplicates
+
+            for (letter in letters) {
+                try {
+                    val apiItems = service.searchCocktails(letter)
+                    apiItems.forEach { api ->
+                        if (!api.name.isNullOrBlank() && api.ingredients != null) {
+                            val baseSpirit = extractBaseSpirit(api.ingredients)
+                            allCocktails.add(
+                                SuggestedCocktail(
+                                    name = api.name.trim(),
+                                    rating = randomRating(),
+                                    category = baseSpirit,
+                                    imageRes = R.drawable.cosmopolitan,
+                                    ingredients = api.ingredients // Pass ingredients for filtering
+                                )
+                            )
+                        }
+                    }
+                    // Stop if we have enough
+                    if (allCocktails.size >= limit) break
+                } catch (e: Exception) {
+                    SafeLog.w("CocktailApi", "Error fetching cocktails for letter: $letter", e)
+                    // Continue with next letter
                 }
-                .toList()
+            }
+
+            allCocktails.take(limit)
         } catch (e: Exception) {
             SafeLog.w("CocktailApi", "Error fetching cocktails", e)
             emptyList()
