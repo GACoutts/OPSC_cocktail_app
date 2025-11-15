@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -25,20 +24,16 @@ import kotlinx.coroutines.withContext
 
 class RecipeDetailActivity : AppCompatActivity() {
 
-    // Header views
-    private lateinit var btnBack: ImageButton
-    private lateinit var btnEdit: ImageButton
-
-    // Content views
-    private lateinit var imgRecipeDetail: ImageView
-    private lateinit var tvRecipeName: TextView
+    // Content views (match your existing layout IDs)
+    private lateinit var ivPhoto: ImageView
+    private lateinit var tvName: TextView
     private lateinit var tvRecipeDescription: TextView
     private lateinit var tvDifficulty: TextView
     private lateinit var tvPrepTime: TextView
     private lateinit var rvIngredients: RecyclerView
     private lateinit var tvInstructions: TextView
 
-    // Optional details views
+    // Optional details views (keep if they exist in your layout, else they’re just never used)
     private lateinit var layoutOptionalDetails: LinearLayout
     private lateinit var layoutGlassware: LinearLayout
     private lateinit var tvGlassware: TextView
@@ -56,11 +51,10 @@ class RecipeDetailActivity : AppCompatActivity() {
         const val EXTRA_RECIPE_ID = "extra_recipe_id"
 
         // External cocktail (e.g., from Discover / Favourites)
-        const val EXTRA_EXTERNAL_ID = "cocktail_id"      // string id if you decide to fetch later
+        const val EXTRA_EXTERNAL_ID = "cocktail_id" // if you fetch later
         const val EXTRA_NAME = "recipe_name"
         const val EXTRA_IMAGE_URL = "recipe_image"
 
-        /** Launch using a LOCAL custom recipe id (Room). */
         fun launch(context: Context, localRecipeId: Long) {
             context.startActivity(
                 Intent(context, RecipeDetailActivity::class.java)
@@ -68,7 +62,6 @@ class RecipeDetailActivity : AppCompatActivity() {
             )
         }
 
-        /** Launch using minimal EXTERNAL info (name/image/optional id). */
         fun launch(
             context: Context,
             name: String?,
@@ -84,13 +77,14 @@ class RecipeDetailActivity : AppCompatActivity() {
         }
     }
 
-    override fun attachBaseContext(newBase: android.content.Context) {
+    override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(LocaleHelper.onAttach(newBase))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        // keep the same layout you already use here
         setContentView(R.layout.activity_recipe_detail)
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -101,25 +95,20 @@ class RecipeDetailActivity : AppCompatActivity() {
 
         initializeViews()
         setupRecyclerView()
-        setupClickListeners()
         resolveAndLoad()
     }
 
     private fun initializeViews() {
-        // Header
-        btnBack = findViewById(R.id.btn_back)
-        btnEdit = findViewById(R.id.btn_edit)
+        // Bind to your existing IDs
+        ivPhoto = findViewById(R.id.ivPhoto)
+        tvName = findViewById(R.id.tvName)
+        tvRecipeDescription = findViewById(R.id.tv_recipe_description) // if this doesn’t exist, remove this line
+        tvDifficulty = findViewById(R.id.tv_difficulty)               // if not in layout, remove
+        tvPrepTime = findViewById(R.id.tv_prep_time)                   // if not in layout, remove
+        rvIngredients = findViewById(R.id.rv_ingredients)              // if not in layout, remove
+        tvInstructions = findViewById(R.id.tvInstructions)
 
-        // Content
-        imgRecipeDetail = findViewById(R.id.img_recipe_detail)
-        tvRecipeName = findViewById(R.id.tv_recipe_name)
-        tvRecipeDescription = findViewById(R.id.tv_recipe_description)
-        tvDifficulty = findViewById(R.id.tv_difficulty)
-        tvPrepTime = findViewById(R.id.tv_prep_time)
-        rvIngredients = findViewById(R.id.rv_ingredients)
-        tvInstructions = findViewById(R.id.tv_instructions)
-
-        // Optional
+        // Optional blocks — keep only if these IDs exist in your XML
         layoutOptionalDetails = findViewById(R.id.layout_optional_details)
         layoutGlassware = findViewById(R.id.layout_glassware)
         tvGlassware = findViewById(R.id.tv_glassware)
@@ -135,28 +124,16 @@ class RecipeDetailActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupClickListeners() {
-        btnBack.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
-
-        btnEdit.setOnClickListener {
-            // If you have an edit flow, wire it here. For now, navigate to submit with prefill later.
-            startActivity(Intent(this, SubmitRecipeActivity::class.java))
-        }
-    }
-
     /** Decide how to load based on the Intent we got. */
     private fun resolveAndLoad() {
         val localId = intent.getLongExtra(EXTRA_RECIPE_ID, -1L)
         if (localId > 0L) {
-            // Load from Room (custom recipe created by user)
             loadRecipeFromDatabase(localId)
             return
         }
 
-        // Otherwise, show lightweight details passed in from elsewhere
         val passedName = intent.getStringExtra(EXTRA_NAME)
         val passedImage = intent.getStringExtra(EXTRA_IMAGE_URL)
-        val externalId = intent.getStringExtra(EXTRA_EXTERNAL_ID) // reserved if you later fetch from API
 
         if (!passedName.isNullOrBlank() || !passedImage.isNullOrBlank()) {
             populateFromLightweight(passedName, passedImage)
@@ -191,52 +168,51 @@ class RecipeDetailActivity : AppCompatActivity() {
     private fun populateFromLightweight(name: String?, imageUrl: String?) {
         recipe = null
 
-        tvRecipeName.text = name ?: getString(R.string.app_name)
-        tvRecipeDescription.text = ""          // unknown
-        tvInstructions.text = ""               // unknown
+        tvName.text = name ?: getString(R.string.app_name)
+        // If your layout doesn’t have these, delete the assignments:
+        tvRecipeDescription.text = ""
         tvDifficulty.text = getString(R.string.not_specified)
         tvPrepTime.text = getString(R.string.not_specified)
 
-        // No ingredients → hide list
-        ingredientsAdapter.updateIngredients(emptyList())
+        // No ingredients → hide list if present
+        runCatching { ingredientsAdapter.updateIngredients(emptyList()) }
 
-        // Hide optional sections
-        layoutOptionalDetails.visibility = View.GONE
-        layoutGlassware.visibility = View.GONE
-        layoutGarnish.visibility = View.GONE
+        // Hide optional sections if present
+        runCatching {
+            layoutOptionalDetails.visibility = View.GONE
+            layoutGlassware.visibility = View.GONE
+            layoutGarnish.visibility = View.GONE
+        }
 
-        // Image
         if (!imageUrl.isNullOrEmpty()) {
             Glide.with(this)
                 .load(imageUrl)
                 .placeholder(R.drawable.ic_default_cocktail)
                 .error(R.drawable.ic_default_cocktail)
                 .centerCrop()
-                .into(imgRecipeDetail)
+                .into(ivPhoto)
         } else {
-            imgRecipeDetail.setImageResource(R.drawable.ic_default_cocktail)
-            imgRecipeDetail.scaleType = ImageView.ScaleType.CENTER_INSIDE
+            ivPhoto.setImageResource(R.drawable.ic_default_cocktail)
+            ivPhoto.scaleType = ImageView.ScaleType.CENTER_INSIDE
         }
-
-        // If lightweight, you probably don’t want edit
-        btnEdit.visibility = View.GONE
     }
 
     /** Populate UI from a full Room entity. */
     private fun populateViews(recipe: CustomRecipeEntity) {
         this.recipe = recipe
 
-        tvRecipeName.text = recipe.name
-        tvRecipeDescription.text = recipe.description.orEmpty()
+        tvName.text = recipe.name
+        runCatching { tvRecipeDescription.text = recipe.description.orEmpty() }
         tvInstructions.text = recipe.instructions.orEmpty()
-
-        tvDifficulty.text = recipe.difficulty ?: getString(R.string.not_specified)
+        runCatching { tvDifficulty.text = recipe.difficulty ?: getString(R.string.not_specified) }
 
         val prepTime = recipe.preparationTime
-        tvPrepTime.text = if (prepTime != null && prepTime > 0) {
-            getString(R.string.minutes_fmt, prepTime)
-        } else {
-            getString(R.string.not_specified)
+        runCatching {
+            tvPrepTime.text = if (prepTime != null && prepTime > 0) {
+                getString(R.string.minutes_fmt, prepTime)
+            } else {
+                getString(R.string.not_specified)
+            }
         }
 
         if (!recipe.imageUri.isNullOrEmpty()) {
@@ -245,32 +221,29 @@ class RecipeDetailActivity : AppCompatActivity() {
                 .placeholder(R.drawable.ic_default_cocktail)
                 .error(R.drawable.ic_default_cocktail)
                 .centerCrop()
-                .into(imgRecipeDetail)
+                .into(ivPhoto)
         } else {
-            imgRecipeDetail.setImageResource(R.drawable.ic_default_cocktail)
-            imgRecipeDetail.scaleType = ImageView.ScaleType.CENTER_INSIDE
+            ivPhoto.setImageResource(R.drawable.ic_default_cocktail)
+            ivPhoto.scaleType = ImageView.ScaleType.CENTER_INSIDE
         }
 
-        ingredientsAdapter.updateIngredients(recipe.ingredients)
+        runCatching { ingredientsAdapter.updateIngredients(recipe.ingredients) }
 
         var hasOptional = false
-        if (!recipe.glassware.isNullOrEmpty()) {
-            tvGlassware.text = recipe.glassware
-            layoutGlassware.visibility = View.VISIBLE
-            hasOptional = true
-        } else layoutGlassware.visibility = View.GONE
+        runCatching {
+            if (!recipe.glassware.isNullOrEmpty()) {
+                tvGlassware.text = recipe.glassware
+                layoutGlassware.visibility = View.VISIBLE
+                hasOptional = true
+            } else layoutGlassware.visibility = View.GONE
 
-        if (!recipe.garnish.isNullOrEmpty()) {
-            tvGarnish.text = recipe.garnish
-            layoutGarnish.visibility = View.VISIBLE
-            hasOptional = true
-        } else layoutGarnish.visibility = View.GONE
+            if (!recipe.garnish.isNullOrEmpty()) {
+                tvGarnish.text = recipe.garnish
+                layoutGarnish.visibility = View.VISIBLE
+                hasOptional = true
+            } else layoutGarnish.visibility = View.GONE
 
-        layoutOptionalDetails.visibility = if (hasOptional) View.VISIBLE else View.GONE
-    }
-
-    private fun somePlaceShowingToasts(e: Exception?) {
-        // Example adaptation: ensure toasts use resources
-        Toast.makeText(this, getString(R.string.toast_error_generic, e?.message ?: ""), Toast.LENGTH_SHORT).show()
+            layoutOptionalDetails.visibility = if (hasOptional) View.VISIBLE else View.GONE
+        }
     }
 }

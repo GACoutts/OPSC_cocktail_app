@@ -1,26 +1,29 @@
 package com.example.mixmate.ui.details
 
+import android.content.Context
 import android.os.Bundle
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
 import com.example.mixmate.R
 import com.example.mixmate.UserManager
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import androidx.lifecycle.ViewModelProvider
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 
 class RecipeDetailsActivity : ComponentActivity() {
 
     private lateinit var vm: RecipeDetailsViewModel
 
-    override fun attachBaseContext(newBase: android.content.Context) {
+    // keep your locale hook
+    override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(com.example.mixmate.LocaleHelper.onAttach(newBase))
     }
 
@@ -28,47 +31,59 @@ class RecipeDetailsActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_recipe_details)
 
-        val userId = UserManager.getCurrentUserUid() ?: "default_user"
-        vm = ViewModelProvider(this, RecipeDetailsViewModelFactory(userId))[RecipeDetailsViewModel::class.java]
-
+        // views present in activity_recipe_details.xml
         val ivPhoto = findViewById<ImageView>(R.id.ivPhoto)
         val tvName = findViewById<TextView>(R.id.tvName)
         val tvIngredients = findViewById<TextView>(R.id.tvIngredients)
         val tvInstructions = findViewById<TextView>(R.id.tvInstructions)
         val btnFav = findViewById<ImageButton>(R.id.btnFav)
 
-        // Get name and image from intent (always available)
-        val cocktailName = intent.getStringExtra("cocktail_name") ?: "Cocktail"
-        val cocktailImage = intent.getStringExtra("cocktail_image") ?: ""
+        // VM
+        val userId = UserManager.getCurrentUserUid() ?: "default_user"
+        vm = ViewModelProvider(
+            this,
+            RecipeDetailsViewModelFactory(userId)
+        )[RecipeDetailsViewModel::class.java]
 
+        // always set initial (from adapter extras)
+        val cocktailName = intent.getStringExtra("cocktail_name").orEmpty()
+        val cocktailImage = intent.getStringExtra("cocktail_image").orEmpty()
         vm.setInitial(cocktailName, cocktailImage)
 
-        val id = intent.getStringExtra("cocktail_id")
-        if (!id.isNullOrBlank()) {
-            vm.load(id)
-        }
+        // then load full details if we have an id
+        intent.getStringExtra("cocktail_id")
+            ?.takeIf { it.isNotBlank() }
+            ?.let { vm.load(it) }
 
+        // observe UI state
         lifecycleScope.launch {
-            vm.ui.collectLatest { s ->
-                tvName.text = s.name
-                tvIngredients.text = s.ingredients
-                tvInstructions.text = s.instructions
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                vm.ui.collectLatest { s ->
+                    tvName.text = s.name
+                    tvIngredients.text = s.ingredients
+                    tvInstructions.text = s.instructions
 
-                if (s.imageUrl.isNotBlank()) {
-                    Glide.with(this@RecipeDetailsActivity)
-                        .load(s.imageUrl)
-                        .into(ivPhoto)
-                } else {
-                        ivPhoto.setImageResource(R.drawable.ic_launcher_foreground)
-                }
+                    if (s.imageUrl.isNotBlank()) {
+                        Glide.with(this@RecipeDetailsActivity)
+                            .load(s.imageUrl)
+                            .placeholder(R.drawable.ic_default_cocktail)
+                            .error(R.drawable.ic_default_cocktail)
+                            .centerCrop()
+                            .into(ivPhoto)
+                    } else {
+                        ivPhoto.setImageResource(R.drawable.ic_default_cocktail)
+                    }
 
-                btnFav.setImageResource(
-                    if (s.isFavorited) R.drawable.ic_heart_filled
-                    else R.drawable.ic_heart_outline
-                )
+                    btnFav.setImageResource(
+                        if (s.isFavorited) R.drawable.ic_heart_filled
+                        else R.drawable.ic_heart_outline
+                    )
 
-                s.error?.let {
-                    Toast.makeText(this@RecipeDetailsActivity, it, Toast.LENGTH_SHORT).show()
+                    s.error?.let {
+                        if (it.isNotBlank()) {
+                            Toast.makeText(this@RecipeDetailsActivity, it, Toast.LENGTH_SHORT).show()
+                        }
+                    }
                 }
             }
         }

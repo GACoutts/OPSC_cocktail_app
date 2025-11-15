@@ -88,7 +88,7 @@ class RecipeDetailsViewModel(
                         error = null // Don't show error, just display what we have
                     )
                 }
-                } else {
+                else {
                     Log.d("RecipeDetailsVM", "Successfully loaded: ${drink.strDrink}")
                     val ingredients = formatIngredients(drink)
                     val instructions = drink.strInstructions.orEmpty()

@@ -1,5 +1,6 @@
 package com.example.mixmate
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,9 +8,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.launch
-import com.example.mixmate.data.local.FavoriteEntity
 import java.util.Locale
 
 data class SuggestedCocktail(
@@ -18,15 +16,16 @@ data class SuggestedCocktail(
     val category: String,
     val imageRes: Int = R.drawable.cosmopolitan,   // local fallback
     val imageUrl: String? = null,                  // remote image (optional)
-    val cocktailId: String? = null,                // for favorites functionality
-    var isFavorite: Boolean = false                // favorite status
+    val cocktailId: String? = null,                // for details/favourites
+    var isFavorite: Boolean = false                // fallback favourite state
 )
 
 class SuggestedCocktailAdapter(
     private val items: MutableList<SuggestedCocktail>,
     private val onItemClick: ((SuggestedCocktail) -> Unit)? = null,
     private val onFavoriteClick: ((SuggestedCocktail, Boolean) -> Unit)? = null,
-    private val getFavoriteState: ((String) -> Boolean)? = null  // NEW: function to get real-time favorite state
+    // Return true if the given cocktailId is currently a favourite (Room/Repo)
+    private val getFavoriteState: ((String) -> Boolean)? = null
 ) : RecyclerView.Adapter<SuggestedCocktailAdapter.VH>() {
 
     class VH(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -47,14 +46,14 @@ class SuggestedCocktailAdapter(
 
         // Image
         holder.photo.scaleType = ImageView.ScaleType.CENTER_CROP
-        val ph = item.imageRes
+        val placeholder = item.imageRes
         if (item.imageUrl.isNullOrBlank()) {
-            holder.photo.setImageResource(ph)
+            holder.photo.setImageResource(placeholder)
         } else {
             Glide.with(holder.photo.context)
                 .load(item.imageUrl)
-                .placeholder(ph)
-                .error(ph)
+                .placeholder(placeholder)
+                .error(placeholder)
                 .centerCrop()
                 .into(holder.photo)
         }
@@ -63,38 +62,33 @@ class SuggestedCocktailAdapter(
         holder.name.text = capitalizeWords(item.name)
         holder.meta.text = String.format(Locale.getDefault(), "%.1f • %s", item.rating, item.category)
 
-        // Favorite icon - use real state from repository if available
-        val isFavorited = item.cocktailId?.let { getFavoriteState?.invoke(it) } ?: item.isFavorite
-        updateFavoriteIcon(holder.favoriteIcon, isFavorited)
+        // Favourite icon (query repo if we have an id; otherwise fall back to item.isFavorite)
+        val currentFav = item.cocktailId?.let { id -> getFavoriteState?.invoke(id) } ?: item.isFavorite
+        renderFavIcon(holder.favoriteIcon, currentFav)
+
         holder.favoriteIcon.setOnClickListener {
-            val newState = !isFavorited
-            item.isFavorite = newState  // Update in-memory for immediate UI feedback
-            updateFavoriteIcon(holder.favoriteIcon, newState)
+            // Re-read current state (in case repo changed)
+            val nowFav = item.cocktailId?.let { id -> getFavoriteState?.invoke(id) } ?: item.isFavorite
+            val newState = !nowFav
+            item.isFavorite = newState // keep in-memory in sync for quick UI
+            renderFavIcon(holder.favoriteIcon, newState)
             onFavoriteClick?.invoke(item, newState)
         }
 
-        // Click → open details (either delegate to lambda or default to RecipeDetailsActivity)
+        // Open details – delegate if provided, else default to RecipeDetailsActivity
         holder.itemView.setOnClickListener {
             onItemClick?.invoke(item) ?: run {
-                // Use RecipeDetailsActivity - always pass name and image
-                val intent = android.content.Intent(holder.itemView.context, com.example.mixmate.ui.details.RecipeDetailsActivity::class.java)
-
-Always pass name and image so we can show something
-intent.putExtra("cocktail_name", item.name)
+                val ctx = holder.itemView.context
+                val intent = Intent(ctx, com.example.mixmate.ui.details.RecipeDetailsActivity::class.java)
+                // Always pass name + image so details can render even without API fetch
+                intent.putExtra("cocktail_name", item.name)
                 intent.putExtra("cocktail_image", item.imageUrl)
-
-                // Pass ID if available for fetching additional details
-                item.cocktailId?.let { id ->
-                    intent.putExtra("cocktail_id", id)
-                }
-
-                holder.itemView.context.startActivity(intent)
+                // Pass id if available so details can fetch full description/ingredients
+                item.cocktailId?.let { id -> intent.putExtra("cocktail_id", id) }
+                ctx.startActivity(intent)
             }
         }
     }
-                    
-                   
-                
 
     override fun getItemCount(): Int = items.size
 
@@ -104,45 +98,41 @@ intent.putExtra("cocktail_name", item.name)
         notifyDataSetChanged()
     }
 
-    private fun updateFavoriteIcon(iconView: ImageView, isFavorite: Boolean) {
-        if (isFavorite) {
-            iconView.setImageResource(R.drawable.ic_heart_filled)
-        } else {
-            iconView.setImageResource(R.drawable.ic_heart_outline)
-        }
+    private fun renderFavIcon(icon: ImageView, isFav: Boolean) {
+        icon.setImageResource(if (isFav) R.drawable.ic_heart_filled else R.drawable.ic_heart_outline)
     }
 }
 
-/* -------- helpers -------- */
+/* ---------- text helpers ---------- */
 
 fun capitalizeWords(raw: String): String = raw.trim()
     .split(Regex("\\s+"))
     .filter { it.isNotBlank() }
     .joinToString(" ") { token ->
-        // Process hyphenated segments separately
+        // Handle hyphenated words and simple possessives gracefully
         token.split('-').joinToString("-") { segment ->
-            if (segment.isBlank()) "" else capitalizePossessiveSegment(segment)
+            if (segment.isBlank()) ""
+            else capitalizePossessiveSegment(segment)
         }
     }
 
 private fun capitalizePossessiveSegment(segment: String): String {
     val parts = segment.split("'")
     if (parts.size == 1) {
-
-        return parts[0].lowercase().replaceFirstChar { c ->
+        val p = parts[0]
+        return p.lowercase().replaceFirstChar { c ->
             if (c.isLowerCase()) c.titlecase(Locale.getDefault()) else c.toString()
         }
     }
-    return parts.mapIndexed { index, part ->
+    return parts.mapIndexed { idx, part ->
         if (part.isBlank()) "" else when {
-            index == 0 -> part.lowercase().replaceFirstChar { c ->
+            idx == 0 -> part.lowercase().replaceFirstChar { c ->
                 if (c.isLowerCase()) c.titlecase(Locale.getDefault()) else c.toString()
             }
-            part.length == 1 -> part.lowercase() // possessive 's
+            part.length == 1 -> part.lowercase() // the "'s"
             else -> part.lowercase().replaceFirstChar { c ->
                 if (c.isLowerCase()) c.titlecase(Locale.getDefault()) else c.toString()
             }
         }
-
     }.joinToString("'")
 }

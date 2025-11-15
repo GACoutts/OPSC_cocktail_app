@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/dark_brown_navbar"
-    tools:context=".RecipeDetailActivity">
+    tools:context=".ui.details.RecipeDetailsActivity">
 
     <!-- Header -->
     <LinearLayout
@@ -31,20 +32,21 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:layout_marginHorizontal="16dp"
             android:text="Recipe Details"
             android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:gravity="center"
-            android:layout_marginHorizontal="16dp" />
+            android:gravity="center" />
 
+        <!-- Reuse this as the favourite button the Activity expects -->
         <ImageButton
-            android:id="@+id/btn_edit"
+            android:id="@+id/btnFav"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_edit"
+            android:src="@drawable/ic_heart_outline"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Edit Recipe"
+            android:contentDescription="Favourite"
             app:tint="@color/white" />
 
     </LinearLayout>
@@ -70,7 +72,7 @@
                 app:cardElevation="8dp">
 
                 <ImageView
-                    android:id="@+id/img_recipe_detail"
+                    android:id="@+id/ivPhoto"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
@@ -80,7 +82,7 @@
 
             <!-- Recipe Name -->
             <TextView
-                android:id="@+id/tv_recipe_name"
+                android:id="@+id/tvName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
@@ -90,7 +92,7 @@
                 android:textStyle="bold"
                 tools:text="My Custom Cocktail" />
 
-            <!-- Recipe Description -->
+            <!-- Optional Description (kept as-is; not used by Activity) -->
             <TextView
                 android:id="@+id/tv_recipe_description"
                 android:layout_width="match_parent"
@@ -102,7 +104,7 @@
                 android:lineSpacingExtra="4dp"
                 tools:text="A delightful custom cocktail perfect for evening gatherings." />
 
-            <!-- Recipe Meta Info -->
+            <!-- Meta row kept (difficulty / time) -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -110,7 +112,6 @@
                 android:orientation="horizontal"
                 android:gravity="center_vertical">
 
-                <!-- Difficulty -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -133,10 +134,8 @@
                         android:textColor="@color/white"
                         android:textSize="14sp"
                         tools:text="Medium" />
-
                 </LinearLayout>
 
-                <!-- Prep Time -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -159,9 +158,7 @@
                         android:textColor="@color/white"
                         android:textSize="14sp"
                         tools:text="10 mins" />
-
                 </LinearLayout>
-
             </LinearLayout>
 
             <!-- Ingredients Section -->
@@ -174,13 +171,26 @@
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_ingredients"
+            <!-- Replace RV (not used by Activity/VM) with a TextView the Activity updates -->
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
-                android:nestedScrollingEnabled="false"
-                tools:listitem="@layout/item_ingredient_detail" />
+                app:cardBackgroundColor="@color/brown"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp">
+
+                <TextView
+                    android:id="@+id/tvIngredients"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:text="Ingredients will be displayed here..."
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:lineSpacingExtra="4dp"
+                    tools:text="• 50 ml Vodka\n• 25 ml Triple Sec\n• 25 ml Cranberry Juice" />
+            </com.google.android.material.card.MaterialCardView>
 
             <!-- Instructions Section -->
             <TextView
@@ -201,7 +211,7 @@
                 app:cardElevation="4dp">
 
                 <TextView
-                    android:id="@+id/tv_instructions"
+                    android:id="@+id/tvInstructions"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="16dp"
@@ -209,26 +219,16 @@
                     android:textColor="@color/white"
                     android:textSize="16sp"
                     android:lineSpacingExtra="4dp"
-                    tools:text="1. Add all ingredients to a shaker with ice.\n2. Shake vigorously for 15 seconds.\n3. Strain into a chilled glass." />
-
+                    tools:text="1) Add all ingredients with ice.\n2) Shake 15s.\n3) Strain into a chilled glass." />
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Optional Details Section -->
+            <!-- Optional details kept; hidden by default -->
             <LinearLayout
                 android:id="@+id/layout_optional_details"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:visibility="gone">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:text="Details"
-                    android:textColor="@color/white"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
 
                 <!-- Glassware -->
                 <LinearLayout
@@ -262,7 +262,6 @@
                         android:textColor="@color/white"
                         android:textSize="16sp"
                         tools:text="Martini Glass" />
-
                 </LinearLayout>
 
                 <!-- Garnish -->
@@ -297,13 +296,10 @@
                         android:textColor="@color/white"
                         android:textSize="16sp"
                         tools:text="Lime wheel" />
-
                 </LinearLayout>
-
             </LinearLayout>
 
         </LinearLayout>
-
     </androidx.core.widget.NestedScrollView>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
