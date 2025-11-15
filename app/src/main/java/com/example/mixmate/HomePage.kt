@@ -154,4 +154,20 @@ class HomePage : BaseActivity() {
         rvSuggested.visibility = View.GONE
         emptyContainer.visibility = View.VISIBLE
     }
+
+    override fun onResume() {
+        super.onResume()
+        // Refresh favorite states when returning to this page
+        lifecycleScope.launch {
+            suggestedAdapter.items.forEach { cocktail ->
+                cocktail.cocktailId?.let { id ->
+                    val isFav = favoritesViewModel.isFavorite(id).firstOrNull() ?: false
+                    favoriteStates[id] = isFav
+                    cocktail.isFavorite = isFav
+                }
+            }
+            // Notify adapter to update heart icons
+            suggestedAdapter.notifyDataSetChanged()
+        }
+    }
 }

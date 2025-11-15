@@ -22,7 +22,7 @@ data class SuggestedCocktail(
 )
 
 class SuggestedCocktailAdapter(
-    private val items: MutableList<SuggestedCocktail>,
+    internal val items: MutableList<SuggestedCocktail>,
     private val onItemClick: ((SuggestedCocktail) -> Unit)? = null,
     private val onFavoriteClick: ((SuggestedCocktail, Boolean) -> Unit)? = null,
     // Return true if the given cocktailId is currently a favourite (Room/Repo)
@@ -131,6 +131,7 @@ private fun capitalizePossessiveSegment(segment: String): String {
                 if (c.isLowerCase()) c.titlecase(Locale.getDefault()) else c.toString()
 
             }
+
             part.length == 1 -> part.lowercase() // the "'s"
             else -> part.lowercase().replaceFirstChar { c ->
                 if (c.isLowerCase()) c.titlecase(Locale.getDefault()) else c.toString()

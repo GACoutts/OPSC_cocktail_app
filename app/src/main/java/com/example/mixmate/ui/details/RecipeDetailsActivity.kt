@@ -21,12 +21,16 @@ import com.example.mixmate.MyBar
 import com.example.mixmate.ProfileActivity
 import com.example.mixmate.R
 import com.example.mixmate.UserManager
+import com.example.mixmate.ui.favorites.SharedFavoritesViewModel
+import com.example.mixmate.data.local.FavoriteEntity
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
 class RecipeDetailsActivity : ComponentActivity() {
 
     private lateinit var vm: RecipeDetailsViewModel
+    private lateinit var sharedFavoritesViewModel: SharedFavoritesViewModel
 
     // keep your locale hook
     override fun attachBaseContext(newBase: Context) {
@@ -60,6 +64,9 @@ class RecipeDetailsActivity : ComponentActivity() {
             this,
             RecipeDetailsViewModelFactory(userId)
         )[RecipeDetailsViewModel::class.java]
+
+        // Initialize SharedFavoritesViewModel for synced favorites
+        sharedFavoritesViewModel = SharedFavoritesViewModel(userId)
 
         // always set initial (from adapter extras)
         val cocktailName = intent.getStringExtra("cocktail_name").orEmpty()
@@ -108,7 +115,67 @@ class RecipeDetailsActivity : ComponentActivity() {
             }
         }
 
-        btnFav.setOnClickListener { vm.toggleFavorite() }
+        btnFav.setOnClickListener {
+            lifecycleScope.launch {
+                val currentState = vm.ui.value
+                val cocktailId = currentState.id
+
+                if (cocktailId.isBlank()) {
+                    Toast.makeText(this@RecipeDetailsActivity, "Unable to favorite this cocktail", Toast.LENGTH_SHORT).show()
+                    return@launch
+                }
+
+                // Check if currently favorited
+                val isFavorited = sharedFavoritesViewModel.isFavorite(cocktailId).firstOrNull() ?: false
+
+                if (isFavorited) {
+                    // Remove from favorites
+                    val favoriteEntity = FavoriteEntity(
+                        cocktailId = cocktailId,
+                        name = currentState.name,
+                        imageUrl = currentState.imageUrl,
+                        ingredients = currentState.ingredients,
+                        instructions = currentState.instructions,
+                        userId = userId
+                    )
+                    sharedFavoritesViewModel.toggleFavorite(favoriteEntity, true)
+                    Toast.makeText(this@RecipeDetailsActivity, "Removed from favorites", Toast.LENGTH_SHORT).show()
+                } else {
+                    // Add to favorites
+                    val favoriteEntity = FavoriteEntity(
+                        cocktailId = cocktailId,
+                        name = currentState.name,
+                        imageUrl = currentState.imageUrl,
+                        ingredients = currentState.ingredients,
+                        instructions = currentState.instructions,
+                        userId = userId
+                    )
+                    sharedFavoritesViewModel.toggleFavorite(favoriteEntity, false)
+                    Toast.makeText(this@RecipeDetailsActivity, "Added to favorites", Toast.LENGTH_SHORT).show()
+                }
+
+                // Update local VM state
+                vm.toggleFavorite()
+            }
+        }
+
+        // Observe favorite state changes from SharedFavoritesViewModel
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    vm.ui.collectLatest { state ->
+                        if (state.id.isNotBlank()) {
+                            sharedFavoritesViewModel.isFavorite(state.id).collectLatest { isFav ->
+                                btnFav.setImageResource(
+                                    if (isFav) R.drawable.ic_heart_filled
+                                    else R.drawable.ic_heart_outline
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private fun setupFooterNavigation() {

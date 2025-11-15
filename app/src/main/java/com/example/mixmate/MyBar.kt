@@ -363,4 +363,20 @@ class MyBar : AppCompatActivity() {
         // For now, the layout handles both cases with the fixed constraint to rv_alcohol_types
         // which works because rv_bar_items has the same top constraint
     }
+
+    override fun onResume() {
+        super.onResume()
+        // Refresh favorite states when returning to this page
+        lifecycleScope.launch {
+            suggestedAdapter.items.forEach { cocktail ->
+                cocktail.cocktailId?.let { id ->
+                    val isFav = favoritesViewModel.isFavorite(id).firstOrNull() ?: false
+                    favoriteStates[id] = isFav
+                    cocktail.isFavorite = isFav
+                }
+            }
+            // Notify adapter to update heart icons
+            suggestedAdapter.notifyDataSetChanged()
+        }
+    }
 }
