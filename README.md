@@ -143,18 +143,7 @@ MixMate is an **offline-first**, beautifully designed Android application that p
 
 ---
 
-## 📱 Screenshots
 
-*(Add your app screenshots here when ready)*
-
-- Home Page with Featured Cocktails
-- Discover Page with Filters
-- MyBar Ingredient Selection
-- Recipe Details View
-- Custom Recipe Creation
-- Profile with Recipes & Favorites
-
----
 
 ## 🏗️ Architecture & Design
 
@@ -347,12 +336,18 @@ Create a `local.properties` file in the project root:
 API_KEY=your_api_ninjas_key_here
 ```
 
-To get an API key:
+**API Ninjas** (Primary cocktail data):
 - Visit [API Ninjas](https://api-ninjas.com/)
 - Sign up for a free account
 - Copy your API key
+- Add to `local.properties` as shown above
 
-**Note**: App includes fallback data if no key provided.
+**TheCocktailDB** (Cocktail images):
+- Free tier available at [TheCocktailDB](https://www.thecocktaildb.com/api.php)
+- No API key required for basic usage
+- App fetches images automatically
+
+**Note**: App includes fallback data and works with limited API access.
 
 #### 4. **Configure Firebase** (Optional for Full Features)
 
