@@ -185,21 +185,27 @@ class MyBar : AppCompatActivity() {
     }
 
     private fun showLoading() {
-        loadingContainer.visibility = View.VISIBLE
-        rvSuggested.visibility = View.GONE
-        emptyContainer.visibility = View.GONE
+        runOnUiThread {
+            loadingContainer.visibility = View.VISIBLE
+            rvSuggested.visibility = View.GONE
+            emptyContainer.visibility = View.GONE
+        }
     }
 
     private fun showContent() {
-        loadingContainer.visibility = View.GONE
-        rvSuggested.visibility = View.VISIBLE
-        emptyContainer.visibility = View.GONE
+        runOnUiThread {
+            loadingContainer.visibility = View.GONE
+            rvSuggested.visibility = View.VISIBLE
+            emptyContainer.visibility = View.GONE
+        }
     }
 
     private fun showEmpty() {
-        loadingContainer.visibility = View.GONE
-        rvSuggested.visibility = View.GONE
-        emptyContainer.visibility = View.VISIBLE
+        runOnUiThread {
+            loadingContainer.visibility = View.GONE
+            rvSuggested.visibility = View.GONE
+            emptyContainer.visibility = View.VISIBLE
+        }
     }
 
     private suspend fun updateSuggestions() {
@@ -334,11 +340,13 @@ class MyBar : AppCompatActivity() {
             }
         }
 
-        if (data.isNotEmpty()) {
-            suggestedAdapter.replaceAll(data)
-            showContent()
-        } else {
-            showEmpty()
+        withContext(Dispatchers.Main) {
+            if (data.isNotEmpty()) {
+                suggestedAdapter.replaceAll(data)
+                showContent()
+            } else {
+                showEmpty()
+            }
         }
     }
 

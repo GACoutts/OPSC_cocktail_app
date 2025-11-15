@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
@@ -81,6 +82,10 @@ object CocktailImageProvider {
         val key = name.lowercase().trim()
         cache[key]?.let { return it }
         val normalized = normalize(name)
+
+        // Add delay to avoid rate limiting (429 errors)
+        delay(100) // 100ms delay between requests
+
         return try {
             // Direct search: prefer exact or closest match instead of naive first item
             val directList = service.searchByName(name).drinks

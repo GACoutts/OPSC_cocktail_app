@@ -107,6 +107,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- Barrier to ensure title appears below whichever RecyclerView is visible -->
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier_ingredient_sections"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="rv_alcohol_types,rv_bar_items" />
+
     <!-- Suggested Cocktails title -->
     <TextView
         android:id="@+id/tv_suggested_title"
@@ -119,7 +127,7 @@
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/rv_alcohol_types" />
+        app:layout_constraintTop_toBottomOf="@id/barrier_ingredient_sections" />
 
     <!-- Suggested Cocktails grid -->
     <androidx.recyclerview.widget.RecyclerView
