@@ -133,15 +133,16 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_suggested"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="9dp"
         android:layout_marginStart="@dimen/margin_side"
         android:layout_marginEnd="@dimen/margin_side"
+        android:layout_marginBottom="16dp"
         android:padding="@dimen/grid_spacing"
         android:clipToPadding="false"
         android:visibility="gone"
+        android:nestedScrollingEnabled="false"
         app:layout_constraintTop_toBottomOf="@id/tv_suggested_title"
-        app:layout_constraintBottom_toTopOf="@id/app_footer"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -149,14 +150,16 @@
     <LinearLayout
         android:id="@+id/loading_container_bar"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center"
         android:visibility="gone"
         android:layout_marginStart="@dimen/margin_side"
         android:layout_marginEnd="@dimen/margin_side"
+        android:layout_marginTop="9dp"
+        android:layout_marginBottom="16dp"
+        android:padding="48dp"
         app:layout_constraintTop_toBottomOf="@id/tv_suggested_title"
-        app:layout_constraintBottom_toTopOf="@id/app_footer"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -181,11 +184,12 @@
         android:visibility="gone"
         android:layout_marginStart="@dimen/margin_side"
         android:layout_marginEnd="@dimen/margin_side"
+        android:layout_marginTop="9dp"
+        android:layout_marginBottom="16dp"
         app:cardCornerRadius="16dp"
         app:cardElevation="0dp"
         app:cardBackgroundColor="@color/dark_brown_navbar"
         app:layout_constraintTop_toBottomOf="@id/tv_suggested_title"
-        app:layout_constraintBottom_toTopOf="@id/app_footer"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 

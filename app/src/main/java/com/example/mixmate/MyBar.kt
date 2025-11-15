@@ -186,6 +186,7 @@ class MyBar : AppCompatActivity() {
 
     private fun showLoading() {
         runOnUiThread {
+            android.util.Log.d("MyBar", "showLoading: setting loading visible")
             loadingContainer.visibility = View.VISIBLE
             rvSuggested.visibility = View.GONE
             emptyContainer.visibility = View.GONE
@@ -194,6 +195,7 @@ class MyBar : AppCompatActivity() {
 
     private fun showContent() {
         runOnUiThread {
+            android.util.Log.d("MyBar", "showContent: setting RecyclerView visible, itemCount=${suggestedAdapter.itemCount}")
             loadingContainer.visibility = View.GONE
             rvSuggested.visibility = View.VISIBLE
             emptyContainer.visibility = View.GONE
@@ -202,6 +204,7 @@ class MyBar : AppCompatActivity() {
 
     private fun showEmpty() {
         runOnUiThread {
+            android.util.Log.d("MyBar", "showEmpty: setting empty container visible")
             loadingContainer.visibility = View.GONE
             rvSuggested.visibility = View.GONE
             emptyContainer.visibility = View.VISIBLE
@@ -270,6 +273,7 @@ class MyBar : AppCompatActivity() {
             }
 
             android.util.Log.d("MyBar", "Loaded ${matchingCocktails.size} cocktails for $ingredient")
+            android.util.Log.d("MyBar", "About to update suggested list with ${matchingCocktails.size} items")
 
             // Load favorite states
             matchingCocktails.forEach { cocktail ->
@@ -332,6 +336,8 @@ class MyBar : AppCompatActivity() {
     }
 
     private suspend fun updateSuggestedList(data: List<SuggestedCocktail>) {
+        android.util.Log.d("MyBar", "updateSuggestedList called with ${data.size} items")
+
         data.forEach { cocktail ->
             cocktail.cocktailId?.let { id ->
                 val isFav = favoritesViewModel.isFavorite(id).firstOrNull() ?: false
@@ -340,14 +346,22 @@ class MyBar : AppCompatActivity() {
             }
         }
 
+        android.util.Log.d("MyBar", "Switching to Main thread to update UI")
         withContext(Dispatchers.Main) {
+            android.util.Log.d("MyBar", "On Main thread, data.size = ${data.size}")
             if (data.isNotEmpty()) {
+                android.util.Log.d("MyBar", "Calling suggestedAdapter.replaceAll with ${data.size} items")
                 suggestedAdapter.replaceAll(data)
+                android.util.Log.d("MyBar", "Adapter updated, adapter.itemCount = ${suggestedAdapter.itemCount}")
+                android.util.Log.d("MyBar", "Calling showContent()")
                 showContent()
+                android.util.Log.d("MyBar", "UI should now be visible")
             } else {
+                android.util.Log.d("MyBar", "Data is empty, showing empty state")
                 showEmpty()
             }
         }
+        android.util.Log.d("MyBar", "updateSuggestedList completed")
     }
 
     private suspend fun handleFavoriteToggle(cocktail: SuggestedCocktail, isFavorite: Boolean) {
