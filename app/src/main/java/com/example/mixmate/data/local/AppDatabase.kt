@@ -6,18 +6,19 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 
 @Database(
-    entities = [FavoriteEntity::class, CustomRecipeEntity::class],
-    version = 3,
+    entities = [FavoriteEntity::class, CustomRecipeEntity::class, CocktailCacheEntity::class],
+    version = 4,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun favoriteDao(): FavoriteDao
     abstract fun customRecipeDao(): CustomRecipeDao
-    
+    abstract fun cocktailCacheDao(): CocktailCacheDao
+
     companion object {
         @Volatile
         private var INSTANCE: AppDatabase? = null
-        
+
         fun getDatabase(context: Context): AppDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(

@@ -32,6 +32,15 @@ android {
         manifestPlaceholders["API_KEY"] = apiKey
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = file("../mixmate-release.keystore")
+            storePassword = "mixmate123"
+            keyAlias = "mixmate"
+            keyPassword = "mixmate123"
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -39,6 +48,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 
