@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mixmate.data.local.FavoriteEntity
-import com.example.mixmate.data.remote.CocktailApi
 import com.example.mixmate.data.remote.formatIngredients
 import com.example.mixmate.data.repo.CocktailRepository
 import com.example.mixmate.data.repo.FavoritesRepository
@@ -48,46 +47,6 @@ class RecipeDetailsViewModel(
             isFavorited = false,
             error = null
         )
-    }
-
-    /** Fallback: Search by name to find ID, then load full details */
-    fun findByNameThenLoad(name: String) {
-        viewModelScope.launch {
-            _ui.value = _ui.value.copy(loading = true, error = null)
-            Log.d("RecipeDetailsVM", "Searching for cocktail by name: $name")
-
-            try {
-                val api = CocktailApi.create()
-                val result = api.searchByName(name)
-                val drink = result.drinks?.firstOrNull()
-
-                if (drink?.idDrink != null) {
-                    Log.d("RecipeDetailsVM", "Found ID ${drink.idDrink} for '$name', loading full details...")
-                    load(drink.idDrink)
-                } else {
-                    Log.w("RecipeDetailsVM", "No cocktail found by name: $name")
-                    // Keep showing the initial name/image
-                    _ui.value = _ui.value.copy(
-                        loading = false,
-                        name = initialName.ifBlank { name },
-                        imageUrl = initialImage,
-                        ingredients = "Unable to find cocktail details",
-                        instructions = "This cocktail could not be found in the database",
-                        error = null
-                    )
-                }
-            } catch (e: Exception) {
-                Log.e("RecipeDetailsVM", "Error searching by name: ${e.message}", e)
-                _ui.value = _ui.value.copy(
-                    loading = false,
-                    name = initialName.ifBlank { name },
-                    imageUrl = initialImage,
-                    ingredients = "Unable to load details",
-                    instructions = "Please check your internet connection and try again",
-                    error = null
-                )
-            }
-        }
     }
 
     /** Try Room first (offline), else fetch from API */

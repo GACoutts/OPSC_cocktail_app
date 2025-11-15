@@ -50,10 +50,14 @@ class RecipeDetailsActivity : ComponentActivity() {
         val cocktailImage = intent.getStringExtra("cocktail_image").orEmpty()
         vm.setInitial(cocktailName, cocktailImage)
 
-        // then load full details if we have an id
-        intent.getStringExtra("cocktail_id")
-            ?.takeIf { it.isNotBlank() }
-            ?.let { vm.load(it) }
+        // then load full details if we have an id, or search by name as fallback
+        val cocktailId = intent.getStringExtra("cocktail_id")
+        if (!cocktailId.isNullOrBlank()) {
+            vm.load(cocktailId)
+        } else if (cocktailName.isNotBlank()) {
+            // Fallback: Try to find the cocktail by name
+            vm.findByNameThenLoad(cocktailName)
+        }
 
         // observe UI state
         lifecycleScope.launch {
