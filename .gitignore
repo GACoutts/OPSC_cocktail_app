@@ -20,7 +20,10 @@ google-services.json
 # Automation scripts (not for version control)
 create-release.sh
 create-release.bat
+release-now.bat
 AUTOMATION_GUIDE.md
+QUICK_RELEASE.txt
+temp_release_notes.md
 
 # Release keystore (sensitive)
 mixmate-release.keystore
