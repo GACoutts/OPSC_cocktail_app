@@ -53,14 +53,16 @@
                 android:id="@+id/ivPhoto"
                 android:layout_width="match_parent"
                 android:layout_height="220dp"
-                android:scaleType="centerCrop" />
+                android:scaleType="centerCrop"
+                android:adjustViewBounds="true" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:paddingTop="12dp">
+                android:paddingTop="12dp"
+                android:paddingBottom="8dp">
 
                 <TextView
                     android:id="@+id/tvName"
@@ -71,7 +73,18 @@
                     android:textStyle="bold"
                     android:textSize="22sp"
                     android:maxLines="2"
-                    android:ellipsize="end" />
+                    android:ellipsize="end"
+                    android:textAllCaps="false" />
+
+                <ImageButton
+                    android:id="@+id/btnFav"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="12dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/ic_heart_outline"
+                    app:tint="@color/white" />
 
             </LinearLayout>
 
@@ -109,15 +122,6 @@
         </LinearLayout>
     </ScrollView>
 
-    <ImageButton
-        android:id="@+id/btnFav"
-        android:layout_width="35dp"
-        android:layout_height="36dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="@string/app_name"
-        android:src="@drawable/ic_heart_outline"
-        app:tint="@color/white"
-        tools:layout_editor_absoluteX="264dp"
-        tools:layout_editor_absoluteY="682dp" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

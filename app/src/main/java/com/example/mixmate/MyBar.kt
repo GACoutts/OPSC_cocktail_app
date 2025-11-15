@@ -66,7 +66,7 @@ class MyBar : AppCompatActivity() {
         navProfile?.isSelected = false
 
         navHome?.setOnClickListener {
-            startActivity(Intent(this, DiscoverPage::class.java))
+            startActivity(Intent(this, HomePage::class.java))
         }
         navDiscover?.setOnClickListener {
             startActivity(Intent(this, DiscoverPage::class.java))
@@ -281,7 +281,7 @@ class MyBar : AppCompatActivity() {
         showLoading()
         try {
             val api = com.example.mixmate.data.remote.CocktailApi.create()
-                        val allCocktails = mutableSetOf<SuggestedCocktail>()
+            val allCocktails = mutableSetOf<SuggestedCocktail>()
 
             android.util.Log.d("MyBar", "Loading cocktails for ${ingredients.size} ingredients: $ingredients")
 
@@ -290,7 +290,7 @@ class MyBar : AppCompatActivity() {
                 try {
                     val apiResponse = withContext(Dispatchers.IO) {
                         api.filterByIngredient(ingredient)
-                                                }
+                    }
                     apiResponse.drinks?.forEachIndexed { index, drink ->
                         if (drink.idDrink != null && drink.strDrink != null) {
                             // Calculate rating based on position (popularity)
@@ -308,7 +308,7 @@ class MyBar : AppCompatActivity() {
                             )
                         }
                     }
-                                android.util.Log.d("MyBar", "Added cocktails for $ingredient, total now: ${allCocktails.size}")
+                    android.util.Log.d("MyBar", "Added cocktails for $ingredient, total now: ${allCocktails.size}")
                 } catch (e: Exception) {
                     android.util.Log.e("MyBar", "Error loading ingredient: $ingredient", e)
                     // Continue with next ingredient if one fails

@@ -4,13 +4,15 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mixmate.data.local.FavoriteEntity
-import com.example.mixmate.data.remote.CocktailApi
+import com.example.mixmate.CocktailApiService
+import com.example.mixmate.CocktailApiRepository
 import com.example.mixmate.data.remote.formatIngredients
 import com.example.mixmate.data.repo.CocktailRepository
 import com.example.mixmate.data.repo.FavoritesRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 data class RecipeDetailsUi(
     val loading: Boolean = true,
@@ -50,23 +52,56 @@ class RecipeDetailsViewModel(
         )
     }
 
-    /** Fallback: Search by name to find ID, then load full details */
+    /** Fallback: Search API Ninjas by name and load details directly */
     fun findByNameThenLoad(name: String) {
         viewModelScope.launch {
             _ui.value = _ui.value.copy(loading = true, error = null)
-            Log.d("RecipeDetailsVM", "Searching for cocktail by name: $name")
+            Log.d("RecipeDetailsVM", "Searching API Ninjas for cocktail: $name")
 
             try {
-                val api = CocktailApi.create()
-                val result = api.searchByName(name)
-                val drink = result.drinks?.firstOrNull()
+                // Create API Ninjas service and search by name
+                val retrofit = retrofit2.Retrofit.Builder()
+                    .baseUrl("https://api.api-ninjas.com/")
+                    .addConverterFactory(retrofit2.converter.gson.GsonConverterFactory.create())
+                    .client(
+                        okhttp3.OkHttpClient.Builder()
+                            .addInterceptor { chain ->
+                                val original = chain.request()
+                                val newReq = original.newBuilder()
+                                    .addHeader("X-Api-Key", com.example.mixmate.BuildConfig.API_KEY)
+                                    .build()
+                                chain.proceed(newReq)
+                            }
+                            .build()
+                    )
+                    .build()
 
-                if (drink?.idDrink != null) {
-                    Log.d("RecipeDetailsVM", "Found ID ${drink.idDrink} for '$name', loading full details...")
-                    load(drink.idDrink)
+                val service = retrofit.create(CocktailApiService::class.java)
+                val results = service.searchCocktails(name)
+
+                val drink = results.firstOrNull()
+
+                if (drink != null && drink.name != null) {
+                    Log.d("RecipeDetailsVM", "Found '${drink.name}' in API Ninjas")
+
+                    // Format ingredients from the list
+                    val ingredientsText = drink.ingredients?.joinToString("\n") { "• $it" }
+                        ?: "No ingredients available"
+
+                    val instructionsText = drink.instructions
+                        ?: "No instructions available"
+
+                    _ui.value = _ui.value.copy(
+                        loading = false,
+                        id = drink.name.hashCode().toString(), // Use hashCode as fake ID for favoriting
+                        name = capitalizeWords(drink.name),
+                        imageUrl = initialImage,
+                        ingredients = ingredientsText,
+                        instructions = instructionsText,
+                        isFavorited = false
+                    )
                 } else {
-                    Log.w("RecipeDetailsVM", "No cocktail found by name: $name")
-                    // Keep showing the initial name/image
+                    Log.w("RecipeDetailsVM", "No cocktail found in API Ninjas: $name")
                     _ui.value = _ui.value.copy(
                         loading = false,
                         name = initialName.ifBlank { name },
@@ -77,7 +112,7 @@ class RecipeDetailsViewModel(
                     )
                 }
             } catch (e: Exception) {
-                Log.e("RecipeDetailsVM", "Error searching by name: ${e.message}", e)
+                Log.e("RecipeDetailsVM", "Error searching API Ninjas: ${e.message}", e)
                 _ui.value = _ui.value.copy(
                     loading = false,
                     name = initialName.ifBlank { name },
@@ -111,9 +146,7 @@ class RecipeDetailsViewModel(
                         isFavorited = true
                     )
                     return@launch
-                }
-
-                // Fetch from API
+                } // Fetch from API
                 Log.d("RecipeDetailsVM", "Fetching from API...")
                 val drink = cocktails.getDrinkById(cocktailId)
 
@@ -128,8 +161,7 @@ class RecipeDetailsViewModel(
                         instructions = "Unable to load instructions",
                         error = null // Don't show error, just display what we have
                     )
-                }
-                else {
+                } else {
                     Log.d("RecipeDetailsVM", "Successfully loaded: ${drink.strDrink}")
                     val ingredients = formatIngredients(drink)
                     val instructions = drink.strInstructions.orEmpty()
@@ -183,4 +215,17 @@ class RecipeDetailsViewModel(
             }
         }
     }
+
+    /** Capitalize cocktail names properly */
+    private fun capitalizeWords(raw: String): String = raw.trim()
+        .split(Regex("\\s+"))
+        .filter { it.isNotBlank() }
+        .joinToString(" ") { token ->
+            token.split('-').joinToString("-") { segment ->
+                if (segment.isBlank()) ""
+                else segment.lowercase().replaceFirstChar { c ->
+                    if (c.isLowerCase()) c.titlecase(Locale.getDefault()) else c.toString()
+                }
+            }
+        }
 }

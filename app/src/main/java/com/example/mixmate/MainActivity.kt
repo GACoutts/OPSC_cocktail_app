@@ -31,7 +31,7 @@ import android.os.CancellationSignal
 class MainActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
-    
+
     // UI Elements
     private lateinit var tilEmail: TextInputLayout
     private lateinit var etEmail: TextInputEditText
@@ -48,30 +48,30 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
+
         // Check if this is a logout scenario
         val isLogout = intent.getBooleanExtra("logout", false)
         if (isLogout) {
             // Force clear any remaining user data
             UserManager.clearUserData(this)
         }
-        
+
         // Check if user is already logged in (unless this is a logout)
         if (!isLogout && UserManager.isLoggedIn(this)) {
             navigateToHome()
             return
         }
-        
+
         setContentView(R.layout.activity_main)
-        
+
         initializeViews()
-        
+
         // Initialize Firebase Auth
         auth = FirebaseAuth.getInstance()
 
         setupClickListeners()
     }
-    
+
     private fun initializeViews() {
         tilEmail = findViewById(R.id.tilEmail)
         etEmail = findViewById(R.id.etEmail)
@@ -111,30 +111,33 @@ class MainActivity : AppCompatActivity() {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 showLoading(false)
-                
+
                 if (task.isSuccessful) {
                     // Login success
                     val user = auth.currentUser
                     user?.let {
                         // Initialize auth listener to sync user data
                         UserManager.initializeAuthListener(this)
-                        
+
                         Toast.makeText(this, "Welcome back!", Toast.LENGTH_SHORT).show()
                         navigateToHome()
                     }
                 } else {
                     // Login failed
                     val errorMessage = when {
-                        task.exception?.message?.contains("password") == true -> 
+                        task.exception?.message?.contains("password") == true ->
                             "Invalid password. Please try again."
-                        task.exception?.message?.contains("user") == true -> 
+
+                        task.exception?.message?.contains("user") == true ->
                             "No account found with this email."
-                        task.exception?.message?.contains("network") == true -> 
+
+                        task.exception?.message?.contains("network") == true ->
                             "Network error. Please check your connection."
-                        else -> 
+
+                        else ->
                             "Login failed. Please try again."
                     }
-                    
+
                     Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show()
                 }
             }
@@ -205,8 +208,6 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
-
     private fun validateInput(email: String, password: String): Boolean {
         var isValid = true
 
@@ -242,7 +243,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun navigateToHome() {
-        startActivity(Intent(this, DiscoverPage::class.java))
+        startActivity(Intent(this, HomePage::class.java))
         finish()
     }
 }
