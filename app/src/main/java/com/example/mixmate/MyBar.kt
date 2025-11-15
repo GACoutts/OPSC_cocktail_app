@@ -149,6 +149,10 @@ class MyBar : AppCompatActivity() {
                         updateSuggestedTitleConstraint(false)
                     }
                 }
+            } else {
+                // If unchecked, collapse both sections
+                rvAlcoholTypes.visibility = View.GONE
+                rvIngredients.visibility = View.GONE
             }
         }
 
@@ -223,7 +227,7 @@ class MyBar : AppCompatActivity() {
         } catch (e: Exception) {
             android.util.Log.e("MyBar", "Error loading rotating suggestions, fallback to generic", e)
             // Fallback to generic cocktails
-            val apiItems = CocktailApiRepository.fetchCocktails(limit = 50)
+            val apiItems = CocktailApiRepository.fetchCocktails(limit = 150)
             val data = if (apiItems.isNotEmpty()) CocktailImageProvider.enrichWithImages(apiItems) else emptyList()
 
             // Load favorite states
@@ -243,7 +247,7 @@ class MyBar : AppCompatActivity() {
         showLoading()
         try {
             // Load ALL cocktails from API Ninjas
-            val apiItems = CocktailApiRepository.fetchCocktails(limit = 100)
+            val apiItems = CocktailApiRepository.fetchCocktails(limit = 150)
             val enrichedCocktails = CocktailImageProvider.enrichWithImages(apiItems)
 
             // Filter CLIENT-SIDE for cocktails containing the ingredient
@@ -283,7 +287,7 @@ class MyBar : AppCompatActivity() {
             android.util.Log.d("MyBar", "Loading cocktails for ${ingredients.size} ingredients: $ingredients")
 
             // Load ALL cocktails from API Ninjas
-            val allApiCocktails = CocktailApiRepository.fetchCocktails(limit = 100)
+            val allApiCocktails = CocktailApiRepository.fetchCocktails(limit = 150)
             val enrichedCocktails = CocktailImageProvider.enrichWithImages(allApiCocktails)
 
             // Filter CLIENT-SIDE for cocktails matching ALL selected ingredients
