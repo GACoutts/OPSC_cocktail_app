@@ -44,6 +44,7 @@
     <string name="cd_profile">Profile</string>
     <string name="cd_home">Home</string>
     <string name="cd_logo">App logo</string>
+    <string name="cd_back">Back</string>
     <string name="header_title_mix_mate">MixMate</string>
     <string name="cd_search">Search</string>
     <string name="ingredient_name">Ingredient Name</string>
