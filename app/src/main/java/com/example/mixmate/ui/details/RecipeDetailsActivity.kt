@@ -6,6 +6,7 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import android.content.Intent
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModel
@@ -13,6 +14,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
+import com.example.mixmate.DiscoverPage
+import com.example.mixmate.FavouritesActivity
+import com.example.mixmate.HomePage
+import com.example.mixmate.MyBar
+import com.example.mixmate.ProfileActivity
 import com.example.mixmate.R
 import com.example.mixmate.UserManager
 import kotlinx.coroutines.flow.collectLatest
@@ -30,6 +36,16 @@ class RecipeDetailsActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_recipe_details)
+
+        // Setup back button
+        val backButton = findViewById<ImageView>(R.id.header_back)
+        backButton?.visibility = android.view.View.VISIBLE
+        backButton?.setOnClickListener {
+            finish()
+        }
+
+        // Setup footer navigation
+        setupFooterNavigation()
 
         // views present in activity_recipe_details.xml
         val ivPhoto = findViewById<ImageView>(R.id.ivPhoto)
@@ -93,6 +109,35 @@ class RecipeDetailsActivity : ComponentActivity() {
         }
 
         btnFav.setOnClickListener { vm.toggleFavorite() }
+    }
+
+    private fun setupFooterNavigation() {
+        val navHome = findViewById<ImageView>(R.id.nav_home)
+        val navDiscover = findViewById<ImageView>(R.id.nav_discover)
+        val navList = findViewById<ImageView>(R.id.nav_list)
+        val navFav = findViewById<ImageView>(R.id.nav_favourites)
+        val navProfile = findViewById<ImageView>(R.id.nav_profile)
+
+        navHome?.setOnClickListener {
+            startActivity(Intent(this, HomePage::class.java))
+            finish()
+        }
+        navDiscover?.setOnClickListener {
+            startActivity(Intent(this, DiscoverPage::class.java))
+            finish()
+        }
+        navList?.setOnClickListener {
+            startActivity(Intent(this, MyBar::class.java))
+            finish()
+        }
+        navFav?.setOnClickListener {
+            startActivity(Intent(this, FavouritesActivity::class.java))
+            finish()
+        }
+        navProfile?.setOnClickListener {
+            startActivity(Intent(this, ProfileActivity::class.java))
+            finish()
+        }
     }
 }
 

@@ -241,85 +241,28 @@ class MyBar : AppCompatActivity() {
 
     private suspend fun loadSuggestedByIngredient(ingredient: String) {
         showLoading()
-        val apiResponse = try {
-            val api = com.example.mixmate.data.remote.CocktailApi.create()
-            withContext(Dispatchers.IO) {
-                api.filterByIngredient(ingredient)
-            }
-        } catch (e: Exception) {
-            android.util.Log.e("MyBar", "Error filtering by ingredient: $ingredient", e)
-            null
-        }
-
-        val cocktails = apiResponse?.drinks?.mapIndexed { index, drink ->
-            val rating = 5.0 - (index * 0.1).coerceAtMost(2.0) // Generate ratings based on position
-            SuggestedCocktail(
-                name = drink.strDrink ?: "Unknown",
-                rating = rating,
-                category = ingredient,
-                imageUrl = drink.strDrinkThumb,
-                cocktailId = drink.idDrink,
-                isFavorite = false
-            )
-        } ?: emptyList()
-
-        android.util.Log.d("MyBar", "Loaded ${cocktails.size} cocktails for $ingredient")
-
-        // Load favorite states
-        cocktails.forEach { cocktail ->
-            cocktail.cocktailId?.let { id ->
-                val isFav = favoritesViewModel.isFavorite(id).firstOrNull() ?: false
-                favoriteStates[id] = isFav
-                cocktail.isFavorite = isFav
-            }
-        }
-
-        updateSuggestedList(cocktails)
-    }
-
-    private suspend fun loadSuggestedByMultipleIngredients(ingredients: List<String>) {
-        showLoading()
         try {
-            val api = com.example.mixmate.data.remote.CocktailApi.create()
-            val allCocktails = mutableSetOf<SuggestedCocktail>()
+            // Load ALL cocktails from API Ninjas
+            val apiItems = CocktailApiRepository.fetchCocktails(limit = 100)
+            val enrichedCocktails = CocktailImageProvider.enrichWithImages(apiItems)
 
-            android.util.Log.d("MyBar", "Loading cocktails for ${ingredients.size} ingredients: $ingredients")
+            // Filter CLIENT-SIDE for cocktails containing the ingredient
+            val matchingCocktails = enrichedCocktails.filter { cocktail ->
+                // Check if ingredient is in the name
+                val nameMatch = cocktail.name.contains(ingredient, ignoreCase = true)
 
-            // Fetch cocktails for each selected ingredient
-            for (ingredient in ingredients) {
-                try {
-                    val apiResponse = withContext(Dispatchers.IO) {
-                        api.filterByIngredient(ingredient)
-                    }
-                    apiResponse.drinks?.forEachIndexed { index, drink ->
-                        if (drink.idDrink != null && drink.strDrink != null) {
-                            // Calculate rating based on position (popularity)
-                            val rating = 5.0 - (index * 0.1).coerceAtMost(2.0)
+                // Check if ingredient is in the ingredients list
+                val ingredientMatch = cocktail.ingredients?.any { ing ->
+                    ing.contains(ingredient, ignoreCase = true)
+                } ?: false
 
-                            allCocktails.add(
-                                SuggestedCocktail(
-                                    name = drink.strDrink,
-                                    rating = rating,
-                                    category = ingredient,
-                                    imageUrl = drink.strDrinkThumb,
-                                    cocktailId = drink.idDrink,
-                                    isFavorite = false
-                                )
-                            )
-                        }
-                    }
-                    android.util.Log.d("MyBar", "Added cocktails for $ingredient, total now: ${allCocktails.size}")
-                } catch (e: Exception) {
-                    android.util.Log.e("MyBar", "Error loading ingredient: $ingredient", e)
-                    // Continue with next ingredient if one fails
-                    continue
-                }
+                nameMatch || ingredientMatch
             }
 
-            android.util.Log.d("MyBar", "Total unique cocktails loaded: ${allCocktails.size}")
+            android.util.Log.d("MyBar", "Loaded ${matchingCocktails.size} cocktails for $ingredient")
 
             // Load favorite states
-            allCocktails.forEach { cocktail ->
+            matchingCocktails.forEach { cocktail ->
                 cocktail.cocktailId?.let { id ->
                     val isFav = favoritesViewModel.isFavorite(id).firstOrNull() ?: false
                     favoriteStates[id] = isFav
@@ -327,9 +270,53 @@ class MyBar : AppCompatActivity() {
                 }
             }
 
-            updateSuggestedList(allCocktails.toList())
+            updateSuggestedList(matchingCocktails)
+        } catch (e: Exception) {
+            android.util.Log.e("MyBar", "Error filtering by ingredient: $ingredient", e)
+            updateSuggestedList(emptyList())
+        }
+    }
+
+    private suspend fun loadSuggestedByMultipleIngredients(ingredients: List<String>) {
+        showLoading()
+        try {
+            android.util.Log.d("MyBar", "Loading cocktails for ${ingredients.size} ingredients: $ingredients")
+
+            // Load ALL cocktails from API Ninjas
+            val allApiCocktails = CocktailApiRepository.fetchCocktails(limit = 100)
+            val enrichedCocktails = CocktailImageProvider.enrichWithImages(allApiCocktails)
+
+            // Filter CLIENT-SIDE for cocktails matching ALL selected ingredients
+            val matchingCocktails = enrichedCocktails.filter { cocktail ->
+                // Check if cocktail has ALL selected ingredients
+                ingredients.all { selectedIngredient ->
+                    // Check name
+                    val nameMatch = cocktail.name.contains(selectedIngredient, ignoreCase = true)
+
+                    // Check ingredients list
+                    val ingredientMatch = cocktail.ingredients?.any { ing ->
+                        ing.contains(selectedIngredient, ignoreCase = true)
+                    } ?: false
+
+                    nameMatch || ingredientMatch
+                }
+            }
+
+            android.util.Log.d("MyBar", "Found ${matchingCocktails.size} cocktails with all ingredients: $ingredients")
+
+            // Load favorite states
+            matchingCocktails.forEach { cocktail ->
+                cocktail.cocktailId?.let { id ->
+                    val isFav = favoritesViewModel.isFavorite(id).firstOrNull() ?: false
+                    favoriteStates[id] = isFav
+                    cocktail.isFavorite = isFav
+                }
+            }
+
+            updateSuggestedList(matchingCocktails)
         } catch (e: Exception) {
             android.util.Log.e("MyBar", "Error in loadSuggestedByMultipleIngredients", e)
+            Toast.makeText(this, "Error loading cocktails: ${e.message}", Toast.LENGTH_SHORT).show()
             updateSuggestedList(emptyList())
         }
     }

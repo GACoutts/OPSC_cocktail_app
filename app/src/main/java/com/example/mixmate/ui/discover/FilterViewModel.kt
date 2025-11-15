@@ -4,7 +4,8 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mixmate.SuggestedCocktail
-import com.example.mixmate.data.remote.CocktailApi
+import com.example.mixmate.CocktailApiRepository
+import com.example.mixmate.CocktailImageProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,8 +17,6 @@ import kotlinx.coroutines.withContext
  * Handles ingredient, rating, and sort filtering
  */
 class FilterViewModel : ViewModel() {
-
-    private val api = CocktailApi.create()
 
     // State: Filter selections
     private val _selectedIngredient = MutableStateFlow<String?>(null)
@@ -55,46 +54,33 @@ class FilterViewModel : ViewModel() {
     }
 
     /**
-     * Filter cocktails by ingredient using TheCocktailDB API
+     * Filter cocktails by ingredient using client-side filtering on API Ninjas data
      */
     fun filterByIngredient(ingredient: String) {
+        Log.d("FilterViewModel", "Filtering by ingredient: $ingredient")
         _selectedIngredient.value = ingredient
         _isLoading.value = true
         _error.value = null
 
         viewModelScope.launch {
             try {
-                val response = withContext(Dispatchers.IO) {
-                    api.filterByIngredient(ingredient)
+                // Load ALL cocktails from API Ninjas if not already loaded
+                if (allCocktails.isEmpty() || originalCocktails.isEmpty()) {
+                    val apiItems = CocktailApiRepository.fetchCocktails(limit = 100)
+                    val enriched = CocktailImageProvider.enrichWithImages(apiItems)
+                    allCocktails = enriched
+                    if (originalCocktails.isEmpty()) {
+                        originalCocktails = enriched
+                    }
                 }
 
-                // Convert API response to SuggestedCocktail with ratings
-                val cocktails = response.drinks?.mapNotNull { drink ->
-                    if (drink.idDrink == null || drink.strDrink == null) {
-                        return@mapNotNull null
-                    }
+                Log.d("FilterViewModel", "Total cocktails loaded: ${allCocktails.size}")
 
-                    val rating = try {
-                        // Use a default rating based on position (popularity)
-                        5.0 - (response.drinks.indexOf(drink) * 0.1).coerceAtMost(2.0)
-                    } catch (e: Exception) {
-                        3.5  // Default rating if lookup fails
-                    }
-
-                    SuggestedCocktail(
-                        name = drink.strDrink,
-                        rating = rating,
-                        category = ingredient,
-                        imageUrl = drink.strDrinkThumb,
-                        cocktailId = drink.idDrink,
-                        isFavorite = false
-                    )
-                } ?: emptyList()
-
-                allCocktails = cocktails
+                // Apply all filters (including the new ingredient filter)
                 applyAllFilters()
                 _isLoading.value = false
             } catch (e: Exception) {
+                Log.e("FilterViewModel", "Error loading cocktails", e)
                 _error.value = "Error loading cocktails: ${e.message}"
                 _isLoading.value = false
             }
@@ -169,7 +155,7 @@ class FilterViewModel : ViewModel() {
 
     /**
      * Apply all active filters to the cocktail list
-     * Now supports multiple filters simultaneously
+     * Now supports multiple filters simultaneously with client-side filtering
      */
     private fun applyAllFilters() {
         Log.d("FilterViewModel", "Applying filters. Total cocktails: ${allCocktails.size}")
@@ -179,8 +165,26 @@ class FilterViewModel : ViewModel() {
 
         var result = allCocktails
 
-        // Apply ingredient filter (if set, this already filtered the list)
-        // No additional filtering needed as ingredient filter fetches specific cocktails
+        // Apply ingredient filter (client-side on ingredients list)
+        _selectedIngredient.value?.let { ingredient ->
+            Log.d("FilterViewModel", "Filtering by ingredient: $ingredient")
+            result = result.filter { cocktail ->
+                // Check if ingredient appears in the cocktail's name
+                val nameMatch = cocktail.name.contains(ingredient, ignoreCase = true)
+
+                // Check if ingredient appears in actual ingredient list (from API Ninjas)
+                val ingredientListMatch = cocktail.ingredients?.any { ing ->
+                    ing.contains(ingredient, ignoreCase = true)
+                } ?: false
+
+                val matches = nameMatch || ingredientListMatch
+                if (matches) {
+                    Log.d("FilterViewModel", "Match: ${cocktail.name} (nameMatch=$nameMatch, ingredientMatch=$ingredientListMatch)")
+                }
+                matches
+            }
+            Log.d("FilterViewModel", "After ingredient filter: ${result.size} cocktails")
+        }
 
         // Apply category filter (drink type) - works with ingredient filter
         _selectedCategory.value?.let { category ->

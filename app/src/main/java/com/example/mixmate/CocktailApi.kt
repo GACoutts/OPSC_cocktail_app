@@ -47,8 +47,10 @@ object CocktailApiRepository {
     private const val DEFAULT_BASE_URL = "https://api.api-ninjas.com/"
 
     // Allow tests to override base URL / service and skip API key requirement.
-    @Volatile private var baseUrl: String = DEFAULT_BASE_URL
-    @Volatile private var allowBlankApiKeyForTests: Boolean = false
+    @Volatile
+    private var baseUrl: String = DEFAULT_BASE_URL
+    @Volatile
+    private var allowBlankApiKeyForTests: Boolean = false
 
     private val client: OkHttpClient by lazy {
         OkHttpClient.Builder()
@@ -56,7 +58,8 @@ object CocktailApiRepository {
             .build()
     }
 
-    @Volatile private var service: CocktailApiService = buildService()
+    @Volatile
+    private var service: CocktailApiService = buildService()
 
     private fun buildService(): CocktailApiService = Retrofit.Builder()
         .baseUrl(baseUrl)
@@ -70,7 +73,10 @@ object CocktailApiRepository {
         baseUrl = newBase
         service = buildService()
     }
-    internal fun enableBlankApiKeyForTests() { allowBlankApiKeyForTests = true }
+
+    internal fun enableBlankApiKeyForTests() {
+        allowBlankApiKeyForTests = true
+    }
 
     // Public suspend function to get up to [limit] cocktails. Uses a broad letter query to widen results.
     suspend fun fetchCocktails(limit: Int = 10): List<SuggestedCocktail> = withContext(Dispatchers.IO) {
@@ -90,7 +96,8 @@ object CocktailApiRepository {
                         name = api.name!!.trim(),
                         rating = randomRating(),
                         category = baseSpirit,
-                        imageRes = R.drawable.cosmopolitan // Placeholder image
+                        imageRes = R.drawable.cosmopolitan, // Placeholder image
+                        ingredients = api.ingredients // Pass ingredients for filtering
                     )
                 }
                 .toList()

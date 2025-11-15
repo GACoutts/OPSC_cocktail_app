@@ -151,7 +151,9 @@ class ProfileActivity : AppCompatActivity() {
             }
         )
         rvFavorites.adapter = favoritesAdapter
-        rvFavorites.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        rvFavorites.layoutManager = androidx.recyclerview.widget.GridLayoutManager(this, 2) // 2 columns
+        val spacingPx = resources.getDimensionPixelSize(R.dimen.grid_spacing)
+        rvFavorites.addItemDecoration(GridSpacingItemDecoration(2, spacingPx, false))
     }
 
     private fun setupClickListeners() {
