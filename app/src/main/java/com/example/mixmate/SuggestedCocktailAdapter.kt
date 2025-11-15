@@ -17,7 +17,8 @@ data class SuggestedCocktail(
     val imageRes: Int = R.drawable.cosmopolitan,   // local fallback
     val imageUrl: String? = null,                  // remote image (optional)
     val cocktailId: String? = null,                // for details/favourites
-    var isFavorite: Boolean = false                // fallback favourite state
+    var isFavorite: Boolean = false,               // fallback favourite state
+    val ingredients: List<String>? = null          // ingredient list for filtering
 )
 
 class SuggestedCocktailAdapter(
@@ -128,6 +129,7 @@ private fun capitalizePossessiveSegment(segment: String): String {
         if (part.isBlank()) "" else when {
             idx == 0 -> part.lowercase().replaceFirstChar { c ->
                 if (c.isLowerCase()) c.titlecase(Locale.getDefault()) else c.toString()
+
             }
             part.length == 1 -> part.lowercase() // the "'s"
             else -> part.lowercase().replaceFirstChar { c ->
